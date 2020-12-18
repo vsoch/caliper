@@ -13,3 +13,4 @@ def main(args, extra):
     # TODO: need to create a manager depending on the package type.
     # Create a client to interact with
     client = MetricsExtractor()
+    assert client

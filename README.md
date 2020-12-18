@@ -1,6 +1,6 @@
 # Caliper
 
-[![PyPI version](https://badge.fury.io/py/rseng.svg)](https://badge.fury.io/py/caliper)
+[![PyPI version](https://badge.fury.io/py/caliper.svg)](https://badge.fury.io/py/caliper)
 
 Caliper is a tool for measuring and assessing change in packages.
 
