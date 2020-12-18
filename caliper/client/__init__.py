@@ -7,7 +7,6 @@ __license__ = "MPL 2.0"
 import caliper
 import argparse
 import sys
-import logging
 
 
 def get_parser():
