@@ -2,10 +2,12 @@ __author__ = "Vanessa Sochat"
 __copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-from caliper.managers.base import ManagerBase
+from caliper.metrics.base import MetricFinder
 from caliper.managers import GitManager
 from caliper.utils.command import wget_and_extract
 from caliper.logger import logger
+
+import importlib
 import tempfile
 import os
 
@@ -24,12 +26,47 @@ class MetricsExtractor:
     The source should be a url we can download with wget or similar.
     """
 
-    def __init__(self, manager):
+    def __init__(self, manager=None, working_dir=None):
+        self._metrics = {}
+        self._extractors = {}
         self.manager = manager
         self.tmpdir = None
         self.git = None
-        if not isinstance(self.manager, ManagerBase):
-            raise ValueError("You must provide a caliper.manager subclass.")
+
+        # If we have a working directory provided, the repository exists
+        if working_dir:
+            self.tmpdir = working_dir
+            self.git = GitManager(self.tmpdir)
+
+    def __iter__(self):
+        for name, result in self._extractors.items():
+            yield name, result
+
+    @property
+    def metrics(self):
+        """return a list of metrics available"""
+        if not self._metrics:
+            self._metrics_finder = MetricFinder()
+            self._metrics = dict(self._metrics_finder.items())
+        return self._metrics
+
+    def extract_all(self):
+        for name in self.metrics:
+            self.extract_metric(name)
+
+    def extract_metric(self, name):
+        """Given a metric, extract for each commit from the repository."""
+        if name not in self.metrics:
+            logger.exit("Metric %s is not known." % name)
+
+        # If no git repository defined, prepare one
+        if not self.git:
+            self.prepare_repository()
+
+        module, metric_name = self._metrics[name].rsplit(".", 1)
+        metric = getattr(importlib.import_module(module), metric_name)()
+        metric.extract(self.git)
+        self._extractors[metric_name] = metric
 
     def prepare_repository(self):
         """Since most source code archives won't include the git history,
@@ -37,6 +74,9 @@ class MetricsExtractor:
         and then create tagged commits that correpond to each version. We
         can then use this git repository to derive metrics of change.
         """
+        if not self.manager:
+            logger.exit("A manager is required to prepare a repository.")
+
         # Create temporary git directory
         self.tmpdir = tempfile.mkdtemp(prefix="%s-" % self.manager.name)
         self.git = GitManager(self.tmpdir)
@@ -66,9 +106,3 @@ class MetricsExtractor:
         # number of changed lines
         # number of changed files
         # new dependencies
-
-
-def changed_lines(before, after):
-    """given a file before and after, count the number of changed lines"""
-    # TODO, should be able to do this with git?
-    pass

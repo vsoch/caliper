@@ -13,6 +13,7 @@ Caliper is a tool for measuring and assessing change in packages.
  - **Manager** a handle to interact with a package manager
  - **Extractor** a controller to use a manager to extract metrics of interest
  - **Version repository** a repository created by an extractor that tagged commits for package releases
+ - **Metrics** are a type of classes that can extract a single timepoint, or a change over time (e.g., lines changed)
 
 ### Managers
 
@@ -76,8 +77,14 @@ This is the [metrics extractor](#metrics-extractor) discussed next.
 ### Metrics Extractor
 
 Finally, a metrics extractor provides an easy interface to iterate over versions
-of a package, and extract some kind of metric. For example, let's say we have
-the Pypi manager above:
+of a package, and extract some kind of metric. There are two ways to go about it -
+starting with a repository that already has tags of interest, or starting
+with a manager that will be used to create it.
+
+#### Extraction Using Manager
+
+The manager knows all the files for a release of some particular software, so 
+we can use it to start an extraction. For example, let's say we have the Pypi manager above:
 
 ```python
 from caliper.managers import PypiManager
@@ -154,7 +161,72 @@ $ git tag
 
 This is really neat! Next we can use the extractor to calculate metrics.
 
-**under development**
+
+#### Extraction from Existing
+
+As an alternative, if you create a repository via a manager (or have another
+repository you want to use that doesn't require one) you can simply provide the
+working directory to the metrics extractor:
+
+```python
+from caliper.metrics import MetricsExtractor
+extractor = MetricsExtractor(working_dir="/tmp/sregistry-j63wuvei")
+```
+
+You can see that we've created a git manager at this root:
+
+```python
+extractor.git
+<caliper.managers.git.GitManager at 0x7ff92a66ca60>
+```
+
+And we then might want to see what metrics are available for extraction. 
+
+```python
+extractor.metrics
+{'changedlines': 'caliper.metrics.collection.changedlines.metric.Changedlines'}
+```
+
+Without going into detail, there are different base classes of metrics - a `MetricBase`
+expects to extract some metric for one timepoint (a tag/commit) and a `ChangeMetricBase`
+expects to extract metrics that compare two of these timepoints. The metric above
+we see is a change metric. We can then run the extraction:
+
+```python
+extractor.extract_metric("changedlines")
+```
+
+Note that you can also extract all metrics known to the extractor.
+
+```python
+extractor.extract_all()
+```
+
+#### Parsing Results
+
+For each extractor, you can currently loop through them and extract either
+data on the level of individual files, or summary results:
+
+```
+for name, metric in extractor:
+    # Changedlines <caliper.metrics.collection.changedlines.metric.Changedlines at 0x7f7cd24f4940>
+
+    # A lookup of v1..v2 with a list of files
+    metric.get_file_results()
+
+    # A lookup of v1..v2 for summed changed
+    metric.get_summed_results()
+```
+
+For example, an entry in summed results might look like this:
+
+```
+{'0.2.34..0.2.35': {'size': 0, 'insertions': 4, 'deletions': 4, 'lines': 8}}
+```
+
+To say that between versions 0.2.34 and 0.2.35 there were 4 insertions, 4 deletions,
+and 8 lines changed total, and there was no change in overall size.
+We will eventually have more examples for how to parse and use this data.
 
 
 ## Use Cases
