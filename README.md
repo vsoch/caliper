@@ -11,7 +11,7 @@ Caliper is a tool for measuring and assessing change in packages.
  - **Manager** a handle to interact with a package manager
  - **Extractor** a controller to use a manager to extract metrics of interest
  - **Version repository** a repository created by an extractor that tagged commits for package releases
- - **Metrics** are a type of classes that can extract a single timepoint, or a change over time (e.g., lines changed)
+ - **Metrics** are a type of classes that can extract a single timepoint, or a change over time (e.g., lines changed). You can see example metrics that have been extracted under [examples/metrics](examples/metrics) or in the [vsoch/caliper-metrics](https://github.com/vsoch/caliper-metrics) repository.
 
 ### Managers
 
@@ -126,6 +126,7 @@ optional arguments:
   --metric METRIC  one or more metrics to extract (comma separated), defaults to all metrics
   --outdir OUTDIR  output directory to write files (defaults to temporary directory)
   --no-cleanup     do not cleanup temporary extraction repositories.
+  --force          if a metric file exists, do not overwrite.
 ```
 
 But first we might want to see metrics available:

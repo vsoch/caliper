@@ -78,6 +78,14 @@ def get_parser():
         default=False,
         action="store_true",
     )
+    extract.add_argument(
+        "--force",
+        dest="force",
+        help="if a metric file exists, do not overwrite.",
+        default=False,
+        action="store_true",
+    )
+
     return parser
 
 

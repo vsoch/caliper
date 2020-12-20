@@ -4,6 +4,7 @@ __license__ = "MPL 2.0"
 
 from caliper.metrics.base import MetricFinder
 from caliper.managers import GitManager
+from caliper.utils.file import write_json, mkdir_p
 from caliper.utils.prompt import confirm
 from caliper.utils.command import wget_and_extract
 from caliper.logger import logger
@@ -90,14 +91,18 @@ class MetricsExtractor:
             logger.exit("A manager is required to prepare a repository.")
 
         # Create temporary git directory
-        self.tmpdir = tempfile.mkdtemp(prefix="%s-" % self.manager.name)
+        self.tmpdir = tempfile.mkdtemp(prefix="%s-" % self.manager.uri)
         self.git = GitManager(self.tmpdir, quiet=self.quiet)
 
         # Initialize empty respository
         self.git.init()
 
         # For each version, download and create git commit and tag
-        for spec in self.manager.specs:
+        for i, spec in enumerate(self.manager.specs):
+            logger.info(
+                "Downloading and tagging %s, %s of %s"
+                % (spec["version"], i + 1, len(self.manager.specs))
+            )
             download_to = os.path.join(
                 self.tmpdir, os.path.basename(spec["source"]["filename"])
             )
@@ -111,10 +116,33 @@ class MetricsExtractor:
         logger.info("Repository for %s is created at %s" % (self.manager, self.tmpdir))
         return self.git
 
-        # - dependencies (imports) and requirements.txt
-        # - make sure these functions are imported from metrics
-        # extract subsequent, figure out git commands to get changes
+    def save_all(self, outdir, force=False):
+        """Save data as json exports using an outdir root."""
+        if not self.manager or not self._extractors:
+            logger.exit("You must add a manager and do an extract() before save.")
 
-        # number of changed lines
-        # number of changed files
-        # new dependencies
+        package_dir = os.path.join(outdir, self.manager.name, self.manager.uri)
+
+        for _, extractor in self._extractors.items():
+            extractor_dir = os.path.join(package_dir, extractor.name)
+            mkdir_p(extractor_dir)
+
+            # Write results to file
+            for results, outfile in [
+                (
+                    extractor.get_file_results(),
+                    os.path.join(
+                        extractor_dir, "%s-file-results.json" % extractor.name
+                    ),
+                ),
+                (
+                    extractor.get_summed_results(),
+                    os.path.join(
+                        extractor_dir, "%s-summed-results.json" % extractor.name
+                    ),
+                ),
+            ]:
+                if os.path.exists(outfile) and not force:
+                    logger.warning("%s exists and force is False, skipping." % outfile)
+                    continue
+                write_json(results, outfile)
