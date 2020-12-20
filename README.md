@@ -6,8 +6,6 @@ Caliper is a tool for measuring and assessing change in packages.
 
 **under development**
 
-## Core
-
 ### Concepts
 
  - **Manager** a handle to interact with a package manager
@@ -63,11 +61,17 @@ import tempfile
 git = GitManager(tempfile.mkdtemp())
 git.init()
 
-# copy content to the repository here
+# write some content (file.txt)
 
+git.add("file.txt")
 git.commit("Adding new content!")
 git.tag("tag")
 ```
+Note that when you run `git.init()` a dummy username and email will be added
+to the `.git/config` file so we can continue interactions without needing a global
+setting. This is done intentionally based on the idea that the user likely won't keep
+the version repository, however if you do want to keep it, feel free to change or
+remote these settings in favor of global ones.
 
 You can imagine how this might be used - we can have a class that can take a manager,
 and then iterate over versions/releases and create a tagged commit for each.
@@ -184,13 +188,15 @@ And we then might want to see what metrics are available for extraction.
 
 ```python
 extractor.metrics
-{'changedlines': 'caliper.metrics.collection.changedlines.metric.Changedlines'}
+{'totalcounts': 'caliper.metrics.collection.totalcounts.metric.Totalcounts',
+ 'changedlines': 'caliper.metrics.collection.changedlines.metric.Changedlines'}
 ```
 
 Without going into detail, there are different base classes of metrics - a `MetricBase`
 expects to extract some metric for one timepoint (a tag/commit) and a `ChangeMetricBase`
-expects to extract metrics that compare two of these timepoints. The metric above
-we see is a change metric. We can then run the extraction:
+expects to extract metrics that compare two of these timepoints. The metric `changedlines` 
+above is a change metric, and `totalcounts` is a base metric (for one commit timepoint). 
+We can then run the extraction:
 
 ```python
 extractor.extract_metric("changedlines")
@@ -265,6 +271,12 @@ degree of changes for each:
 
 **Note** this is all still being developed, and likely to change!
 
+## TODO
+
+- create official docs in docs folder alongside code
+- write tests to discover and test all metrics (type, name, etc.)
+- think about and implement command line client
+- think of common functions to run metric
 ## License
 
  * Free software: MPL 2.0 License

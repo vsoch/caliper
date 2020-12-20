@@ -5,45 +5,19 @@ __license__ = "MPL 2.0"
 from caliper.metrics.base import ChangeMetricBase
 import os
 
-import git as gitpython
-
-DATE_TIME_FORMAT = "%Y-%m-%dT%H:%M:%S%z"
-EMPTY_SHA = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
-
 
 class Changedlines(ChangeMetricBase):
 
     name = "changedlines"
     description = "count lines added and removed between versions"
 
-    def __init__(self):
-        self._data = {}
-
-    @property
-    def rawdata(self):
-        return self._data
-
-    def extract(self, git):
-        """given a file before and after, count the number of changed lines"""
-        repo = gitpython.Repo(git.folder)
-        for tag in repo.tags:
-            parent = tag.commit.parents[0] if tag.commit.parents else EMPTY_SHA
-
-            # Derive the diff name
-            tag2 = "EMPTY" if isinstance(parent, str) else parent.message.strip()
-            index = "%s..%s" % (tag2, tag)
-
-            # A ChangeMetric stores tag diffs
-            self._data[index] = self._extract(git, tag.commit, parent)
-
-    def _extract(self, git, commit1, commit2):
+    def _extract(self, commit1, commit2):
         """The second commit should be the parent"""
         diffs = {diff.a_path: diff for diff in commit1.diff(commit2)}
         data = []
 
-        # The stats on the commit is a summary of all the changes for this
         # commit, we'll iterate through it to get the information we need.
-        for filepath, stats in commit1.stats.files.items():
+        for filepath, metrics in commit1.stats.files.items():
 
             # Select the diff for the path in the stats
             diff = diffs.get(filepath)
@@ -51,21 +25,23 @@ class Changedlines(ChangeMetricBase):
             # Was the path renamed?
             if not diff:
                 for diff in diffs.values():
-                    if diff.b_path == git.folder and diff.renamed:
+                    if diff.b_path == self.git.folder and diff.renamed:
                         break
 
             # Update the stats with the additional information
-            stats.update(
+            metrics.update(
                 {
-                    "object": os.path.join(git.folder, filepath),
+                    "object": os.path.join(self.git.folder, filepath),
                     "commit": commit1.hexsha,
                     "author": commit1.author.email,
-                    "timestamp": commit1.authored_datetime.strftime(DATE_TIME_FORMAT),
+                    "timestamp": commit1.authored_datetime.strftime(
+                        self.date_time_format
+                    ),
                     "size": diff_size(diff),
                 }
             )
-            if stats:
-                data.append(stats)
+            if metrics:
+                data.append(metrics)
 
         return data
 

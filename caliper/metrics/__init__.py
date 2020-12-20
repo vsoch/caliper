@@ -64,8 +64,8 @@ class MetricsExtractor:
             self.prepare_repository()
 
         module, metric_name = self._metrics[name].rsplit(".", 1)
-        metric = getattr(importlib.import_module(module), metric_name)()
-        metric.extract(self.git)
+        metric = getattr(importlib.import_module(module), metric_name)(self.git)
+        metric.extract()
         self._extractors[metric_name] = metric
 
     def prepare_repository(self):
