@@ -91,7 +91,7 @@ class MetricsExtractor:
             logger.exit("A manager is required to prepare a repository.")
 
         # Create temporary git directory
-        self.tmpdir = tempfile.mkdtemp(prefix="%s-" % self.manager.name)
+        self.tmpdir = tempfile.mkdtemp(prefix="%s-" % self.manager.uri)
         self.git = GitManager(self.tmpdir, quiet=self.quiet)
 
         # Initialize empty respository

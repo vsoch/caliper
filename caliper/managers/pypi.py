@@ -19,7 +19,7 @@ class PypiManager(ManagerBase):
         self.metadata = None
 
     @property
-    def name(self):
+    def package_name(self):
         if self.uri:
             return self.uri.replace("pypi:", "", 1)
 
@@ -32,7 +32,7 @@ class PypiManager(ManagerBase):
 
     def get_package_metadata(self, name=None):
         """Given a package name, retrieve it's metadata from pypi"""
-        name = name or self.name
+        name = name or self.package_name
         if not name:
             raise ValueError("A package name is required.")
 
@@ -51,7 +51,7 @@ class PypiManager(ManagerBase):
 
             self._specs.append(
                 {
-                    "name": self.name,
+                    "name": name,
                     "version": version,
                     "source": {
                         "filename": release[0]["url"],
@@ -61,5 +61,5 @@ class PypiManager(ManagerBase):
                 }
             )
 
-        logger.info("Found %s versions for %s" % (len(self._specs), self.name))
+        logger.info("Found %s versions for %s" % (len(self._specs), name))
         return self._specs
