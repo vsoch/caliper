@@ -1,0 +1,52 @@
+{
+    "EMPTY..0.1": {
+        "insertions": 13176,
+        "deletions": 0,
+        "lines": 13176
+    },
+    "0.1..0.2": {
+        "insertions": 4,
+        "deletions": 4,
+        "lines": 8
+    },
+    "0.2..0.21": {
+        "insertions": 243,
+        "deletions": 38,
+        "lines": 281
+    },
+    "0.21..0.22": {
+        "insertions": 6,
+        "deletions": 7,
+        "lines": 13
+    },
+    "0.22..0.3": {
+        "insertions": 43,
+        "deletions": 51,
+        "lines": 94
+    },
+    "0.3..0.31": {
+        "insertions": 5,
+        "deletions": 5,
+        "lines": 10
+    },
+    "0.31..0.32": {
+        "insertions": 6,
+        "deletions": 6,
+        "lines": 12
+    },
+    "0.32..0.33": {
+        "insertions": 329,
+        "deletions": 125,
+        "lines": 454
+    },
+    "0.33..0.34": {
+        "insertions": 59,
+        "deletions": 4,
+        "lines": 63
+    },
+    "0.34..0.35": {
+        "insertions": 5344,
+        "deletions": 2204,
+        "lines": 7548
+    }
+}

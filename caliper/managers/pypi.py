@@ -39,6 +39,8 @@ class PypiManager(ManagerBase):
         url = "%s/%s/json" % (self.baseurl, name)
         self.metadata = do_request(url)
 
+        # Note that release[0] can be for any architecture, etc.
+
         # Parse metadata into simplified version of spack package schema
         for version, release in self.metadata.get("releases", {}).items():
             self._specs.append(

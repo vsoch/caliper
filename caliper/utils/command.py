@@ -5,11 +5,13 @@ __license__ = "MPL 2.0"
 from caliper.utils.file import move_files
 import json
 import os
-import tarfile
+import re
 import requests
 import shutil
 import subprocess
 import sys
+import tarfile
+import zipfile
 
 
 def wget(url, download_to, chunk_size=1024):
@@ -32,11 +34,27 @@ def wget_and_extract(url, download_to, chunk_size=1024, flatten=True):
     download_to = wget(url, download_to)
     download_dir = os.path.dirname(download_to)
     download_root = download_to.rstrip(".tar.gz")
+
     if download_to.endswith(".tar.gz"):
         tar = tarfile.open(download_to, "r:gz")
         download_root = os.path.join(download_dir, os.path.commonprefix(tar.getnames()))
         tar.extractall(download_dir)
         tar.close()
+
+    # A wheel is just a zip file
+    elif re.search("([.]whl$|[.]gzip|[.]zip)", download_to):
+        download_root = download_to.rsplit(".", 1)[0]
+        with zipfile.ZipFile(download_to, "r") as zip_ref:
+            top_level = {item.split("/")[0] for item in zip_ref.namelist()}
+            zip_ref.extractall(download_dir)
+
+        # For wheels, remove dist-info, set download_root to unpack
+        for folder in top_level:
+            folder_dir = os.path.join(download_dir, folder)
+            if folder.endswith(".dist-info") and os.path.exists(folder_dir):
+                shutil.rmtree(folder_dir)
+            elif folder.endswith(".data") and os.path.exists(folder_dir):
+                download_root = folder_dir
 
     # Remove the archive
     if os.path.exists(download_to):
