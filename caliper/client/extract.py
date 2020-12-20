@@ -4,10 +4,8 @@ __license__ = "MPL 2.0"
 
 from caliper.metrics import MetricsExtractor
 from caliper.managers import get_named_manager
-from caliper.utils.file import mkdir_p, write_json
 import tempfile
 import logging
-import os
 
 logger = logging.getLogger("caliper.client")
 
@@ -49,23 +47,10 @@ def main(args, extra):
             else:
                 client.extract_metric(metric)
 
-        package_dir = os.path.join(outdir, uri.lower(), package)
-
         # Save results to files
-        for _, extractor in client._extractors.items():
-            extractor_dir = os.path.join(package_dir, extractor.name)
-            mkdir_p(extractor_dir)
+        client.save_all(outdir, force=args.force)
 
-            # Write results to file
-            write_json(
-                extractor.get_file_results(),
-                os.path.join(extractor_dir, "%s-file-results.json" % extractor.name),
-            )
-            write_json(
-                extractor.get_summed_results(),
-                os.path.join(extractor_dir, "%s-summed-results.json" % extractor.name),
-            )
-
+        # Cleanup, unless disabled
         if not args.no_cleanup:
             client.cleanup(force=True)
 

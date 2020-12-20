@@ -19,10 +19,10 @@ class GitManager:
         """
         self.folder = folder or ""
         self.quiet = quiet
+        self.repo = None
         self._update_repo(self.folder)
 
     def _update_repo(self, dest):
-        self.repo = Repo()
         self.git_dir = os.path.join(dest, ".git")
         if os.path.exists(self.git_dir):
             self.repo = Repo(self.git_dir)

@@ -40,9 +40,15 @@ class PypiManager(ManagerBase):
         self.metadata = do_request(url)
 
         # Note that release[0] can be for any architecture, etc.
+        # The indexing appears consisent within a package, so OK for now
 
         # Parse metadata into simplified version of spack package schema
         for version, release in self.metadata.get("releases", {}).items():
+
+            # Some releases can be empty, skip
+            if not release:
+                continue
+
             self._specs.append(
                 {
                     "name": self.name,
