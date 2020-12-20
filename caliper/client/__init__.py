@@ -10,6 +10,7 @@ import sys
 
 
 def get_parser():
+
     parser = argparse.ArgumentParser(
         description="Caliper is a tool for measuring and assessing changes in packages."
     )
@@ -33,20 +34,50 @@ def get_parser():
     # print version and exit
     subparsers.add_parser("version", help="show software version")
 
+    # See metrics available
+    metrics = subparsers.add_parser(
+        "metrics",
+        help="see metrics available",
+    )
+
+    metrics.add_argument(
+        "query",
+        help="search metrics by a query string",
+        nargs="?",
+        default=None,
+    )
+
     # Generate a key for the interface
     extract = subparsers.add_parser(
         "extract",
         help="extract one or more metrics for a software package.",
     )
 
-    extract.add_argument("--metric", nargs="*", help="one or more metrics to extract")
+    extract.add_argument(
+        "--metric",
+        help="one or more metrics to extract (comma separated), defaults to all metrics",
+        default="all",
+    )
+
     extract.add_argument(
         "packages",
-        help="Packages to extract, e.g., pypi, GitHub, or (eventually) spack.",
-        nargs="?",
+        help="packages to extract, e.g., pypi, GitHub, or (eventually) spack.",
+        nargs="*",
         default=None,
     )
 
+    extract.add_argument(
+        "--outdir",
+        help="output directory to write files (defaults to temporary directory)",
+        default=None,
+    )
+    extract.add_argument(
+        "--no-cleanup",
+        dest="no_cleanup",
+        help="do not cleanup temporary extraction repositories.",
+        default=False,
+        action="store_true",
+    )
     return parser
 
 
@@ -65,10 +96,6 @@ def main():
         parser.print_help()
         sys.exit(return_code)
 
-    # If the user didn't provide any arguments, show the full help
-    if len(sys.argv) == 1:
-        help()
-
     # If an error occurs while parsing the arguments, the interpreter will exit with value 2
     args, extra = parser.parse_known_args()
 
@@ -79,18 +106,16 @@ def main():
         print(caliper.__version__)
         sys.exit(0)
 
-    # Does the user want a shell?
     main = None
-    # if args.command == "extract":
-    #    from .extract import main
+    if args.command == "extract":
+        from .extract import main
+    elif args.command == "metrics":
+        from .metrics import main
 
-    print("This client has not been developed yet.")
     if main is not None:
         main(args=args, extra=extra)
-
-
-#    else:
-#        help()
+    else:
+        help()
 
 
 if __name__ == "__main__":
