@@ -6,8 +6,6 @@ Caliper is a tool for measuring and assessing change in packages.
 
 **under development**
 
-## Core
-
 ### Concepts
 
  - **Manager** a handle to interact with a package manager
@@ -69,6 +67,11 @@ git.add("file.txt")
 git.commit("Adding new content!")
 git.tag("tag")
 ```
+Note that when you run `git.init()` a dummy username and email will be added
+to the `.git/config` file so we can continue interactions without needing a global
+setting. This is done intentionally based on the idea that the user likely won't keep
+the version repository, however if you do want to keep it, feel free to change or
+remote these settings in favor of global ones.
 
 You can imagine how this might be used - we can have a class that can take a manager,
 and then iterate over versions/releases and create a tagged commit for each.

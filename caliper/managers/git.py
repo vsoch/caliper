@@ -65,7 +65,12 @@ class GitManager:
         dest = dest or self.folder or ""
         self.run_command(["git", "init", dest])
         self._update_repo(dest)
+        self.config("user.name", "vsoch-caliper", dest)
+        self.config("user.email", "vsoch-caliper@users.noreply.github.com", dest)
         return dest
+
+    def config(self, key, value, dest=None):
+        self.run_command(self.init_cmd(dest) + ["config", key, value])
 
     def ls_files(self, dest=None):
         """init an empty repository in a directory of choice"""
