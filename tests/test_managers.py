@@ -12,8 +12,10 @@ def test_pypi_manager(tmp_path):
     print("Testing Pypi Manager")
     from caliper.managers import PypiManager
 
-    manager = PypiManager("sregistry")
-    assert manager.name == "sregistry"
+    manager = PypiManager("pypi:sregistry")
+    assert manager.name == "pypi"
+    assert manager.uri == "pypi:sregistry"
+    assert manager.package_name == "sregistry"
     assert len(manager.specs) >= 82
     assert manager.baseurl == "https://pypi.python.org/pypi"
 
