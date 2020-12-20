@@ -4,10 +4,12 @@ __license__ = "MPL 2.0"
 
 from caliper.metrics.base import MetricFinder
 from caliper.managers import GitManager
+from caliper.utils.prompt import confirm
 from caliper.utils.command import wget_and_extract
 from caliper.logger import logger
 
 import importlib
+import shutil
 import tempfile
 import os
 
@@ -26,12 +28,13 @@ class MetricsExtractor:
     The source should be a url we can download with wget or similar.
     """
 
-    def __init__(self, manager=None, working_dir=None):
+    def __init__(self, manager=None, working_dir=None, quiet=False):
         self._metrics = {}
         self._extractors = {}
         self.manager = manager
         self.tmpdir = None
         self.git = None
+        self.quiet = quiet
 
         # If we have a working directory provided, the repository exists
         if working_dir:
@@ -49,6 +52,15 @@ class MetricsExtractor:
             self._metrics_finder = MetricFinder()
             self._metrics = dict(self._metrics_finder.items())
         return self._metrics
+
+    def cleanup(self, force=False):
+        """Delete a git directory. If force is not set, ask for confirmation"""
+        if self.tmpdir and os.path.exists(self.tmpdir):
+            if not force and not confirm(
+                "Are you sure you want to delete %s?" % self.tmpdir
+            ):
+                return
+        shutil.rmtree(self.tmpdir)
 
     def extract_all(self):
         for name in self.metrics:
@@ -79,7 +91,7 @@ class MetricsExtractor:
 
         # Create temporary git directory
         self.tmpdir = tempfile.mkdtemp(prefix="%s-" % self.manager.name)
-        self.git = GitManager(self.tmpdir)
+        self.git = GitManager(self.tmpdir, quiet=self.quiet)
 
         # Initialize empty respository
         self.git.init()

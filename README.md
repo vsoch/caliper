@@ -85,6 +85,99 @@ of a package, and extract some kind of metric. There are two ways to go about it
 starting with a repository that already has tags of interest, or starting
 with a manager that will be used to create it.
 
+#### Extraction Using Client
+
+When installed, caliper comes with an executable, `caliper` that can make it easy
+to extract a version repository.
+
+```bash
+$ caliper
+
+caliper Python v0.0.1
+usage: caliper [-h] [--version] {version,metrics,extract} ...
+
+Caliper is a tool for measuring and assessing changes in packages.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --version             suppress additional output.
+
+actions:
+  actions
+
+  {version,metrics,extract}
+                        actions
+    version             show software version
+    metrics             see metrics available
+    extract             extract one or more metrics for a software package.
+```
+
+For now we are primarily interested in the `extract` command:
+
+```bash
+$ caliper extract --help
+usage: caliper extract [-h] [--metric METRIC] [--outdir OUTDIR] [--no-cleanup] [packages [packages ...]]
+
+positional arguments:
+  packages         packages to extract, e.g., pypi, GitHub, or (eventually) spack.
+
+optional arguments:
+  -h, --help       show this help message and exit
+  --metric METRIC  one or more metrics to extract (comma separated), defaults to all metrics
+  --outdir OUTDIR  output directory to write files (defaults to temporary directory)
+  --no-cleanup     do not cleanup temporary extraction repositories.
+```
+
+But first we might want to see metrics available:
+
+```bash
+$ caliper metrics
+         totalcounts: caliper.metrics.collection.totalcounts.metric.Totalcounts
+        changedlines: caliper.metrics.collection.changedlines.metric.Changedlines
+```
+
+Let's say we want to extract the changedlines metric for a pypi repository, sif, which
+will return insertions, deletions, and overall change for each tagged release.
+That would look like this:
+
+```bash
+caliper extract --metric changedlines pypi:sif
+Found 2 versions for sif
+Repository for [manager:sif] is created at /tmp/sif-26hqifbm
+Results written to /tmp/caliper-p633odvg
+```
+
+By default, the metrics will be saved to a temporary directory organized by package type,
+name, and then results files:
+
+```bash
+$ tree /tmp/caliper-p633odvg
+/tmp/caliper-p633odvg
+└── pypi
+    └── sif
+        └── changedlines
+            ├── changedlines-file-results.json
+            └── changedlines-summed-results.json
+
+3 directories, 2 files
+```
+
+but you can instead save to an output folder of your choosing (with the same structure).
+
+```bash
+mkdir -p examples/metrics/
+caliper extract --metric changedlines --outdir examples/metrics/ pypi:sif
+Found 2 versions for sif
+Repository for [manager:sif] is created at /tmp/sif-0vpe767q
+Results written to examples/metrics/
+```
+
+These files are provided for inspection under [examples/metrics](examples/metrics).
+For a change metric (a type that looks at change across tagged commits) you'll see 
+a range of version like `EMPTY..0.0.1`. For a metric specific to a commit you will
+see just the tag (e.g., `0.0.1`).
+
+
 #### Extraction Using Manager
 
 The manager knows all the files for a release of some particular software, so 

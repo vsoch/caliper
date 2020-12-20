@@ -13,11 +13,12 @@ class GitManager:
     versions (e.g., self.specs) so it does not subclass ManagerBase.
     """
 
-    def __init__(self, folder=None):
+    def __init__(self, folder=None, quiet=False):
         """initialize a git manager. The folder can be empty if intending to
         init a new repository, or not existing if a clone is intended.
         """
         self.folder = folder or ""
+        self.quiet = quiet
         self._update_repo(self.folder)
 
     def _update_repo(self, dest):
@@ -105,7 +106,7 @@ class GitManager:
     def run_command(self, cmd):
         """A wrapper to run_command to handle errors"""
         logger.debug(" ".join(cmd))
-        response = run_command(cmd)
+        response = run_command(cmd, quiet=self.quiet)
         if not response["return_code"] == 0:
             logger.exit("Error with %s, %s" % (" ".join(cmd), response["lines"]))
         return response["lines"]

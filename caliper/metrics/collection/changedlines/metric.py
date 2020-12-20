@@ -37,7 +37,6 @@ class Changedlines(ChangeMetricBase):
                     "timestamp": commit1.authored_datetime.strftime(
                         self.date_time_format
                     ),
-                    "size": diff_size(diff),
                 }
             )
             if metrics:
@@ -52,25 +51,10 @@ class Changedlines(ChangeMetricBase):
     def get_summed_results(self):
         """Get summed values (e.g., lines changed) across files"""
         results = {}
-        summary_keys = ["size", "insertions", "deletions", "lines"]
+        summary_keys = ["insertions", "deletions", "lines"]
         for index, items in self._data.items():
             results[index] = dict((x, 0) for x in summary_keys)
             for item in items:
                 for key in summary_keys:
                     results[index][key] += item.get(key, 0)
         return results
-
-
-def diff_size(diff):
-    """Calculate the size of the diff by comparing blob size
-    Computes the size of the diff by comparing the size of the blobs.
-    """
-    # New file
-    if not diff.a_blob and diff.new_file:
-        return diff.b_blob.size
-
-    # Deletion (should be negative)
-    if not diff.b_blob and diff.deleted_file:
-        return -1 * diff.a_blob.size
-
-    return diff.a_blob.size - diff.b_blob.size
