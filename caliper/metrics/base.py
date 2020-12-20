@@ -9,17 +9,28 @@ import os
 
 here = os.path.abspath(os.path.dirname(__file__))
 
+EMPTY_SHA = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
+
 
 class MetricBase:
     name = "metric"
     description = "Extract a metric for a particular tag or commit"
+    date_time_format = "%Y-%m-%dT%H:%M:%S%z"
+
+    def __init__(self, git=None):
+        self._data = {}
+        self.git = git
+
+    def extract(self):
+        for tag, index in self.iter_tags():
+            self._data[index] = self._extract(tag.commit)
+
+    @property
+    def rawdata(self):
+        return self._data
 
     @abstractmethod
-    def extract(self, git):
-        pass
-
-    @abstractmethod
-    def _extract(self, git, commit):
+    def _extract(self, commit):
         pass
 
     @abstractmethod
@@ -30,6 +41,11 @@ class MetricBase:
     def get_summed_results(self):
         pass
 
+    def iter_tags(self):
+        """yield a tag and a string to describe it."""
+        for tag in getattr(self.git, "tags", []):
+            yield tag, str(tag)
+
 
 class ChangeMetricBase(MetricBase):
 
@@ -37,8 +53,25 @@ class ChangeMetricBase(MetricBase):
     description = "Extract a metric between two tags or commits"
 
     @abstractmethod
-    def _extract(self, git, commit1, commit2):
+    def _extract(self, commit1, commit2):
         pass
+
+    def extract(self):
+        for tag, parent, index in self.iter_tags():
+            self._data[index] = self._extract(tag.commit, parent)
+
+    def iter_tags(self):
+        """yield a tag, it's parent, and a string to describe the two for an
+        index. In the case of the first commit, we produce an empty sha commit
+        """
+        for tag in getattr(self.git, "tags", []):
+            parent = tag.commit.parents[0] if tag.commit.parents else EMPTY_SHA
+
+            # Derive the diff name
+            # TODO: figure out how to create empty commit object
+            tag2 = "EMPTY" if isinstance(parent, str) else parent.message.strip()
+            index = "%s..%s" % (tag2, tag)
+            yield tag, parent, index
 
 
 class MetricFinder(Mapping):
