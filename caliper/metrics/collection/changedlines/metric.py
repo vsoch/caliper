@@ -13,6 +13,7 @@ class Changedlines(ChangeMetricBase):
 
     def _extract(self, commit1, commit2):
         """The second commit should be the parent"""
+
         diffs = {diff.a_path: diff for diff in commit1.diff(commit2)}
         data = []
 

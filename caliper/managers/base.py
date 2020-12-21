@@ -2,6 +2,7 @@ __author__ = "Vanessa Sochat"
 __copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
+from distutils.version import StrictVersion
 from abc import abstractmethod
 
 
@@ -36,3 +37,10 @@ class ManagerBase:
 
     def __repr__(self):
         return self.__str__()
+
+    def sort_specs(self, specs, by="version"):
+        """If the tags are out of order, we won't be able to derive"""
+        lookup = {x["version"].lstrip("v"): x for x in specs}
+        versions = [x[by].lstrip("v") for x in self._specs]
+        versions.sort(key=StrictVersion)
+        return [lookup[x] for x in versions]

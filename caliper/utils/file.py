@@ -19,18 +19,19 @@ import tempfile
 def move_files(source, dest):
     """move one or more files from a source to a destination"""
     moved_files = []
-    for frompath in recursive_find(source, pattern="*"):
-        topath = os.path.join(dest, frompath.replace(source, "").strip("/"))
 
-        # If the file already exists, we prepare to replace
-        if os.path.isfile(topath) and os.path.exists(topath):
+    for path in os.listdir(source):
+        frompath = os.path.join(source, path)
+        topath = os.path.join(dest, path)
+
+        # If a file already exists, remove it
+        if os.path.exists(topath) and os.path.isfile(topath):
             os.remove(topath)
+        elif os.path.exists(topath) and os.path.isdir(topath):
+            shutil.rmtree(topath)
 
-        # If it's a file and still present, move
-        if os.path.exists(frompath):
-            mkdir_p(os.path.dirname(topath))
-            shutil.move(frompath, topath)
-            moved_files.append(topath)
+        shutil.move(frompath, dest)
+        moved_files.append(topath)
     return moved_files
 
 
