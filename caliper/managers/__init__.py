@@ -4,6 +4,7 @@ __license__ = "MPL 2.0"
 
 
 from .git import GitManager
+from .github import GitHubManager
 from .pypi import PypiManager
 import re
 
@@ -15,6 +16,8 @@ def get_named_manager(name, uri=None, config=None):
     manager = None
     if re.search("pypi", name, re.IGNORECASE):
         manager = PypiManager(uri)
+    if re.search("github", name, re.IGNORECASE):
+        manager = GitHubManager(uri)
 
     if not manager:
         raise NotImplementedError(f"There is no matching manager for {name}")

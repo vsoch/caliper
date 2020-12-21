@@ -6,29 +6,14 @@ from caliper.utils.command import do_request
 from caliper.logger import logger
 from caliper.managers.base import ManagerBase
 
+import re
+
 
 class PypiManager(ManagerBase):
     """Retreive Pypi package metadata."""
 
     name = "pypi"
     baseurl = "https://pypi.python.org/pypi"
-
-    def __init__(self, name=None):
-        self.uri = name
-        self._specs = []
-        self.metadata = None
-
-    @property
-    def package_name(self):
-        if self.uri:
-            return self.uri.replace("pypi:", "", 1)
-
-    @property
-    def specs(self):
-        """Retrieve specs and populate _specs if they don't exist"""
-        if not self._specs:
-            return self.get_package_metadata()
-        return self._specs
 
     def get_package_metadata(self, name=None):
         """Given a package name, retrieve it's metadata from pypi"""
@@ -43,23 +28,36 @@ class PypiManager(ManagerBase):
         # The indexing appears consisent within a package, so OK for now
 
         # Parse metadata into simplified version of spack package schema
-        for version, release in self.metadata.get("releases", {}).items():
+        for version, releases in self.metadata.get("releases", {}).items():
+
+            # Find an appropriate linux/unix flavor release to extract
+            release = self.find_release(releases)
 
             # Some releases can be empty, skip
-            if not release:
+            if not releases or not release:
                 continue
 
+            # Release type drives the extraction logic
+            release_type = "wheel" if release["url"].endswith("whl") else "targz"
             self._specs.append(
                 {
                     "name": name,
                     "version": version,
                     "source": {
-                        "filename": release[0]["url"],
-                        "type": release[0].get("python_version", "source"),
+                        "filename": release["url"],
+                        "type": release_type,
                     },
-                    "hash": release[0]["digests"]["sha256"],
+                    "hash": release["digests"]["sha256"],
                 }
             )
 
         logger.info("Found %s versions for %s" % (len(self._specs), name))
         return self._specs
+
+    def find_release(self, releases):
+        """Given a list of releases, find one that we can extract"""
+        filename = None
+        for release in releases:
+            if re.search("(tar[.]gz|[.]whl)", release["url"]):
+                filename = release
+        return filename
