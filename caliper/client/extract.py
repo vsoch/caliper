@@ -4,8 +4,8 @@ __license__ = "MPL 2.0"
 
 from caliper.metrics import MetricsExtractor
 from caliper.managers import get_named_manager
-import tempfile
 import logging
+import os
 
 logger = logging.getLogger("caliper.client")
 
@@ -27,7 +27,7 @@ def main(args, extra):
             logger.exit("%s is not a known metric." % metric)
 
     # prepare top level output directory
-    outdir = args.outdir or tempfile.mkdtemp(prefix="caliper-")
+    outdir = args.outdir or os.getcwd()
 
     # Now parse the package names and do the extraction!
     for package in args.packages:

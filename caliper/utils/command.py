@@ -3,9 +3,9 @@ __copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
 from caliper.utils.file import move_files
+from caliper.logger import logger
 import json
 import os
-import re
 import requests
 import shutil
 import subprocess
@@ -26,48 +26,67 @@ def wget(url, download_to, chunk_size=1024):
     return download_to
 
 
-def wget_and_extract(url, download_to, chunk_size=1024, flatten=True):
-    """Given a .tar.gz download url, download to a folder and extract it.
-    If flatten is true, we expect a top level folder that should be flattened
-    into the current directory.
+def wget_and_extract(
+    url, download_to, download_type="targz", chunk_size=1024, flatten=True
+):
+    """Given a download url of a particular type (targz or wheel or zip)
+    download to a folder and extract it. If flatten is true, we expect a top
+    level folder that should be flattened into the current directory.
     """
-    download_to = wget(url, download_to)
+    if download_type == "targz":
+        dest, root, dest_dir = wget_and_extract_targz(url, download_to, chunk_size)
+    elif download_type in ["wheel", "gzip", "zip"]:
+        dest, root, dest_dir = wget_and_extract_zip(url, download_to, chunk_size)
+    else:
+        logger.exit("%s is not a known archive type." % download_type)
+
+    # Remove the archive
+    if os.path.exists(dest):
+        os.remove(dest)
+
+    # Move contents into top level folder
+    if flatten and os.path.exists(root):
+        move_files(root, dest_dir)
+
+    # Remove the originally extracted folder
+    if os.path.exists(root):
+        shutil.rmtree(root)
+    return dest_dir
+
+
+def wget_and_extract_targz(url, download_to, chunk_size=1024):
+    """Get an extract a targz archive."""
+    download_to = wget(url, download_to, chunk_size=chunk_size)
     download_dir = os.path.dirname(download_to)
     download_root = download_to.rstrip(".tar.gz")
 
-    if download_to.endswith(".tar.gz"):
-        tar = tarfile.open(download_to, "r:gz")
+    # Extract tar and determine root folder
+    with tarfile.open(download_to, "r:gz") as tar:
         download_root = os.path.join(download_dir, os.path.commonprefix(tar.getnames()))
         tar.extractall(download_dir)
-        tar.close()
 
-    # A wheel is just a zip file
-    elif re.search("([.]whl$|[.]gzip|[.]zip)", download_to):
-        download_root = download_to.rsplit(".", 1)[0]
-        with zipfile.ZipFile(download_to, "r") as zip_ref:
-            top_level = {item.split("/")[0] for item in zip_ref.namelist()}
-            zip_ref.extractall(download_dir)
+    return download_to, download_root, download_dir
 
-        # For wheels, remove dist-info, set download_root to unpack
-        for folder in top_level:
-            folder_dir = os.path.join(download_dir, folder)
-            if folder.endswith(".dist-info") and os.path.exists(folder_dir):
-                shutil.rmtree(folder_dir)
-            elif folder.endswith(".data") and os.path.exists(folder_dir):
-                download_root = folder_dir
 
-    # Remove the archive
-    if os.path.exists(download_to):
-        os.remove(download_to)
+def wget_and_extract_zip(url, download_to, chunk_size=1024):
+    """Get an extract a zip or wheel archive."""
+    download_to = wget(url, download_to, chunk_size=chunk_size)
+    download_root = download_to.rsplit(".", 1)[0]
+    download_dir = os.path.dirname(download_to)
 
-    # Move contents into top level folder
-    if flatten and os.path.exists(download_root):
-        move_files(download_root, download_dir)
+    with zipfile.ZipFile(download_to, "r") as zip_ref:
+        top_level = {item.split("/")[0] for item in zip_ref.namelist()}
+        zip_ref.extractall(download_dir)
 
-    # Remove the originally extracted folder
-    if os.path.exists(download_root):
-        shutil.rmtree(download_root)
-    return download_dir
+    # For wheels, remove dist-info, set download_root to unpack
+    for folder in top_level:
+        folder_dir = os.path.join(download_dir, folder)
+        if folder.endswith(".dist-info") and os.path.exists(folder_dir):
+            shutil.rmtree(folder_dir)
+        elif folder.endswith(".data") and os.path.exists(folder_dir):
+            download_root = folder_dir
+
+    return download_to, download_root, download_dir
 
 
 def do_request(url, headers=None, data=None, method="GET"):

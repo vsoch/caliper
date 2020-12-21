@@ -91,7 +91,9 @@ class MetricsExtractor:
             logger.exit("A manager is required to prepare a repository.")
 
         # Create temporary git directory
-        self.tmpdir = tempfile.mkdtemp(prefix="%s-" % self.manager.uri)
+        self.tmpdir = tempfile.mkdtemp(
+            prefix="%s-" % self.manager.uri.replace("/", "-")
+        )
         self.git = GitManager(self.tmpdir, quiet=self.quiet)
 
         # Initialize empty respository
@@ -106,7 +108,13 @@ class MetricsExtractor:
             download_to = os.path.join(
                 self.tmpdir, os.path.basename(spec["source"]["filename"])
             )
-            wget_and_extract(spec["source"]["filename"], download_to)
+
+            # Extraction type is based on source type
+            wget_and_extract(
+                url=spec["source"]["filename"],
+                download_type=spec["source"]["type"],
+                download_to=download_to,
+            )
 
             # git add all content in folder, commit and tag with version
             self.git.add()

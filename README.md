@@ -20,7 +20,17 @@ A manager is a handle to interact with a package.
 #### Pypi
 
 The first kind of package we are interested in is one from pypi.
-For example, we can create a new manager as follows:
+We might quickly extract all metrics to an output folder from the command line for
+a Pypi package:
+
+```python
+caliper extract --outdir caliper-metrics/ pypi:sregistry
+```
+
+##### Pypi Details
+
+or we can instantiate a manager from Python, and walk through the steps
+that the client takes. First we create the manager.
 
 ```python
 from caliper.managers import PypiManager
@@ -47,6 +57,26 @@ manager.specs[-1]
   'type': 'source'},
  'hash': '238ebd3ca0e0408e0be6780d45deca79583ce99aed05ac6981da7a2b375ae79e'}
 ```
+
+#### GitHub
+
+We might also be interested in releases from GitHub. Extracting
+metrics from the command line would look like this:
+
+```python
+caliper extract --outdir caliper-metrics/ github:vsoch/pull-request-action
+```
+
+##### GitHub Details
+
+And we could do the same steps as above (as we did with the [pypi manager](#pypi-manager)
+to create an interactive manager client.
+
+```python
+from caliper.managers import GitHubManager
+manager = GitHubManager("vsoch/pull-request-action")
+```
+
 
 #### GitManager
 
@@ -148,7 +178,8 @@ Repository for [manager:sif] is created at /tmp/sif-26hqifbm
 Results written to /tmp/caliper-p633odvg
 ```
 
-By default, the metrics will be saved to a temporary directory organized by package type,
+By default, if you don't specify an output directory, the metrics will be saved 
+to the present working directory. The organizaion is by package type,
 name, and then results files:
 
 ```bash
