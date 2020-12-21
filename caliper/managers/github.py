@@ -31,7 +31,8 @@ class GitHubManager(ManagerBase):
         if not name:
             raise ValueError("A package name is required.")
 
-        url = "%s/repos/%s/releases" % (self.baseurl, name)
+        # At some point we might need to add pagination
+        url = "%s/repos/%s/releases?per_page=100" % (self.baseurl, name)
         self.metadata = do_request(url, headers=self._get_headers())
 
         # Parse metadata into simplified version of spack package schema
@@ -49,5 +50,7 @@ class GitHubManager(ManagerBase):
                 }
             )
 
+        # Must sort by version or won't work
+        self._specs = self.sort_specs(self._specs, by="version")
         logger.info("Found %s versions for %s" % (len(self._specs), name))
         return self._specs

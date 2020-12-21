@@ -118,6 +118,8 @@ class MetricsExtractor:
 
             # git add all content in folder, commit and tag with version
             self.git.add()
+            self.git.status()
+            os.listdir(self.tmpdir)
             self.git.commit(spec["version"])
             self.git.tag(spec["version"])
 

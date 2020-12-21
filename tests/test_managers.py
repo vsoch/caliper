@@ -38,7 +38,7 @@ def test_github_manager(tmp_path):
     assert manager.package_name == "vsoch/pull-request-action"
 
     assert len(manager.specs) >= 14
-    assert manager.baseurl == 'https://api.github.com'
+    assert manager.baseurl == "https://api.github.com"
 
     # Ensure we have correct metadata
     for key in ["name", "version", "source", "hash"]:

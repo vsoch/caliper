@@ -34,6 +34,17 @@ def test_metrics_extractor(tmp_path):
         if isinstance(metric, ChangeMetricBase):
             assert "0.0.1..0.0.11" in file_results
             assert "0.0.1..0.0.11" in summed_results
+
+            # Ensure they aren't empty or null
+            file_result = file_results["0.0.1..0.0.11"][0]
+            assert len(file_result) >= 7
+            assert file_result["lines"] > 0
+
         elif isinstance(metric, MetricBase):
             assert "0.0.1" in file_results
             assert "0.0.1" in summed_results
+
+            # Ensure they aren't empty or null
+            summed_result = summed_results["0.0.1"]
+            assert len(summed_result) >= 3
+            assert summed_result["files"] > 0
