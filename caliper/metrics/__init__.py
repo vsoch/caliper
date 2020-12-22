@@ -77,9 +77,14 @@ class MetricsExtractor:
             self.prepare_repository()
 
         module, metric_name = self._metrics[name].rsplit(".", 1)
-        metric = getattr(importlib.import_module(module), metric_name)(self.git)
+        metric = self.get_metric(name)
         metric.extract()
         self._extractors[metric_name] = metric
+
+    def get_metric(self, name):
+        """Return a metric object based on name"""
+        module, metric_name = self._metrics[name].rsplit(".", 1)
+        return getattr(importlib.import_module(module), metric_name)(self.git)
 
     def prepare_repository(self):
         """Since most source code archives won't include the git history,

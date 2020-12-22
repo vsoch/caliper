@@ -10,6 +10,9 @@ class Totalcounts(MetricBase):
     name = "totalcounts"
     description = "retrieve total counts of files and lines for each commit"
 
+    def __init__(self, git):
+        super().__init__(git, __file__)
+
     def _extract(self, commit):
         total_files = len(self.git.ls_files())
         return {

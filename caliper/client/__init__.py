@@ -47,7 +47,6 @@ def get_parser():
         default=None,
     )
 
-    # Generate a key for the interface
     extract = subparsers.add_parser(
         "extract",
         help="extract one or more metrics for a software package.",
@@ -61,16 +60,11 @@ def get_parser():
 
     extract.add_argument(
         "packages",
-        help="packages to extract, e.g., pypi, GitHub, or (eventually) spack.",
+        help="package to extract, e.g., pypi:, github:",
         nargs="*",
         default=None,
     )
 
-    extract.add_argument(
-        "--outdir",
-        help="output directory to write files (defaults to temporary directory)",
-        default=None,
-    )
     extract.add_argument(
         "--no-cleanup",
         dest="no_cleanup",
@@ -78,13 +72,36 @@ def get_parser():
         default=False,
         action="store_true",
     )
-    extract.add_argument(
-        "--force",
-        dest="force",
-        help="if a metric file exists, do not overwrite.",
-        default=False,
-        action="store_true",
+
+    view = subparsers.add_parser(
+        "view",
+        help="extract a metric and view a plot.",
     )
+
+    view.add_argument(
+        "--metric",
+        help="a metric to extract",
+    )
+
+    view.add_argument(
+        "input",
+        help="input data file to visualize.",
+    )
+
+    for command in [extract, view]:
+        command.add_argument(
+            "--outdir",
+            help="output directory to write files (defaults to temporary directory)",
+            default=None,
+        )
+
+        command.add_argument(
+            "--force",
+            dest="force",
+            help="if a file exists, do not overwrite.",
+            default=False,
+            action="store_true",
+        )
 
     return parser
 
@@ -119,6 +136,8 @@ def main():
         from .extract import main
     elif args.command == "metrics":
         from .metrics import main
+    elif args.command == "view":
+        from .view import main
 
     if main is not None:
         main(args=args, extra=extra)

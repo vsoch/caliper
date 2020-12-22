@@ -6,6 +6,22 @@ Caliper is a tool for measuring and assessing change in packages.
 
 **under development**
 
+## Getting Started
+
+### Installation
+
+You can easily install from pypi:
+
+```bash
+pip install caliper
+```
+
+If you want support for graphs (requires jinja2) then do:
+
+```bash
+pip install caliper[graphs]
+```
+
 ### Concepts
 
  - **Manager** a handle to interact with a package manager
@@ -124,7 +140,7 @@ to extract a version repository.
 $ caliper
 
 caliper Python v0.0.1
-usage: caliper [-h] [--version] {version,metrics,extract} ...
+usage: caliper [-h] [--version] {version,metrics,extract,view} ...
 
 Caliper is a tool for measuring and assessing changes in packages.
 
@@ -135,11 +151,12 @@ optional arguments:
 actions:
   actions
 
-  {version,metrics,extract}
+  {version,metrics,extract,view}
                         actions
     version             show software version
     metrics             see metrics available
     extract             extract one or more metrics for a software package.
+    view                extract a metric and view a plot.
 ```
 
 For now we are primarily interested in the `extract` command:
@@ -358,6 +375,39 @@ For example, an entry in summed results might look like this:
 To say that between versions 0.2.34 and 0.2.35 there were 4 insertions, 4 deletions,
 and 8 lines changed total, and there was no change in overall size.
 We will eventually have more examples for how to parse and use this data.
+
+### Metrics View
+
+To extract and view metrics, you can use `caliper view`
+
+```bash
+$ calipler view --help
+usage: caliper view [-h] [--metric METRIC] [--outdir OUTDIR] [--force] input
+
+positional arguments:
+  input            input data file to visualize.
+
+optional arguments:
+  -h, --help       show this help message and exit
+  --metric METRIC  a metric to extract
+  --outdir OUTDIR  output directory to write files (defaults to temporary directory)
+  --force          if a file exists, do not overwrite.
+```
+
+For example, let's say we want to view an already extracted metric. We would provide the file
+as input:
+
+```bash
+$ caliper view ../caliper-metrics/github/spack/spack/changedlines/changedlines-summed-results.json 
+```
+
+Note that caliper will attempt to derive the metric name from the file. If you've renamed the
+file, then you'll need to provide it directly:
+
+```bash
+$ caliper view --metric changedlines ../caliper-metrics/github/spack/spack/changedlines/changedlines-summed-results.json 
+```
+ 
 
 
 ## Use Cases

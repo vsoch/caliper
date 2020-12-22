@@ -19,7 +19,9 @@ INSTALL_REQUIRES = (
     ("requests", {"min_version": "2.23.0"}),
     ("GitPython", {"min_version": "3.1.7"}),
 )
+
+GRAPHS_REQUIRES = (("Jinja2", {"min_version": "2.11.2"}),)
 TESTS_REQUIRES = (("pytest", {"min_version": "4.6.2"}),)
 
 
-ALL_REQUIRES = INSTALL_REQUIRES
+ALL_REQUIRES = INSTALL_REQUIRES + GRAPHS_REQUIRES
