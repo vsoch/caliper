@@ -359,14 +359,17 @@ data on the level of individual files, or summary results:
 for name, metric in extractor:
     # Changedlines <caliper.metrics.collection.changedlines.metric.Changedlines at 0x7f7cd24f4940>
 
-    # A lookup of v1..v2 with a list of files
+    # A lookup with file level changes
     metric.get_file_results()
 
-    # A lookup of v1..v2 for summed changed
-    metric.get_summed_results()
+    # A lookup with group or summed changed
+    metric.get_group_results()
+
+    # A lookup with "by-file" and "by-group" that includes both the above
+    metric.get_results()
 ```
 
-For example, an entry in summed results might look like this:
+For example, an entry in group results might look like this:
 
 ```
 {'0.2.34..0.2.35': {'size': 0, 'insertions': 4, 'deletions': 4, 'lines': 8}}
@@ -381,8 +384,7 @@ We will eventually have more examples for how to parse and use this data.
 To extract and view metrics, you can use `caliper view`
 
 ```bash
-$ calipler view --help
-usage: caliper view [-h] [--metric METRIC] [--outdir OUTDIR] [--force] input
+usage: caliper view [-h] [--metric METRIC] [--title TITLE] [--outdir OUTDIR] [--force] input
 
 positional arguments:
   input            input data file to visualize.
@@ -390,6 +392,7 @@ positional arguments:
 optional arguments:
   -h, --help       show this help message and exit
   --metric METRIC  a metric to extract
+  --title TITLE    the title for the graph (defaults to one set by metric)
   --outdir OUTDIR  output directory to write files (defaults to temporary directory)
   --force          if a file exists, do not overwrite.
 ```
@@ -398,7 +401,14 @@ For example, let's say we want to view an already extracted metric. We would pro
 as input:
 
 ```bash
-$ caliper view ../caliper-metrics/github/spack/spack/changedlines/changedlines-summed-results.json 
+$ caliper view ../caliper-metrics/pypi/singularity-cli/changedlines/changedlines-results.json
+```
+
+We might also add a custom title:
+
+
+```bash
+$ caliper view ../caliper-metrics/pypi/singularity-cli/changedlines/changedlines-results.json --title "Singularity Registry Client Version Changes"
 ```
 
 Note that caliper will attempt to derive the metric name from the file. If you've renamed the
@@ -407,8 +417,12 @@ file, then you'll need to provide it directly:
 ```bash
 $ caliper view --metric changedlines ../caliper-metrics/github/spack/spack/changedlines/changedlines-summed-results.json 
 ```
- 
 
+Note from the usage that you can also select an output directory. Caliper tries
+to derive the name of the metric from the filename (e.g., `<metric>-results.json`
+however if you rename the file, you can specify the metric directly with `--metric`. 
+You can see an example in [docs](https://vsoch.github.io/caliper/). We expect to have
+more examples when we improve the documentation.
 
 ## Use Cases
 

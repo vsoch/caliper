@@ -84,6 +84,11 @@ def get_parser():
     )
 
     view.add_argument(
+        "--title",
+        help="the title for the graph (defaults to one set by metric)",
+    )
+
+    view.add_argument(
         "input",
         help="input data file to visualize.",
     )

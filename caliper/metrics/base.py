@@ -37,14 +37,23 @@ class MetricBase:
         pass
 
     @abstractmethod
+    def get_results(self):
+        """return a lookup of the acceptable results type. This varies by
+        metric, but if given a results dictionary, the metric should be able
+        to match a result to a visualization, for example.
+        """
+        return {
+            "by-file": self.get_file_results(),
+            "by-group": self.get_group_results(),
+        }
+
     def get_file_results(self):
-        pass
+        return []
 
-    @abstractmethod
-    def get_summed_results(self):
-        pass
+    def get_group_results(self):
+        return []
 
-    def plot_results(self, result_file, outdir=None, force=False):
+    def plot_results(self, result_file, outdir=None, force=False, title=None):
         """Given a metric has a template and a function to generate data
         for it, create the graph for the user.
         """
@@ -53,7 +62,7 @@ class MetricBase:
             from caliper.metrics.graphs import generate_graph
 
             outdir = outdir or get_tmpdir("%s-graph-" % self.name)
-            data = self.get_plot_data(result_file)
+            data = self.get_plot_data(result_file, title=title)
             generate_graph(template=template, data=data, outdir=outdir, force=force)
         else:
             logger.warning("A metric must have template.html and get_plot_data.")

@@ -32,4 +32,4 @@ def main(args, extra):
     # prepare top level output directory
     outdir = args.outdir or os.getcwd()
     metric = client.get_metric(metric)
-    metric.plot_results(args.input, outdir, force=args.force)
+    metric.plot_results(args.input, outdir, force=args.force, title=args.title)

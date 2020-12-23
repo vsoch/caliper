@@ -53,5 +53,3 @@ def main(args, extra):
         # Cleanup, unless disabled
         if not args.no_cleanup:
             client.cleanup(force=True)
-
-    print("Results written to %s" % outdir)

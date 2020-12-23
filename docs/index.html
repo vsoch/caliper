@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+<head>
+  <title>Stacked Bar Chart with Groups</title>
+  <script src="https://www.chartjs.org/dist/2.9.4/Chart.min.js"></script>
+  <style>
+  canvas {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+  }
+  </style>
+</head>
+<body>
+    <div style="width: 75%">
+        <canvas id="canvas"></canvas>
+    </div>
+    <script>
+        var barChartData = {
+            labels: [ "EMPTY..0.1.0", "0.1.0..0.1.1", "0.1.1..0.1.10", "0.1.2..0.1.4", "0.1.4..0.1.5", "0.1.5..0.1.6", "0.1.6..0.1.7", "0.1.7..0.1.8", "0.1.8..0.1.9", "0.1.10..0.1.2"],
+            datasets: [{
+                label: 'Insertions',
+                backgroundColor: "turquoise",
+                stack: 'Stack 0',
+                data: [ 1378, 31, 104, 9, 44, 4, 6, 4, 23, 20]
+            },{
+                label: 'Deletions',
+                backgroundColor: "tomato",
+                stack: 'Stack 0',
+                data: [ 0, 14, 33, 6, 10, 4, 5, 4, 6, 79]
+            }]
+
+        };
+        window.onload = function() {
+            var ctx = document.getElementById('canvas').getContext('2d');
+            window.myBar = new Chart(ctx, {
+                type: 'bar',
+                data: barChartData,
+                options: {
+                    title: {
+                        display: true,
+                        text: 'Singularity Registry Client Version Changes'
+                    },
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    responsive: true,
+                    scales: {
+                        xAxes: [{
+                            stacked: true,
+                        }],
+                        yAxes: [{
+                            stacked: true
+                        }]
+                    }
+                }
+            });
+        };
+    </script>
+</body>
+</html>

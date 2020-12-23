@@ -138,26 +138,20 @@ class MetricsExtractor:
 
         package_dir = os.path.join(outdir, self.manager.name, self.manager.uri)
 
+        written = True
         for _, extractor in self._extractors.items():
             extractor_dir = os.path.join(package_dir, extractor.name)
             mkdir_p(extractor_dir)
 
-            # Write results to file
-            for results, outfile in [
-                (
-                    extractor.get_file_results(),
-                    os.path.join(
-                        extractor_dir, "%s-file-results.json" % extractor.name
-                    ),
-                ),
-                (
-                    extractor.get_summed_results(),
-                    os.path.join(
-                        extractor_dir, "%s-summed-results.json" % extractor.name
-                    ),
-                ),
-            ]:
-                if os.path.exists(outfile) and not force:
-                    logger.warning("%s exists and force is False, skipping." % outfile)
-                    continue
-                write_json(results, outfile)
+            # Prepare to write results to file
+            outfile = os.path.join(extractor_dir, "%s-results.json" % extractor.name)
+            if os.path.exists(outfile) and not force:
+                logger.warning("%s exists and force is False, skipping." % outfile)
+                continue
+
+            written = True
+            results = extractor.get_results()
+            write_json(results, outfile)
+
+        if written:
+            logger.info("Results written to %s" % outdir)

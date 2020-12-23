@@ -16,7 +16,7 @@ class Changedlines(ChangeMetricBase):
     def __init__(self, git):
         super().__init__(git=git, filename=__file__)
 
-    def get_plot_data(self, result_file):
+    def get_plot_data(self, result_file, title=None):
         """Given extracted data, return data to render into a template. This
         function should load data into self._data.
         """
@@ -30,11 +30,10 @@ class Changedlines(ChangeMetricBase):
         if not self._data:
             logger.exit("Data file %s is empty." % filename)
 
-        # We currently only plot insertions and deletions
-        keys = list(list(self._data.values())[0].keys())
-        for key in ["insertions", "deletions"]:
-            if key not in keys:
-                logger.exit("key %s is missing from %s." % (key, filename))
+        # We currently support just the group plot
+        if "by-group" not in self._data:
+            logger.exit("by-group key is missing from data.")
+        self._data = self._data["by-group"]
 
         # Prepare datasets, each of a different color, and title
         labels = self._derive_labels()
@@ -47,7 +46,7 @@ class Changedlines(ChangeMetricBase):
 
         return {
             "datasets": datasets,
-            "title": "Insertions and Deletions",
+            "title": title or "Insertions and Deletions",
             "labels": labels,
         }
 
@@ -89,7 +88,7 @@ class Changedlines(ChangeMetricBase):
         """return a lookup of changes, where each change has a list of files"""
         return self._data
 
-    def get_summed_results(self):
+    def get_group_results(self):
         """Get summed values (e.g., lines changed) across files"""
         results = {}
         summary_keys = ["insertions", "deletions", "lines"]
