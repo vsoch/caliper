@@ -4,10 +4,8 @@ __license__ = "MPL 2.0"
 
 from caliper.metrics import MetricsExtractor
 from caliper.managers import get_named_manager
-import logging
+from caliper.logger import logger
 import os
-
-logger = logging.getLogger("caliper.client")
 
 
 def main(args, extra):
@@ -53,5 +51,3 @@ def main(args, extra):
         # Cleanup, unless disabled
         if not args.no_cleanup:
             client.cleanup(force=True)
-
-    print("Results written to %s" % outdir)

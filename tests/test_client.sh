@@ -32,4 +32,10 @@ echo "#### Testing caliper extract"
 runTest 0 $output caliper extract --metric changedlines --outdir $tmpdir pypi:sif
 runTest 0 $output caliper extract --metric all --outdir $tmpdir pypi:sif
 
+echo
+echo "#### Testing caliper view"
+runTest 0 $output caliper view --outdir $tmpdir $here/changedlines-pokemon-results.json
+runTest 1 $output caliper view --outdir $tmpdir $here/changedlines-pokemon-results.json
+runTest 0 $output caliper view --outdir $tmpdir $here/changedlines-pokemon-results.json --force
+
 rm -rf ${tmpdir}

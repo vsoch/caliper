@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+  <title>{{ title }}</title>
+  <script src="https://www.chartjs.org/dist/2.9.4/Chart.min.js"></script>
+  <style>
+  canvas {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+  }
+  </style>
+</head>
+<body>
+    <div style="width: 75%">
+        <canvas id="canvas"></canvas>
+    </div>
+    <script>
+        var barChartData = {
+            labels: [{% for label in labels %} "{{ label }}"{% if loop.last %}{% else %},{% endif %}{% endfor %}],
+            datasets: [{% for dataset in datasets %}{
+                label: '{{ dataset.title }}',
+                backgroundColor: "{{ dataset.color }}",
+                stack: 'Stack 0',
+                data: [{% for datum in dataset.data %} {{ datum }}{% if loop.last %}{% else %},{% endif %}{% endfor %}]
+            }{% if loop.last %}]{% else %},{% endif %}{% endfor %}
+
+        };
+        window.onload = function() {
+            var ctx = document.getElementById('canvas').getContext('2d');
+            window.myBar = new Chart(ctx, {
+                type: 'bar',
+                data: barChartData,
+                options: {
+                    title: {
+                        display: true,
+                        text: '{{ title }}'
+                    },
+                    tooltips: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    responsive: true,
+                    scales: {
+                        xAxes: [{
+                            stacked: true,
+                        }],
+                        yAxes: [{
+                            stacked: true
+                        }]
+                    }
+                }
+            });
+        };
+    </script>
+</body>
+</html>

@@ -10,6 +10,9 @@ class Totalcounts(MetricBase):
     name = "totalcounts"
     description = "retrieve total counts of files and lines for each commit"
 
+    def __init__(self, git):
+        super().__init__(git, __file__)
+
     def _extract(self, commit):
         total_files = len(self.git.ls_files())
         return {
@@ -22,6 +25,6 @@ class Totalcounts(MetricBase):
         """return a lookup of changes, where each change has a list of files"""
         return self._data
 
-    def get_summed_results(self):
+    def get_group_results(self):
         """Get summed values (e.g., lines changed) across files"""
         return self._data

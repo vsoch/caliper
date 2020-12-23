@@ -5,6 +5,8 @@ __license__ = "MPL 2.0"
 from abc import abstractmethod
 from collections.abc import Mapping
 from caliper.logger import logger
+from caliper.utils.file import get_tmpdir
+from distutils.version import StrictVersion
 import os
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -17,9 +19,10 @@ class MetricBase:
     description = "Extract a metric for a particular tag or commit"
     date_time_format = "%Y-%m-%dT%H:%M:%S%z"
 
-    def __init__(self, git=None):
+    def __init__(self, git=None, filename=__file__):
         self._data = {}
         self.git = git
+        self.classpath = os.path.dirname(filename)
 
     def extract(self):
         for tag, index in self.iter_tags():
@@ -34,12 +37,35 @@ class MetricBase:
         pass
 
     @abstractmethod
-    def get_file_results(self):
-        pass
+    def get_results(self):
+        """return a lookup of the acceptable results type. This varies by
+        metric, but if given a results dictionary, the metric should be able
+        to match a result to a visualization, for example.
+        """
+        return {
+            "by-file": self.get_file_results(),
+            "by-group": self.get_group_results(),
+        }
 
-    @abstractmethod
-    def get_summed_results(self):
-        pass
+    def get_file_results(self):
+        return []
+
+    def get_group_results(self):
+        return []
+
+    def plot_results(self, result_file, outdir=None, force=False, title=None):
+        """Given a metric has a template and a function to generate data
+        for it, create the graph for the user.
+        """
+        template = os.path.join(self.classpath, "template.html")
+        if os.path.exists(template) and hasattr(self, "get_plot_data"):
+            from caliper.metrics.graphs import generate_graph
+
+            outdir = outdir or get_tmpdir("%s-graph-" % self.name)
+            data = self.get_plot_data(result_file, title=title)
+            generate_graph(template=template, data=data, outdir=outdir, force=force)
+        else:
+            logger.warning("A metric must have template.html and get_plot_data.")
 
     def iter_tags(self):
         """yield a tag and a string to describe it."""
@@ -59,6 +85,27 @@ class ChangeMetricBase(MetricBase):
     def extract(self):
         for tag, parent, index in self.iter_tags():
             self._data[index] = self._extract(tag.commit, parent)
+
+    def _derive_labels(self):
+        """Given a list of change versions, the labels should be returned sorted
+        including any EMPTY declarations, which need to be moved to the beginning
+        """
+        labels = list(self._data)
+
+        # Remove EMPTY label before sorting
+        empty = None
+        for label in labels:
+            if "EMPTY" in label:
+                empty = labels.pop(labels.index(label))
+                break
+
+        lookup = {x.split("..")[0].lstrip("v"): x for x in labels}
+        pairs = [x.split("..") for x in labels]
+        versions = [pair[0].lstrip("v") for pair in pairs]
+        versions.sort(key=StrictVersion)
+        if empty:
+            return [empty] + [lookup[x] for x in versions]
+        return [lookup[x] for x in versions]
 
     def iter_tags(self):
         """yield a tag, it's parent, and a string to describe the two for an

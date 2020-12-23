@@ -70,6 +70,7 @@ if __name__ == "__main__":
     INSTALL_REQUIRES = get_reqs(lookup)
     TESTS_REQUIRES = get_reqs(lookup, "TESTS_REQUIRES")
     ALL_REQUIRES = get_reqs(lookup, "ALL_REQUIRES")
+    GRAPHS_REQUIRES = get_reqs(lookup, 'GRAPHS_REQUIRES')
 
     setup(
         name=NAME,
@@ -92,6 +93,7 @@ if __name__ == "__main__":
         tests_require=TESTS_REQUIRES,
         extras_require={
             "all": ALL_REQUIRES,
+            "graphs": GRAPHS_REQUIRES,
         },
         classifiers=[
             "Intended Audience :: Science/Research",

@@ -2,6 +2,8 @@ __author__ = "Vanessa Sochat"
 __copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
+from caliper.logger import logger
+from caliper.utils.file import read_json
 from caliper.metrics.base import ChangeMetricBase
 import os
 
@@ -10,6 +12,43 @@ class Changedlines(ChangeMetricBase):
 
     name = "changedlines"
     description = "count lines added and removed between versions"
+
+    def __init__(self, git):
+        super().__init__(git=git, filename=__file__)
+
+    def get_plot_data(self, result_file, title=None):
+        """Given extracted data, return data to render into a template. This
+        function should load data into self._data.
+        """
+        result_file = os.path.abspath(result_file)
+        if not os.path.exists(result_file):
+            logger.exit("%s does not exist" % result_file)
+
+        # Derive the result type based on data keys
+        self._data = read_json(result_file)
+        filename = os.path.basename(result_file)
+        if not self._data:
+            logger.exit("Data file %s is empty." % filename)
+
+        # We currently support just the group plot
+        if "by-group" not in self._data:
+            logger.exit("by-group key is missing from data.")
+        self._data = self._data["by-group"]
+
+        # Prepare datasets, each of a different color, and title
+        labels = self._derive_labels()
+        insertion_dataset = [self._data[label]["insertions"] for label in labels]
+        deletion_dataset = [self._data[label]["deletions"] for label in labels]
+        datasets = [
+            {"data": insertion_dataset, "title": "Insertions", "color": "turquoise"},
+            {"data": deletion_dataset, "title": "Deletions", "color": "tomato"},
+        ]
+
+        return {
+            "datasets": datasets,
+            "title": title or "Insertions and Deletions",
+            "labels": labels,
+        }
 
     def _extract(self, commit1, commit2):
         """The second commit should be the parent"""
@@ -49,7 +88,7 @@ class Changedlines(ChangeMetricBase):
         """return a lookup of changes, where each change has a list of files"""
         return self._data
 
-    def get_summed_results(self):
+    def get_group_results(self):
         """Get summed values (e.g., lines changed) across files"""
         results = {}
         summary_keys = ["insertions", "deletions", "lines"]
