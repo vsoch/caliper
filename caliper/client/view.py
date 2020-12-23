@@ -3,10 +3,8 @@ __copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
 from caliper.metrics import MetricsExtractor
-import logging
+from caliper.logger import logger
 import os
-
-logger = logging.getLogger("caliper.client")
 
 
 def main(args, extra):

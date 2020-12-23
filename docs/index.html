@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-  <title>Stacked Bar Chart with Groups</title>
+  <title>Spack Version Changes</title>
   <script src="https://www.chartjs.org/dist/2.9.4/Chart.min.js"></script>
   <style>
   canvas {
@@ -17,17 +17,17 @@
     </div>
     <script>
         var barChartData = {
-            labels: [ "EMPTY..0.1.0", "0.1.0..0.1.1", "0.1.1..0.1.10", "0.1.2..0.1.4", "0.1.4..0.1.5", "0.1.5..0.1.6", "0.1.6..0.1.7", "0.1.7..0.1.8", "0.1.8..0.1.9", "0.1.10..0.1.2"],
+            labels: [ "EMPTY..v0.8.15", "v0.8.15..v0.8.16", "v0.8.16..v0.8.17", "v0.8.17..v0.10.0", "v0.10.0..v0.11.0", "v0.11.0..v0.11.1", "v0.11.1..v0.11.2", "v0.11.2..v0.12.0", "v0.12.0..v0.12.1", "v0.12.1..v0.13.0", "v0.13.0..v0.13.1", "v0.13.1..v0.13.2", "v0.13.2..v0.13.3", "v0.13.3..v0.13.4", "v0.13.4..v0.14.0", "v0.14.0..v0.14.1", "v0.14.1..v0.14.2", "v0.14.2..v0.15.0", "v0.15.0..v0.15.1", "v0.15.1..v0.15.2", "v0.15.2..v0.15.3", "v0.15.3..v0.15.4", "v0.15.4..v0.16.0"],
             datasets: [{
                 label: 'Insertions',
                 backgroundColor: "turquoise",
                 stack: 'Stack 0',
-                data: [ 1378, 31, 104, 9, 44, 4, 6, 4, 23, 20]
+                data: [ 38066, 305, 51, 151986, 152245, 453, 24144, 84012, 4, 102192, 768, 275, 671, 458, 59286, 788, 1434, 49773, 108, 821, 218, 1590, 80334]
             },{
                 label: 'Deletions',
                 backgroundColor: "tomato",
                 stack: 'Stack 0',
-                data: [ 0, 14, 33, 6, 10, 4, 5, 4, 6, 79]
+                data: [ 0, 125, 3, 16240, 27856, 1375, 6268, 89826, 4, 33374, 160, 79, 292, 226, 17156, 233, 352, 21632, 21, 258, 35, 153, 12292]
             }]
 
         };
@@ -39,7 +39,7 @@
                 options: {
                     title: {
                         display: true,
-                        text: 'Singularity Registry Client Version Changes'
+                        text: 'Spack Version Changes'
                     },
                     tooltips: {
                         mode: 'index',

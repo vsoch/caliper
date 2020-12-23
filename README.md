@@ -4,7 +4,7 @@
 
 Caliper is a tool for measuring and assessing change in packages.
 
-**under development**
+![img/spack-changes.png](img/spack-changes.png)
 
 ## Getting Started
 
@@ -16,7 +16,7 @@ You can easily install from pypi:
 pip install caliper
 ```
 
-If you want support for graphs (requires jinja2) then do:
+If you want support for graphs (`caliper view`) (requires jinja2) then do:
 
 ```bash
 pip install caliper[graphs]
@@ -401,21 +401,21 @@ For example, let's say we want to view an already extracted metric. We would pro
 as input:
 
 ```bash
-$ caliper view ../caliper-metrics/pypi/singularity-cli/changedlines/changedlines-results.json
+$ caliper view ../caliper-metrics/github/spack/spack/changedlines/changedlines-results.json
 ```
 
 We might also add a custom title:
 
 
 ```bash
-$ caliper view ../caliper-metrics/pypi/singularity-cli/changedlines/changedlines-results.json --title "Singularity Registry Client Version Changes"
+$ caliper view ../caliper-metrics/github/spack/spack/changedlines/changedlines-results.json --title "Spack Version Changes"
 ```
 
 Note that caliper will attempt to derive the metric name from the file. If you've renamed the
 file, then you'll need to provide it directly:
 
 ```bash
-$ caliper view --metric changedlines ../caliper-metrics/github/spack/spack/changedlines/changedlines-summed-results.json 
+$ caliper view --metric changedlines mystery-file.json
 ```
 
 Note from the usage that you can also select an output directory. Caliper tries

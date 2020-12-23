@@ -27,24 +27,23 @@ def test_metrics_extractor(tmp_path):
     for name, metric in extractor:
 
         # File results should have lookup by version or
-        file_results = metric.get_file_results()
-        summed_results = metric.get_summed_results()
+        results = metric.get_results()
 
         # MetricBase has lookup by commit
         if isinstance(metric, ChangeMetricBase):
-            assert "0.0.1..0.0.11" in file_results
-            assert "0.0.1..0.0.11" in summed_results
+            assert "0.0.1..0.0.11" in results.get("by-group")
+            assert "0.0.1..0.0.11" in results.get("by-file")
 
             # Ensure they aren't empty or null
-            file_result = file_results["0.0.1..0.0.11"][0]
+            file_result = results["by-file"]["0.0.1..0.0.11"][0]
             assert len(file_result) >= 7
             assert file_result["lines"] > 0
 
         elif isinstance(metric, MetricBase):
-            assert "0.0.1" in file_results
-            assert "0.0.1" in summed_results
+            assert "0.0.1" in results.get("by-group")
+            assert "0.0.1" in results.get("by-file")
 
             # Ensure they aren't empty or null
-            summed_result = summed_results["0.0.1"]
+            summed_result = results["by-group"]["0.0.1"]
             assert len(summed_result) >= 3
             assert summed_result["files"] > 0
