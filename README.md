@@ -4,7 +4,7 @@
 
 Caliper is a tool for measuring and assessing change in packages.
 
-![img/spack-changes.png](img/spack-changes.png)
+![docs/assets/img/spack-changes.png](docs/assets/img/spack-changes.png)
 
 ## Getting Started
 
