@@ -15,10 +15,9 @@ class PypiManager(ManagerBase):
     name = "pypi"
     baseurl = "https://pypi.python.org/pypi"
 
-    def get_package_metadata(self, name=None, arch=None, python_version=None):
-        """Given a package name, retrieve it's metadata from pypi. Given an arch
-        regex and python version, we look for a particular architecture. Otherwise
-        the choices are a bit random.
+    def do_metadata_request(self, name=None):
+        """A separate, shared function to retrieve package metadata without
+        doing any custom filtering.
         """
         name = name or self.package_name
         if not name:
@@ -27,11 +26,22 @@ class PypiManager(ManagerBase):
         url = "%s/%s/json" % (self.baseurl, name)
         self.metadata = do_request(url)
 
+    @property
+    def releases(self):
+        if not self.metadata:
+            self.do_metadata_request()
+        return self.metadata.get("releases", {})
+
+    def get_package_metadata(self, name=None, arch=None, python_version=None):
+        """Given a package name, retrieve it's metadata from pypi. Given an arch
+        regex and python version, we look for a particular architecture. Otherwise
+        the choices are a bit random.
+        """
         # Note that without specifying an arch and python version, the
         # architecture returned can be fairly random.
 
         # Parse metadata into simplified version of spack package schema
-        for version, releases in self.metadata.get("releases", {}).items():
+        for version, releases in self.releases.items():
 
             # Find an appropriate linux/unix flavor release to extract
             release = self.find_release(releases, arch, python_version)
@@ -58,9 +68,23 @@ class PypiManager(ManagerBase):
         logger.info("Found %s versions for %s" % (len(self._specs), name))
         return self._specs
 
-    def find_release(self, releases, arch=None, python_version=None):
+    def get_python_versions(self):
+        """Given a list of releases (or the default) return a list of pep
+        Python versions (e.g., cp38)
+        """
+        python_versions = set()
+        for version, releases in self.releases.items():
+            [
+                python_versions.add(r["python_version"])
+                for r in releases
+                if r["python_version"]
+            ]
+        return python_versions
+
+    def find_release(self, releases=None, arch=None, python_version=None):
         """Given a list of releases, find one that we can extract"""
         filename = None
+        releases = releases or self.releases
 
         if arch:
             releases = [r for r in releases if re.search(arch, r["filename"])]
@@ -73,3 +97,12 @@ class PypiManager(ManagerBase):
             if re.search("(tar[.]gz|[.]whl)", release["url"]):
                 filename = release
         return filename
+
+    def filter_releases(self, regex, search_field="filename"):
+        """Given a regular expression, filter releases down to smaller list"""
+        filtered = {}
+        for version, releases in self.releases.items():
+            filtered[version] = [
+                r for r in releases if re.search(regex, r.get(search_field, ""))
+            ]
+        return filtered
