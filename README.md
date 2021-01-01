@@ -74,6 +74,22 @@ manager.specs[-1]
  'hash': '238ebd3ca0e0408e0be6780d45deca79583ce99aed05ac6981da7a2b375ae79e'}
 ```
 
+If you just interact with `manager.specs`, you'll get a random architecture for each
+one. This can be okay if you want to do static file analysis, but if you want to choose
+a specific python version, your best bet is to call the get package metadata function
+directly and provide your preferences. For example, here we want Tensorflow for Python 3.5
+and a specific linux architecture:
+
+```python
+manager.get_package_metadata(python_version="35", arch="manylinux1_x86_64")
+```
+
+To derive these search strings, you can look at examples of wheels provided.
+This isn't the default because not all packages provide such rich choices.
+
+```
+```
+
 #### GitHub
 
 We might also be interested in releases from GitHub. Extracting
