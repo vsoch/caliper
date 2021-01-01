@@ -69,12 +69,6 @@ class PypiManager(ManagerBase):
                 r for r in releases if re.search("cp%s" % python_version, r["filename"])
             ]
 
-        # Cut out early if we can't provide a package for the criteria
-        if not releases:
-            raise ValueError(
-                "No release can be found that matches the criteria. Try changing it."
-            )
-
         for release in releases:
             if re.search("(tar[.]gz|[.]whl)", release["url"]):
                 filename = release
