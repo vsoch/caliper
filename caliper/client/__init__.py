@@ -5,6 +5,7 @@ __copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
 import caliper
+from caliper.logger import setup_logger
 import argparse
 import sys
 
@@ -45,6 +46,47 @@ def get_parser():
         help="search metrics by a query string",
         nargs="?",
         default=None,
+    )
+
+    analyze = subparsers.add_parser(
+        "analyze",
+        help="analyze functionality of a package.",
+    )
+
+    analyze.add_argument(
+        "--config",
+        help="A caliper.yaml file to use for the analysis (required)",
+    )
+
+    analyze.add_argument(
+        "--no-progress",
+        dest="no_progress",
+        help="Do not show a progress bar (defaults to unset, showing progress)",
+        default=False,
+        action="store_true",
+    )
+
+    analyze.add_argument(
+        "--serial",
+        dest="serial",
+        help="Run in serial instead of parallel",
+        default=False,
+        action="store_true",
+    )
+
+    analyze.add_argument(
+        "--force",
+        dest="force",
+        help="If an output file exists, force re-write (default will not overwrite)",
+        default=False,
+        action="store_true",
+    )
+
+    analyze.add_argument(
+        "--nprocs",
+        dest="nprocs",
+        help="Number of processes. Defaults to cpu count.",
+        type=int,
     )
 
     extract = subparsers.add_parser(
@@ -93,6 +135,40 @@ def get_parser():
         help="input data file to visualize.",
     )
 
+    # Logging
+    logging_group = parser.add_argument_group("LOGGING")
+
+    logging_group.add_argument(
+        "--quiet",
+        dest="quiet",
+        help="suppress logging.",
+        default=False,
+        action="store_true",
+    )
+
+    logging_group.add_argument(
+        "--verbose",
+        dest="verbose",
+        help="verbose output for logging.",
+        default=False,
+        action="store_true",
+    )
+
+    logging_group.add_argument(
+        "--log-disable-color",
+        dest="disable_color",
+        default=False,
+        help="Disable color for snakeface logging.",
+        action="store_true",
+    )
+
+    logging_group.add_argument(
+        "--log-use-threads",
+        dest="use_threads",
+        action="store_true",
+        help="Force threads rather than processes.",
+    )
+
     for command in [extract, view]:
         command.add_argument(
             "--outdir",
@@ -129,7 +205,13 @@ def main():
     # If an error occurs while parsing the arguments, the interpreter will exit with value 2
     args, extra = parser.parse_known_args()
 
-    # TODO import setup_logger to add the logging level
+    # customize logging
+    setup_logger(
+        quiet=args.quiet,
+        nocolor=args.disable_color,
+        debug=args.verbose,
+        use_threads=args.use_threads,
+    )
 
     # Show the version and exit
     if args.command == "version" or args.version:
@@ -137,7 +219,9 @@ def main():
         sys.exit(0)
 
     main = None
-    if args.command == "extract":
+    if args.command == "analyze":
+        from .analyze import main
+    elif args.command == "extract":
         from .extract import main
     elif args.command == "metrics":
         from .metrics import main

@@ -14,6 +14,7 @@ import json
 import os
 import shutil
 import tempfile
+import yaml
 
 
 def move_files(source, dest):
@@ -76,6 +77,12 @@ def write_file(filename, content):
     """Write some text content to a file"""
     with open(filename, "w") as fd:
         fd.write(content)
+
+
+def read_yaml(filename):
+    """Given a yaml file, read with pyaml"""
+    stream = read_file(filename, readlines=False)
+    return yaml.load(stream, Loader=yaml.FullLoader)
 
 
 def write_json(json_obj, filename, pretty=True):

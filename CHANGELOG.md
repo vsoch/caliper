@@ -14,6 +14,7 @@ and **Merged pull requests**. Critical items to know are:
 The versions coincide with releases on pip.
 
 ## [0.2.x](https://github.com/vsoch/caliper/tree/master) (0.0.x)
+ - adding caliper analyzer (0.0.13)
  - ability to specify architecture and python version for packages (0.0.12)
  - adding first graph for changedlines metric (0.0.11)
  - adding first metric extractors (0.0.1)

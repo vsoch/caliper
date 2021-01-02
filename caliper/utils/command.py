@@ -11,6 +11,7 @@ import shutil
 import subprocess
 import sys
 import tarfile
+import threading
 import zipfile
 
 
@@ -121,6 +122,56 @@ def decodeUtf8String(inputStr):
     )
 
 
+class CommandRunner(object):
+    def __init__(self):
+        self.reset()
+
+    def reset(self):
+        self.error = []
+        self.output = []
+        self.retval = None
+
+    def reader(self, stream, context):
+        """Get output and error lines and save to command runner."""
+        # Make sure we save to the correct field
+        lines = self.error
+        if context == "stdout":
+            lines = self.output
+
+        while True:
+            s = stream.readline()
+            if not s:
+                break
+            lines.append(s.decode("utf-8"))
+        stream.close()
+
+    def run_command(self, cmd, env=None, **kwargs):
+        self.reset()
+
+        # If we need to update the environment
+        # **IMPORTANT: this will include envars from host. Absolutely cannot
+        # be any secrets (they should be defined in the app settings file)
+        envars = os.environ.copy()
+        if env:
+            envars.update(env)
+
+        p = subprocess.Popen(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=envars, **kwargs
+        )
+
+        # Create threads for error and output
+        t1 = threading.Thread(target=self.reader, args=(p.stdout, "stdout"))
+        t1.start()
+        t2 = threading.Thread(target=self.reader, args=(p.stderr, "stderr"))
+        t2.start()
+
+        p.wait()
+        t1.join()
+        t2.join()
+        self.retval = p.returncode
+        return self.output
+
+
 def run_command(
     cmd,
     capture=True,
@@ -130,7 +181,8 @@ def run_command(
 
     """run_command uses subprocess to send a command to the terminal. If
     capture is True, we use the parent stdout, so output is piped to the user.
-    This means we don't return the output to parse.
+    This means we don't return the output to parse. This is a function (simpler)
+    version of the Command Runner that also supports printing out output.
 
     Arguments
     =========

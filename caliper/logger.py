@@ -102,6 +102,46 @@ class Logger:
             "{}: {info.filename}, {info.function}, {info.lineno}".format(msg, info=info)
         )
 
+    def show_progress(
+        self,
+        iteration,
+        total,
+        length=40,
+        min_level=0,
+        prefix=None,
+        carriage_return=True,
+        suffix=None,
+        symbol=None,
+    ):
+        """create a terminal progress bar, default bar shows for verbose+"""
+        if self.quiet:
+            return
+
+        percent = 100 * (iteration / float(total))
+        progress = int(length * iteration // total)
+        suffix = suffix or ""
+        prefix = prefix or "Progress"
+        symbol = symbol or "="
+
+        # Download sizes can be imperfect, setting carriage_return to False
+        # and writing newline with caller cleans up the UI
+        if percent >= 100:
+            percent = 100
+            progress = length
+
+        if progress < length:
+            bar = symbol * progress + "|" + "-" * (length - progress - 1)
+        else:
+            bar = symbol * progress + "-" * (length - progress)
+
+        # Only show progress bar for level > min_level
+        percent = "%5s" % ("{0:.1f}").format(percent)
+        output = "\r" + prefix + " |%s| %s%s %s" % (bar, percent, "%", suffix)
+        sys.stdout.write(output)
+        if iteration == total and carriage_return:
+            sys.stdout.write("\n")
+        sys.stdout.flush()
+
     def info(self, msg):
         self.handler(dict(level="info", msg=msg))
 

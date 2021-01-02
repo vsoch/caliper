@@ -16,18 +16,13 @@ You can easily install from pypi:
 pip install caliper
 ```
 
-If you want support for graphs (`caliper view`) (requires jinja2) then do:
-
-```bash
-pip install caliper[graphs]
-```
-
 ### Concepts
 
- - **Manager** a handle to interact with a package manager
- - **Extractor** a controller to use a manager to extract metrics of interest
- - **Version repository** a repository created by an extractor that tagged commits for package releases
- - **Metrics** are a type of classes that can extract a single timepoint, or a change over time (e.g., lines changed). You can see example metrics that have been extracted under [examples/metrics](examples/metrics) or in the [vsoch/caliper-metrics](https://github.com/vsoch/caliper-metrics) repository.
+ - **Manager**: a handle to interact with a package manager
+ - **Extractor**: a controller to use a manager to extract metrics of interest
+ - **Analysis**: A caliper analysis means attempting to build containers across versions of a library, and run against scripts for tests to assess functionality.
+ - **Version repository**: a repository created by an extractor that tagged commits for package releases
+ - **Metrics**: are a type of classes that can extract a single timepoint, or a change over time (e.g., lines changed). You can see example metrics that have been extracted under [examples/metrics](examples/metrics) or in the [vsoch/caliper-metrics](https://github.com/vsoch/caliper-metrics) repository.
 
 ### Managers
 
@@ -166,6 +161,30 @@ and then iterate over versions/releases and create a tagged commit for each.
 We can then easily extract metrics about files changed between versions.
 This is the [metrics extractor](#metrics-extractor) discussed next.
 
+### Caliper Analyze
+
+Caliper supports analyzing package functionality, which means that we take
+a configuration file (see an [example](examples/analyze/caliper.yaml)), a `caliper.yaml`
+with a package name, manager, Dockerfile template to build, and a list of tests.
+We do this with the Caliper `analyze` command:
+
+```bash
+$ caliper analyze --help
+usage: caliper analyze [-h] [--config CONFIG]
+
+optional arguments:
+  -h, --help       show this help message and exit
+  --config CONFIG  A caliper.yaml file to use for the analysis (required)
+```
+
+For example, we might use the example and do:
+
+```python
+$ caliper analyze --config examples/analyze/caliper.yaml 
+```
+
+### TODO add docs to here
+
 ### Metrics Extractor
 
 Finally, a metrics extractor provides an easy interface to iterate over versions
@@ -179,10 +198,8 @@ When installed, caliper comes with an executable, `caliper` that can make it eas
 to extract a version repository.
 
 ```bash
-$ caliper
-
-caliper Python v0.0.1
-usage: caliper [-h] [--version] {version,metrics,extract,view} ...
+$ caliper --help
+usage: caliper [-h] [--version] {version,metrics,analyze,extract,view} ...
 
 Caliper is a tool for measuring and assessing changes in packages.
 
@@ -193,15 +210,22 @@ optional arguments:
 actions:
   actions
 
-  {version,metrics,extract,view}
+  {version,metrics,analyze,extract,view}
                         actions
     version             show software version
     metrics             see metrics available
+    analyze             analyze functionality of a package.
     extract             extract one or more metrics for a software package.
     view                extract a metric and view a plot.
+
+LOGGING:
+  --quiet               suppress logging.
+  --verbose             verbose output for logging.
+  --log-disable-color   Disable color for snakeface logging.
+  --log-use-threads     Force threads rather than processes.
 ```
 
-For now we are primarily interested in the `extract` command:
+The `extract` command allows to extract metrics for a package:
 
 ```bash
 $ caliper extract --help
