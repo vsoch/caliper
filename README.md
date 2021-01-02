@@ -74,6 +74,48 @@ manager.specs[-1]
  'hash': '238ebd3ca0e0408e0be6780d45deca79583ce99aed05ac6981da7a2b375ae79e'}
 ```
 
+If you just interact with `manager.specs`, you'll get a random architecture for each
+one. This can be okay if you want to do static file analysis, but if you want to choose
+a specific python version, your best bet is to call the get package metadata function
+directly and provide your preferences. For example, here we want Tensorflow for Python 3.5
+and a specific linux architecture:
+
+```python
+manager.get_package_metadata(python_version="35", arch="manylinux1_x86_64")
+```
+
+To derive these search strings, you can look at examples of wheels provided.
+This isn't the default because not all packages provide such rich choices.
+Here is an example from an early version of tensorflow.
+
+```
+tensorflow-0.12.0-cp27-cp27m-macosx_10_11_x86_64.whl
+tensorflow-0.12.0-cp27-cp27mu-manylinux1_x86_64.whl
+tensorflow-0.12.0-cp34-cp34m-manylinux1_x86_64.whl
+tensorflow-0.12.0-cp35-cp35m-macosx_10_11_x86_64.whl
+tensorflow-0.12.0-cp35-cp35m-manylinux1_x86_64.whl
+tensorflow-0.12.0-cp35-cp35m-win_amd64.whl
+```
+
+For more recent versions you would see Python 3.8 and 3.9, and definitely not 2.x.
+The above function still selects one release based on your preferences. You can also choose to return a subset of 
+_all_ versions with the filter function. For example, here let's narrow down the set
+to include those that can be installed on Linux.
+
+```python
+releases = manager.filter_releases('manylinux1_x86_64')
+```
+
+You can also get a set of unique Python versions across packages:
+
+```python
+python_versions = manager.get_python_versions()
+# {'cp27', 'cp33', 'cp34', 'cp35', 'cp36', 'cp37', 'cp38'}
+```
+
+Not all package versions are guaranteed to have these Python versions, but that's
+something interesting to consider. And you can always interact with the raw package metadata at `manager.metadata`.
+
 #### GitHub
 
 We might also be interested in releases from GitHub. Extracting
