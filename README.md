@@ -196,8 +196,59 @@ $ caliper analyze --config examples/analyze/caliper.yaml --cleanup
 and run the builds in serial. A parallel argument is supported, but in practice
 it doesn't work well building multiple containers at once.
 
+#### caliper.yml
 
-### TODO add docs to here
+The caliper.yml file is a small configuration file to run caliper. Currently, it's fairly simply
+and we need to define the dependency to run tests over (e.g., tensorflow), the Dockerfile template,
+a name, and then a list of runs:
+
+```yaml
+analysis:
+  name: Testing tensorflow
+  packagemanager: pypi
+  dockerfile: Dockerfile
+  dependency: tensorflow
+  versions:
+    - 0.0.11
+  python_versions:
+    - cp27
+  tests:
+    - tensorflow_v0.11/5_MultiGPU/multigpu_basics.py
+    - tensorflow_v0.11/1_Introduction/basic_operations.py
+    - tensorflow_v0.11/1_Introduction/helloworld.py
+    - tensorflow_v0.11/4_Utils/tensorboard_advanced.py
+```
+
+If you don't define a list of `python_versions` all will be used by default.
+If you don't define a list of `versions` all versions of the library will be tested.
+If you want to add custom arguments for your template (beyond a base image that
+is derived for your Python software, and the dependency name to derive wheels to install)
+you can do this with args:
+
+```yaml
+analysis:
+  name: Testing tensorflow
+  packagemanager: pypi
+  dockerfile: Dockerfile
+  args:
+     additionaldeps: 
+       - scikit-learn
+```
+
+The functionality of your arguments is up to you. In the example above, `additionaldeps`
+would be a list, so likely you would loop over it in your Dockerfile template (which uses jinja2).
+
+### Dockerfile
+
+The [Dockerfile](Dockerfile) template (specified in the caliper.yaml) should expect
+the following arguments from the caliper analysis script:
+
+ - **base**: The base python image, derived from the wheel we need to install
+ - **filename**: the url filename of the wheel to download with wget
+ - **basename**: the basename of that to install with pip
+
+Additional arguments under args will be handed to the template, and are up to you
+to define and render appropriately.
 
 ### Metrics Extractor
 
