@@ -56,6 +56,7 @@ def get_parser():
     analyze.add_argument(
         "--config",
         help="A caliper.yaml file to use for the analysis (required)",
+        default="caliper.yaml",
     )
 
     analyze.add_argument(
