@@ -12,7 +12,9 @@ import sys
 
 class Workers:
     def __init__(self, workers=None, show_progress=True):
-        self.workers = workers or multiprocessing.cpu_count()
+
+        # Set a conservative number of workers
+        self.workers = workers or int(multiprocessing.cpu_count() / 2) - 1
         logger.debug("Using %s workers for multiprocess." % self.workers)
         self.tasks = {}
         self.show_progress = show_progress
@@ -38,7 +40,6 @@ class Workers:
         The tasks should be added with add_task.
         """
         # Keep track of some progress for the user
-        progress = 1
         total = len(self.tasks)
 
         # if we don't have tasks, don't run
@@ -50,30 +51,32 @@ class Workers:
         results = []
 
         try:
-            prefix = "[%s/%s]" % (progress, total)
-            if self.show_progress:
-                logger.show_progress(0, total, length=35, prefix=prefix)
             pool = multiprocessing.Pool(self.workers, init_worker)
 
             self.start()
+            progress = 1
+            logger.info("Preparing %s tasks..." % total)
             for key, task in self.tasks.items():
                 func, params = task
-                if not self.show_progress:
-                    logger.info("Processing task %s: %s of %s" % (key, progress, total))
+                if self.show_progress:
+                    prefix = "[%s/%s]" % (progress, total)
+                    logger.show_progress(progress, total, length=35, prefix=prefix)
                 result = pool.apply_async(multi_wrapper, multi_package(func, [params]))
 
                 # Store the key with the result
                 results.append((key, result))
-                break
+                progress += 1
 
+            progress = 1
+            logger.info("Waiting for results...")
             while len(results) > 0:
                 pair = results.pop()
                 key, result = pair
-                result.wait()
                 if self.show_progress:
+                    prefix = "[%s/%s]" % (progress, total)
                     logger.show_progress(progress, total, length=35, prefix=prefix)
+                result.wait()
                 progress += 1
-                prefix = "[%s/%s]" % (progress, total)
                 finished[key] = result.get()
 
             self.end()

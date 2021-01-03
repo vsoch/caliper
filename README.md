@@ -170,11 +170,15 @@ We do this with the Caliper `analyze` command:
 
 ```bash
 $ caliper analyze --help
-usage: caliper analyze [-h] [--config CONFIG]
+usage: caliper analyze [-h] [--config CONFIG] [--no-progress] [--serial] [--force] [--nprocs NPROCS]
 
 optional arguments:
   -h, --help       show this help message and exit
   --config CONFIG  A caliper.yaml file to use for the analysis (required)
+  --no-progress    Do not show a progress bar (defaults to unset, showing progress)
+  --serial         Run in serial instead of parallel
+  --force          If an output file exists, force re-write (default will not overwrite)
+  --nprocs NPROCS  Number of processes. Defaults to cpu count.
 ```
 
 For example, we might use the example and do:
@@ -182,6 +186,16 @@ For example, we might use the example and do:
 ```python
 $ caliper analyze --config examples/analyze/caliper.yaml 
 ```
+
+to do a `docker system prune --all` after each build (recommended) add `--cleanup`
+
+```python
+$ caliper analyze --config examples/analyze/caliper.yaml --cleanup
+```
+
+and run the builds in serial. A parallel argument is supported, but in practice
+it doesn't work well building multiple containers at once.
+
 
 ### TODO add docs to here
 

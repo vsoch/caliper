@@ -15,9 +15,12 @@ def main(args, extra):
 
     client = CaliperAnalyzer(args.config)
     analyzer = client.get_analyzer()
+
+    # serial argument removed for analyze, doesn't run well building containers
     analyzer.run_analysis(
         show_progress=not args.no_progress,
         nproc=args.nprocs,
         force=args.force,
-        parallel=not args.serial,
+        parallel=False,
+        cleanup=args.cleanup,
     )

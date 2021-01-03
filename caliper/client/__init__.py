@@ -66,18 +66,20 @@ def get_parser():
         action="store_true",
     )
 
-    analyze.add_argument(
-        "--serial",
-        dest="serial",
-        help="Run in serial instead of parallel",
-        default=False,
-        action="store_true",
-    )
+    # serial argument removed for analyze, doesn't run well building containers
 
     analyze.add_argument(
         "--force",
         dest="force",
         help="If an output file exists, force re-write (default will not overwrite)",
+        default=False,
+        action="store_true",
+    )
+
+    analyze.add_argument(
+        "--cleanup",
+        dest="cleanup",
+        help="Do docker system prune --all after each build, recommended for saving space.",
         default=False,
         action="store_true",
     )

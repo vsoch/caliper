@@ -3,16 +3,15 @@ __copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
 from caliper.managers import PypiManager
-from caliper.utils.file import read_file, write_file, read_yaml
+from caliper.utils.file import read_file, read_yaml
 from caliper.utils.command import CommandRunner
 from caliper.logger import logger
 from jinja2 import Template
 from .workers import Workers
+from .tasks import analysis_task
 
 import os
-import json
 import re
-import tempfile
 
 
 class CaliperAnalyzerBase:
@@ -63,6 +62,9 @@ class CaliperAnalyzerBase:
         self.dependency = self.config.get("dependency")
         self.args = self.config.get("args", {})
 
+        # Filter to specific python and library versions
+        self.python_versions = self.config.get("python_versions", [])
+        self.test_versions = self.config.get("versions", [])
         if not os.path.exists(self.outdir):
             os.makedirs(self.outdir)
 
@@ -90,17 +92,18 @@ class CaliperPypiAnalyzer(CaliperAnalyzerBase):
         self,
         release_filter=None,
         nproc=None,
-        parallel=True,
+        parallel=False,
         show_progress=True,
         func=None,
         force=False,
+        cleanup=False,
     ):
         """Once the config is loaded, run the analysis using multiprocessing
         workers.
         """
         # The release filter is a regular expression we use to find the correct
-        # platform / architecture
-        release_filter = release_filter or ".*manylinux.*x86_64.*"
+        # platform / architecture. We select linux wheels and source
+        release_filter = release_filter or "(.*manylinux.*x86_64.*|[.]tar[.]gz)"
         func = func or analysis_task
 
         # prepare a command runner, check that docker is installed
@@ -113,6 +116,7 @@ class CaliperPypiAnalyzer(CaliperAnalyzerBase):
         manager = PypiManager(self.dependency)
         all_releases = manager.filter_releases(release_filter)
         python_versions = manager.get_python_versions()
+        python_version_regex = "(%s)" % "|".join(self.python_versions)
 
         # Read in the template, populate with each deps version
         template = Template(read_file(self.dockerfile, readlines=False))
@@ -123,10 +127,21 @@ class CaliperPypiAnalyzer(CaliperAnalyzerBase):
         # Loop over versions of the library, and Python versions
         for version, releases in all_releases.items():
 
+            # Check if the user has defined a set of versions
+            if self.test_versions and version not in self.test_versions:
+                continue
+
             # Create a lookup based on Python version
             lookup = {x["python_version"]: x for x in releases}
 
             for python_version in python_versions:
+
+                # If the user has requested a subset of Python versions
+                if self.python_versions and not re.search(
+                    python_version_regex, python_version, re.IGNORECASE
+                ):
+                    continue
+
                 name = "%s-%s-%s-python-%s" % (
                     self.name,
                     self.dependency,
@@ -158,10 +173,12 @@ class CaliperPypiAnalyzer(CaliperAnalyzerBase):
                     "exists": exists,
                     "name": name,
                     "tests": tests,
+                    "cleanup": cleanup,
                     "outdir": self.config_dir,
                 }
                 tasks[name] = (func, params)
 
+        # TODO: we should run in order of container bases
         if parallel:
             return self._run_parallel(tasks, nproc, show_progress)
         return self._run_serial(tasks)
@@ -186,7 +203,7 @@ class CaliperPypiAnalyzer(CaliperAnalyzerBase):
             func, params = task
             prefix = "[%s/%s]" % (progress, total)
             if show_progress:
-                logger.show_progress(progress, total, length=35, prefix=prefix)
+                logger.info("%s: %s" % (prefix, key))
             else:
                 logger.info("Processing task %s" % key)
 
@@ -194,88 +211,3 @@ class CaliperPypiAnalyzer(CaliperAnalyzerBase):
             progress += 1
 
         return results
-
-
-def analysis_task(**kwargs):
-    """A shared analysis task for the serial or parallel workers. We will
-    read in the Dockerfile template, and generate and run/test a container
-    for a particular Python version, etc.
-    """
-    # Ensure all arguments are provided
-    for key in [
-        "name",
-        "outdir",
-        "dependency",
-        "outfile",
-        "dockerfile",
-        "exists",
-    ]:
-        if key not in kwargs or kwargs.get(key) == None:
-            logger.exit("%s is missing or undefined for analysis task." % key)
-
-    dockerfile = kwargs.get("dockerfile")
-    outfile = kwargs.get("outfile")
-    dependency = kwargs.get("dependency")
-    force = kwargs.get("force", False)
-    exists = kwargs.get("exists")
-    name = kwargs.get("name")
-    outdir = kwargs.get("outdir")
-    result = {"inputs": kwargs}
-    tests = kwargs.get("tests")
-    tests = [] if not tests else tests.split("\n")
-
-    # If the output file already exists and force is true, overwrite
-    if os.path.exists(outfile) and not force:
-        logger.info("%s already exists and force is set to False" % outfile)
-        return
-
-    # If it doesn't exist, we wouldn't be able to build it, cut out early
-    if not exists:
-        result["build_retval"] = 1
-        return result
-
-    # Build temporary Dockerfile
-    dockerfile_name = "Dockerfile.caliper.%s" % name
-    dockerfile_fullpath = os.path.join(tempfile.gettempdir(), dockerfile_name)
-
-    # Write and build temporary Dockerfile, and build the container
-    write_file(dockerfile_fullpath, dockerfile)
-    container_name = "%s-container:%s" % (dependency, name)
-    runner = CommandRunner()
-    runner.run_command(
-        [
-            "docker",
-            "build",
-            "-f",
-            dockerfile_fullpath,
-            "-t",
-            container_name,
-            ".",
-        ],
-        cwd=outdir,
-    )
-
-    # Keep a result for each script
-    result["build_retval"] = runner.retval
-    if runner.retval != 0:
-        return result
-
-    # Get packages installed for each container
-    runner.run_command(["docker", "run", container_name, "pip", "freeze"])
-    result["requirements.txt"] = runner.output
-
-    # Test basic import of library
-    tests = {}
-
-    # Run each test
-    for script in tests:
-        runner.run_command(["docker", "run", container_name, "python", script])
-        tests[script] = {
-            "error": runner.error,
-            "output": runner.output,
-            "retval": runner.retval,
-        }
-    result["tests"] = tests
-
-    # Save the result to file
-    write_file(outfile, json.dumps(result))
