@@ -1,0 +1,8 @@
+analysis:
+  name: Testing tensorflow
+  packagemanager: pypi
+  dockerfile: Dockerfile
+  dependency: tensorflow
+  # Test files are relative to the caliper.yaml
+  tests:
+    - helloworld.py

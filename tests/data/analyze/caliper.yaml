@@ -1,0 +1,12 @@
+analysis:
+  name: Testing sif
+  packagemanager: pypi
+  dockerfile: Dockerfile
+  dependency: sif
+  versions:
+    - 0.0.11
+  python_versions:
+    - cp27
+  # Test files are relative to the caliper.yaml
+  tests:
+    - helloworld.py

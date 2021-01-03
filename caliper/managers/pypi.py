@@ -6,6 +6,7 @@ from caliper.utils.command import do_request
 from caliper.logger import logger
 from caliper.managers.base import ManagerBase
 
+from copy import deepcopy
 import re
 
 
@@ -14,6 +15,7 @@ class PypiManager(ManagerBase):
 
     name = "pypi"
     baseurl = "https://pypi.python.org/pypi"
+    source_versions = ["cp27", "cp35", "cp38"]
 
     def do_metadata_request(self, name=None):
         """A separate, shared function to retrieve package metadata without
@@ -25,6 +27,25 @@ class PypiManager(ManagerBase):
 
         url = "%s/%s/json" % (self.baseurl, name)
         self.metadata = do_request(url)
+
+    @property
+    def source_only(self):
+        """We care that a package is source only so we know to use artifically
+        generated self.source_versions instead. Ideally this matches an install
+        to a specific version of Python. We assume one of the following:
+        1) that a package is all wheels,
+        2) that a package is all source code releases
+        3) that a package is a combination of source and wheels
+        We don't handle well the case that a package was 1 or 2 and then switches.
+        """
+        if not hasattr(self, "_source_only"):
+            self._source_only = True
+            for _, releases in self.releases.items():
+                for release in releases:
+                    if release["python_version"] != "source":
+                        self._source_only = False
+                        return self._source_only
+        return self._source_only
 
     @property
     def releases(self):
@@ -74,11 +95,21 @@ class PypiManager(ManagerBase):
         """
         python_versions = set()
         for version, releases in self.releases.items():
-            [
-                python_versions.add(r["python_version"])
-                for r in releases
-                if r["python_version"]
-            ]
+            for r in releases:
+                if r["python_version"] and r["python_version"] != "source":
+                    python_versions.add(r["python_version"])
+
+                # If we have source, we can only test it over a range of versions
+                elif (
+                    r["python_version"]
+                    and r["python_version"] == "source"
+                    and self.source_only
+                ):
+                    [
+                        python_versions.add(source_version)
+                        for source_version in self.source_versions
+                    ]
+
         return python_versions
 
     def find_release(self, releases=None, arch=None, python_version=None):
@@ -98,11 +129,26 @@ class PypiManager(ManagerBase):
                 filename = release
         return filename
 
-    def filter_releases(self, regex, search_field="filename"):
-        """Given a regular expression, filter releases down to smaller list"""
+    def filter_releases(self, regex, search_field="filename", source_versions=None):
+        """Given a regular expression, filter releases down to smaller list.
+        If a release has version "source" we cannot be sure what version of
+        Python to use, so we return a set that ranges between 2.7 and 3.8.
+        """
         filtered = {}
         for version, releases in self.releases.items():
-            filtered[version] = [
-                r for r in releases if re.search(regex, r.get(search_field, ""))
-            ]
+            subset = []
+
+            # Only add releases that match regular expression
+            for r in releases:
+                if re.search(regex, r.get(search_field, "")):
+
+                    # We only added sources if there aren't wheels
+                    if r["python_version"] == "source" and self.source_only:
+                        for source_version in self.source_versions:
+                            rcopy = deepcopy(r)
+                            rcopy["python_version"] = source_version
+                            subset.append(rcopy)
+                    else:
+                        subset.append(r)
+            filtered[version] = subset
         return filtered

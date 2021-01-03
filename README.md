@@ -16,18 +16,13 @@ You can easily install from pypi:
 pip install caliper
 ```
 
-If you want support for graphs (`caliper view`) (requires jinja2) then do:
-
-```bash
-pip install caliper[graphs]
-```
-
 ### Concepts
 
- - **Manager** a handle to interact with a package manager
- - **Extractor** a controller to use a manager to extract metrics of interest
- - **Version repository** a repository created by an extractor that tagged commits for package releases
- - **Metrics** are a type of classes that can extract a single timepoint, or a change over time (e.g., lines changed). You can see example metrics that have been extracted under [examples/metrics](examples/metrics) or in the [vsoch/caliper-metrics](https://github.com/vsoch/caliper-metrics) repository.
+ - **Manager**: a handle to interact with a package manager
+ - **Extractor**: a controller to use a manager to extract metrics of interest
+ - **Analysis**: A caliper analysis means attempting to build containers across versions of a library, and run against scripts for tests to assess functionality.
+ - **Version repository**: a repository created by an extractor that tagged commits for package releases
+ - **Metrics**: are a type of classes that can extract a single timepoint, or a change over time (e.g., lines changed). You can see example metrics that have been extracted under [examples/metrics](examples/metrics) or in the [vsoch/caliper-metrics](https://github.com/vsoch/caliper-metrics) repository.
 
 ### Managers
 
@@ -166,6 +161,102 @@ and then iterate over versions/releases and create a tagged commit for each.
 We can then easily extract metrics about files changed between versions.
 This is the [metrics extractor](#metrics-extractor) discussed next.
 
+### Caliper Analyze
+
+Caliper supports analyzing package functionality, which means that we take
+a configuration file (see an [example](examples/analyze/caliper.yaml)), a `caliper.yaml`
+with a package name, manager, Dockerfile template to build, and a list of tests.
+We do this with the Caliper `analyze` command:
+
+```bash
+$ caliper analyze --help
+usage: caliper analyze [-h] [--config CONFIG] [--no-progress] [--serial] [--force] [--nprocs NPROCS]
+
+optional arguments:
+  -h, --help       show this help message and exit
+  --config CONFIG  A caliper.yaml file to use for the analysis (required)
+  --no-progress    Do not show a progress bar (defaults to unset, showing progress)
+  --serial         Run in serial instead of parallel
+  --force          If an output file exists, force re-write (default will not overwrite)
+  --nprocs NPROCS  Number of processes. Defaults to cpu count.
+```
+
+For example, we might use the example and do:
+
+```python
+$ caliper analyze --config examples/analyze/caliper.yaml 
+```
+
+to do a `docker system prune --all` after each build (recommended) add `--cleanup`
+
+```python
+$ caliper analyze --config examples/analyze/caliper.yaml --cleanup
+```
+
+And if your caliper.yaml is in the same folder as you are running caliper from, you
+don't need to supply it (it will be auto-detected):
+
+```bash
+caliper analyze --cleanup
+```
+
+and run the builds in serial. A parallel argument is supported, but in practice
+it doesn't work well building multiple containers at once.
+
+#### caliper.yml
+
+The caliper.yml file is a small configuration file to run caliper. Currently, it's fairly simply
+and we need to define the dependency to run tests over (e.g., tensorflow), the Dockerfile template,
+a name, and then a list of runs:
+
+```yaml
+analysis:
+  name: Testing tensorflow
+  packagemanager: pypi
+  dockerfile: Dockerfile
+  dependency: tensorflow
+  versions:
+    - 0.0.11
+  python_versions:
+    - cp27
+  tests:
+    - tensorflow_v0.11/5_MultiGPU/multigpu_basics.py
+    - tensorflow_v0.11/1_Introduction/basic_operations.py
+    - tensorflow_v0.11/1_Introduction/helloworld.py
+    - tensorflow_v0.11/4_Utils/tensorboard_advanced.py
+```
+
+If you don't define a list of `python_versions` all will be used by default.
+If you don't define a list of `versions` all versions of the library will be tested.
+If you want to add custom arguments for your template (beyond a base image that
+is derived for your Python software, and the dependency name to derive wheels to install)
+you can do this with args:
+
+```yaml
+analysis:
+  name: Testing tensorflow
+  packagemanager: pypi
+  dockerfile: Dockerfile
+  args:
+     additionaldeps: 
+       - scikit-learn
+```
+
+The functionality of your arguments is up to you. In the example above, `additionaldeps`
+would be a list, so likely you would loop over it in your Dockerfile template (which uses jinja2).
+
+### Dockerfile
+
+The [Dockerfile](Dockerfile) template (specified in the caliper.yaml) should expect
+the following arguments from the caliper analysis script:
+
+ - **base**: The base python image, derived from the wheel we need to install
+ - **filename**: the url filename of the wheel to download with wget
+ - **basename**: the basename of that to install with pip
+
+Additional arguments under args will be handed to the template, and are up to you
+to define and render appropriately.
+
 ### Metrics Extractor
 
 Finally, a metrics extractor provides an easy interface to iterate over versions
@@ -179,10 +270,8 @@ When installed, caliper comes with an executable, `caliper` that can make it eas
 to extract a version repository.
 
 ```bash
-$ caliper
-
-caliper Python v0.0.1
-usage: caliper [-h] [--version] {version,metrics,extract,view} ...
+$ caliper --help
+usage: caliper [-h] [--version] {version,metrics,analyze,extract,view} ...
 
 Caliper is a tool for measuring and assessing changes in packages.
 
@@ -193,15 +282,22 @@ optional arguments:
 actions:
   actions
 
-  {version,metrics,extract,view}
+  {version,metrics,analyze,extract,view}
                         actions
     version             show software version
     metrics             see metrics available
+    analyze             analyze functionality of a package.
     extract             extract one or more metrics for a software package.
     view                extract a metric and view a plot.
+
+LOGGING:
+  --quiet               suppress logging.
+  --verbose             verbose output for logging.
+  --log-disable-color   Disable color for snakeface logging.
+  --log-use-threads     Force threads rather than processes.
 ```
 
-For now we are primarily interested in the `extract` command:
+The `extract` command allows to extract metrics for a package:
 
 ```bash
 $ caliper extract --help
@@ -506,8 +602,15 @@ degree of changes for each:
 
 - create official docs in docs folder alongside code
 - write tests to discover and test all metrics (type, name, etc.)
-- think about and implement command line client
 - think of common functions to run metric
+- create visualization of grid of errors / scripts, and mouesover to see codes (server rendered)
+- stats: try to estimate types of codes (e.g., error name)
+
+### Analysis Ideas
+
+1. Start with a bunch of unit tests for a library (or example scripts) and build a model that can predict success (return code 0) vs fail (any other code) based on the scripts (tokens is a simple idea). Then given a new script without declared versions, predict which will work.
+2. (A slightly different project) - given a set of known "optimal" containers for a library like tensorflow, parse dependencies, versions, and library versions, run across same set of unit tests / example scripts, and try to say which combos (architecture and dependencies) works for different kinds of scripts.
+
 ## License
 
  * Free software: MPL 2.0 License
