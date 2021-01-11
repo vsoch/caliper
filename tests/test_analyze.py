@@ -22,7 +22,7 @@ def test_pypi_analyze(tmp_path):
 
     outdir = os.path.join(here, "data", "analyze", ".caliper")
     assert os.path.exists(outdir)
-    outfile = os.path.join(outdir, "pypi-sif-0.0.11-python-cp27.json")
+    outfile = os.path.join(outdir, "data", "pypi-sif-0.0.11-python-cp27.json")
     assert os.path.exists(outfile)
 
     # Check fields in output file
