@@ -41,6 +41,7 @@ class CaliperAnalyzerBase:
         self.config_dir = os.path.abspath(os.path.dirname(self.config_file))
         self.config = read_yaml(config_file).get("analysis", {})
         self.outdir = os.path.join(self.config_dir, ".caliper")
+        self.data_dir = os.path.join(self.outdir, "data")
 
         # Validate that required fields are present, and set
         required = ["packagemanager", "dependency"]
@@ -65,8 +66,9 @@ class CaliperAnalyzerBase:
         # Filter to specific python and library versions
         self.python_versions = self.config.get("python_versions", [])
         self.test_versions = self.config.get("versions", [])
-        if not os.path.exists(self.outdir):
-            os.makedirs(self.outdir)
+        for dirname in [self.outdir, self.data_dir]:
+            if not os.path.exists(dirname):
+                os.makedirs(dirname)
 
 
 class CaliperAnalyzer(CaliperAnalyzerBase):
@@ -98,9 +100,7 @@ class CaliperPypiAnalyzer(CaliperAnalyzerBase):
         force=False,
         cleanup=False,
     ):
-        """Once the config is loaded, run the analysis using multiprocessing
-        workers.
-        """
+        """Once the config is loaded, run the analysis."""
         # The release filter is a regular expression we use to find the correct
         # platform / architecture. We select linux wheels and source
         release_filter = release_filter or "(.*manylinux.*x86_64.*|[.]tar[.]gz)"
@@ -148,7 +148,7 @@ class CaliperPypiAnalyzer(CaliperAnalyzerBase):
                     version,
                     python_version,
                 )
-                outfile = os.path.join(self.outdir, "%s.json" % name)
+                outfile = os.path.join(self.data_dir, "%s.json" % name)
                 spec = lookup.get(python_version, {})
                 tests = "\n".join(self.config.get("tests"))
 
@@ -178,7 +178,6 @@ class CaliperPypiAnalyzer(CaliperAnalyzerBase):
                 }
                 tasks[name] = (func, params)
 
-        # TODO: we should run in order of container bases
         if parallel:
             return self._run_parallel(tasks, nproc, show_progress)
         return self._run_serial(tasks)
