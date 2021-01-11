@@ -8,7 +8,7 @@ Caliper is a tool for measuring and assessing change in packages.
 
 ![docs/assets/img/spack-changes.png](docs/assets/img/spack-changes.png)
 
-See the [documentation](https://caliper.readthedocs.io/) for getting started.
+See the [documentation](https://caliper-python.readthedocs.io/en/latest/) for getting started.
 
 ## TODO
 
