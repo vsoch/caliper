@@ -161,7 +161,7 @@ def get_parser():
         "--log-disable-color",
         dest="disable_color",
         default=False,
-        help="Disable color for snakeface logging.",
+        help="Disable color for caliper logging.",
         action="store_true",
     )
 

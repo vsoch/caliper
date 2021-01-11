@@ -78,6 +78,10 @@ def analysis_task(**kwargs):
         cwd=outdir,
     )
 
+    # Clean up Dockerfile
+    if os.path.exists(dockerfile_fullpath):
+        os.remove(dockerfile_fullpath)
+
     # Keep a result for each script
     result["tests"] = {"build": {"retval": runner.retval}}
     if runner.retval != 0:
@@ -118,6 +122,3 @@ def analysis_task(**kwargs):
         runner.run_command(["docker", "rmi", layer.strip("\n"), "--force"])
     if cleanup:
         runner.run_command(["docker", "system", "prune", "--all", "--force"])
-
-    if os.path.exists(dockerfile_fullpath):
-        os.remove(dockerfile_fullpath)
