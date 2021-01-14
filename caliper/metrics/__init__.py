@@ -10,6 +10,7 @@ from caliper.utils.command import wget_and_extract
 from caliper.logger import logger
 
 import importlib
+import requests
 import shutil
 import tempfile
 import os
@@ -45,6 +46,34 @@ class MetricsExtractor:
     def __iter__(self):
         for name, result in self._extractors.items():
             yield name, result
+
+    def load_metric(self, metric, repository=None, subfolder=None, branch=None):
+        """Load a metric from from a GitHub repository that has them extracted,
+        optionally specifying a custom repository and subfolder.
+        """
+        repository = repository or "vsoch/caliper-metrics"
+        subfolder = subfolder or ""
+        branch = branch or "main"
+
+        # A manager is required
+        if not self.manager:
+            logger.exit("A manager is required to load a metric for.")
+
+        # If we have a subfolder, add // around it
+        if subfolder:
+            subfolder = "%s/" % subfolder.strip("/")
+        manager = self.manager.replace(":", "/")
+        url = "https://raw.githubusercontent.com/%s/%s/%s%s/%s/%s-results.json" % (
+            repository,
+            branch,
+            subfolder,
+            manager,
+            metric,
+            metric,
+        )
+        response = requests.get(url)
+        if response.status_code == 200:
+            return response.json()
 
     @property
     def metrics(self):

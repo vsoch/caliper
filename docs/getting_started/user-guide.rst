@@ -513,6 +513,36 @@ Note that you can also extract all metrics known to the extractor.
     extractor.extract_all()
 
 
+Extraction From Repository
+--------------------------
+
+It can be useful for a later analysis to put the contents of a metrics extraction into a repository,
+such as what is present at `vsoch/caliper-metrics <https://github.com/vsoch/caliper-metrics>`_ on GitHub.
+We can easily create a MetricsExtractor class and then read content there as follows:
+
+.. code:: python
+
+    from caliper.metrics import MetricsExtractor
+    extractor = MetricsExtractor("pypi:tensorflow")
+    result = extractor.load_metric("functiondb")
+
+
+For loading the metric, you can also provide a different ``repository`` (defaults to vsoch/caliper-metrics), 
+``metric`` name (required), ``subfolder`` (defaults to empty string), and ``branch`` (defaults to main).
+If the metric exists in the repository, it will download and load the data for you
+into result. If not, None will be returned.
+
+
+.. code:: python
+
+    result.keys()
+    # dict_keys(['by-file', 'by-group'])
+
+You can then continue to use the result as needed. For the example above, since we have
+function signatures for every version of tensorflow, we might generate a comparison  or similiarity
+matric depending on those signatures.
+
+
 Parsing Results
 ---------------
 
@@ -534,7 +564,8 @@ data on the level of individual files, or summary results:
         metric.get_results()
 
 
-For example, an entry in group results might look like this:
+Each metric can choose to return one or both levels of results.
+For example, an entry in the changedlines group results might look like this:
 
 
 .. code:: console

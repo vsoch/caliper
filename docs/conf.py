@@ -62,6 +62,7 @@ project = "Caliper"
 copyright = "2020-2021, Vanessa Sochat"
 
 from caliper import version
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "caliper.settings")
 
 # The version info for the project you're documenting, acts as replacement for
