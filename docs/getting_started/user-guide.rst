@@ -534,7 +534,8 @@ data on the level of individual files, or summary results:
         metric.get_results()
 
 
-For example, an entry in group results might look like this:
+Each metric can choose to return one or both levels of results.
+For example, an entry in the changedlines group results might look like this:
 
 
 .. code:: console

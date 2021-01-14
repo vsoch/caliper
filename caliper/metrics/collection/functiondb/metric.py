@@ -73,9 +73,5 @@ class Functiondb(MetricBase):
         return lookup
 
     def get_file_results(self):
-        """return a lookup of changes, where each change has a list of files"""
-        return self._data
-
-    def get_group_results(self):
-        """Get summed values (e.g., lines changed) across files"""
+        """we only return file level results, as there are no summed group results"""
         return self._data

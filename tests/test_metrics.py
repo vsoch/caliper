@@ -31,19 +31,17 @@ def test_metrics_extractor(tmp_path):
 
         # MetricBase has lookup by commit
         if isinstance(metric, ChangeMetricBase):
-            assert "0.0.1..0.0.11" in results.get("by-group")
-            assert "0.0.1..0.0.11" in results.get("by-file")
 
-            # Ensure they aren't empty or null
-            file_result = results["by-file"]["0.0.1..0.0.11"][0]
-            assert len(file_result) >= 7
-            assert file_result["lines"] > 0
+            # One is required
+            assert results.get("by-group") or results.get("by-file")
+            assert "0.0.1..0.0.11" in results.get("by-group") or ["0.0.1..0.0.11"]
+            assert "0.0.1..0.0.11" in results.get("by-file") or ["0.0.1..0.0.11"]
 
         elif isinstance(metric, MetricBase):
-            assert "0.0.1" in results.get("by-group")
-            assert "0.0.1" in results.get("by-file")
 
-            # Ensure they aren't empty or null
-            summed_result = results["by-group"]["0.0.1"]
-            assert len(summed_result) >= 3
-            assert summed_result["files"] > 0
+            # One is required
+            assert results.get("by-group") or results.get("by-file")
+
+            # ensure if no result type is provided, passes
+            assert "0.0.1" in results.get("by-group") or ["0.0.1"]
+            assert "0.0.1" in results.get("by-file") or ["0.0.1"]
