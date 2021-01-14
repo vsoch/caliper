@@ -4,7 +4,7 @@ __license__ = "MPL 2.0"
 
 from caliper.metrics.base import MetricFinder
 from caliper.managers import GitManager
-from caliper.utils.file import write_json, mkdir_p, read_json
+from caliper.utils.file import write_json, mkdir_p
 from caliper.utils.prompt import confirm
 from caliper.utils.command import wget_and_extract
 from caliper.logger import logger
