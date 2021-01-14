@@ -3,12 +3,10 @@ __copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
 from caliper.metrics.base import MetricBase
-from caliper.utils.file import recursive_find
-from inspect import getmembers, isfunction
+from caliper.utils.file import recursive_find, read_file
 
-import inspect
+import ast
 import os
-import importlib
 import sys
 
 
@@ -29,49 +27,48 @@ class Functiondb(MetricBase):
         sys.path.insert(0, self.git.folder)
 
         # Helper function to populate lookup
-        def add_functions(module):
-            # member[0] is function name, member[1] is function
-            for member in getmembers(module, isfunction):
-                lookup[modulepath][member[0]] = {
-                    key: param.default if not inspect._empty else "inspect._empty"
-                    for key, param in dict(
-                        inspect.signature(member[1]).parameters
-                    ).items()
-                }
+        def add_functions(filename, modulepath):
+
+            node = ast.parse(read_file(filename, False))
+            functions = [n for n in node.body if isinstance(n, ast.FunctionDef)]
+            classes = [n for n in node.body if isinstance(n, ast.ClassDef)]
+
+            # Add each of functions and classes - ignore default values for now
+            for function in functions:
+                lookup[modulepath][function.name] = [
+                    arg.arg for arg in function.args.args
+                ]
+
+            for classname in classes:
+                methods = [n for n in classname.body if isinstance(n, ast.FunctionDef)]
+                lookup[modulepath][classname.name] = {}
+                for method in methods:
+                    lookup[modulepath][classname.name][method.name] = [
+                        arg.arg for arg in method.args.args
+                    ]
 
         # Look for folders with an init
-        for folder in recursive_find(self.git.folder, "__init__.py"):
+        for filename in recursive_find(self.git.folder, "*.py"):
 
-            # First try importing the top level modules
+            # Skip files that aren't a module
+            dirname = os.path.dirname(filename)
+            if not os.path.exists(os.path.join(dirname, "__init__.py")):
+                continue
+
+            # The module path is needed for a script calling the function
             modulepath = ".".join(
-                os.path.dirname(folder)
+                os.path.dirname(filename)
                 .replace(self.git.folder, "")
                 .strip("/")
                 .split("/")
             )
             lookup[modulepath] = {}
-            module = importlib.import_module(modulepath)
-            add_functions(module)
 
-            # Next look for other modules in each init folder
-            for modulename in os.listdir(os.path.dirname(folder)):
-                if (
-                    modulename
-                    in [
-                        "__init__.py",
-                        "__pycache__",
-                    ]
-                    or not modulename.endswith(".py")
-                ):
-                    continue
-
-                try:
-                    module = importlib.import_module(
-                        "%s.%s" % (modulepath, modulename.replace(".py", ""))
-                    )
-                    add_functions(module)
-                except:
-                    pass
+            # Ignore any scripts that ast cannot parse
+            try:
+                add_functions(filename, modulepath)
+            except:
+                pass
 
         return lookup
 
