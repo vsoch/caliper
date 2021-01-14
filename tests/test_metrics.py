@@ -7,6 +7,16 @@ import sys
 import pytest
 
 
+def test_metrics_loading(tmp_path):
+    """test that an existing metric can be loaded"""
+    from caliper.metrics import MetricsExtractor
+
+    extractor = MetricsExtractor("pypi:sif")
+    result = extractor.load_metric("functiondb")
+    assert result
+    assert "by-file" in result
+
+
 def test_metrics_extractor(tmp_path):
     """test git manager"""
     print("Testing Metrics and Extractor")
