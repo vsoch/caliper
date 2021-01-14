@@ -86,7 +86,9 @@ class PypiManager(ManagerBase):
             )
 
         # Pypi is already sorted by version (at least it seems)
-        logger.info("Found %s versions for %s" % (len(self._specs), name))
+        logger.info(
+            "Found %s versions for %s" % (len(self._specs), name or self.package_name)
+        )
         return self._specs
 
     def get_python_versions(self):

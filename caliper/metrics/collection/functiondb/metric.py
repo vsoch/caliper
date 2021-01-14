@@ -7,6 +7,7 @@ from caliper.utils.file import recursive_find, read_file
 
 import ast
 import os
+import re
 import sys
 
 
@@ -27,11 +28,16 @@ class Functiondb(MetricBase):
         sys.path.insert(0, self.git.folder)
 
         # Helper function to populate lookup
-        def add_functions(filename, modulepath):
+        def add_functions(filepath, modulepath):
 
-            node = ast.parse(read_file(filename, False))
+            filename = os.path.basename(filepath)
+            node = ast.parse(read_file(filepath, False))
             functions = [n for n in node.body if isinstance(n, ast.FunctionDef)]
             classes = [n for n in node.body if isinstance(n, ast.ClassDef)]
+
+            # If we have an init, then it's just the main class, otherwise module
+            if filename != "__init__":
+                modulepath = "%s.%s" % (modulepath, re.sub("[.]py$", "", filename))
 
             # Add each of functions and classes - ignore default values for now
             for function in functions:
