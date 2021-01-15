@@ -28,6 +28,8 @@ class Functiondb(MetricBase):
         # Add the temporary directory to the PYTHONPATH
         sys.path.insert(0, self.git.folder)
 
+        # Checkout the right commit
+
         # Helper function to populate lookup
         def add_functions(filepath, modulepath):
 

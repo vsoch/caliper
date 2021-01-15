@@ -25,7 +25,11 @@ class MetricBase:
         self.classpath = os.path.dirname(filename)
 
     def extract(self):
+        """extract for a metric base assumes one timepoint, so we checkout the
+        commit for the user.
+        """
         for tag, index in self.iter_tags():
+            self.git.checkout(str(tag.commit), dest=self.git.folder)
             self._data[index] = self._extract(tag.commit)
 
     @property
@@ -83,6 +87,9 @@ class ChangeMetricBase(MetricBase):
         pass
 
     def extract(self):
+        """extract for a change metric base has two timepoints, we don't do
+        any checkout on behalf of the user.
+        """
         for tag, parent, index in self.iter_tags():
             self._data[index] = self._extract(tag.commit, parent)
 
