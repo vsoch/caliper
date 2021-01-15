@@ -1,20 +1,45 @@
-"""
-
-Copyright (C) 2020-2021 Vanessa Sochat.
-
-This Source Code Form is subject to the terms of the
-Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed
-with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
-"""
+__author__ = "Vanessa Sochat"
+__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__license__ = "MPL 2.0"
 
 import errno
 import fnmatch
 import json
+import io
 import os
 import shutil
 import tempfile
 import yaml
+import zipfile
+
+
+def write_zip(members, saveto):
+    """Given a dictionary with filenames (keys) and data (values),
+    write the data to a zipfile.
+
+    Parameters
+    ==========
+    members (dict) : a lookup (keys are filenames, values data) of files to add
+    saveto   (str) : a filename to save the zip to.
+    """
+    with zipfile.ZipFile(saveto, "w") as zf:
+        for filename, content in members.items():
+            if isinstance(content, dict):
+                content = json.dumps(content)
+            zf.writestr(filename, content)
+    return saveto
+
+
+def zip_from_string(zipdata, filename=None):
+    """Given zipdata (for example, provided from a request) load it into
+    a zip object so we can then extract it (or otherwise parse it)
+    """
+    # Read into in-memory zip, return specific file or lookup of files
+    memzip = zipfile.ZipFile(io.BytesIO(zipdata))
+    if not filename:
+        return {name: memzip.read(name) for name in memzip.namelist()}
+    elif filename in memzip.namelist():
+        return memzip.read(filename)
 
 
 def move_files(source, dest):

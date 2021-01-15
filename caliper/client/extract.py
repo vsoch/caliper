@@ -46,7 +46,7 @@ def main(args, extra):
                 client.extract_metric(metric)
 
         # Save results to files
-        client.save_all(outdir, force=args.force)
+        client.save_all(outdir, force=args.force, fmt=args.fmt)
 
         # Cleanup, unless disabled
         if not args.no_cleanup:

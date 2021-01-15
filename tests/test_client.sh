@@ -30,6 +30,7 @@ runTest 0 $output caliper metrics total
 echo
 echo "#### Testing caliper extract"
 runTest 0 $output caliper extract --metric changedlines --outdir $tmpdir pypi:sif
+runTest 0 $output caliper extract --metric functiondb --fmt zip --outdir $tmpdir pypi:sif
 runTest 0 $output caliper extract --metric all --outdir $tmpdir pypi:sif
 
 echo
