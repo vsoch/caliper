@@ -37,7 +37,7 @@ class Functiondb(MetricBase):
             classes = [n for n in node.body if isinstance(n, ast.ClassDef)]
 
             # If we have an init, then it's just the main class, otherwise module
-            if filename != "__init__":
+            if filename != "__init__.py":
                 modulepath = "%s.%s" % (modulepath, re.sub("[.]py$", "", filename))
 
             # Add the modulepath to the lookup
