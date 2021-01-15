@@ -4,6 +4,7 @@ __license__ = "MPL 2.0"
 
 from caliper.metrics.base import MetricBase
 from caliper.utils.file import recursive_find, read_file
+from caliper.logger import logger
 
 import ast
 import os
@@ -39,6 +40,9 @@ class Functiondb(MetricBase):
             if filename != "__init__":
                 modulepath = "%s.%s" % (modulepath, re.sub("[.]py$", "", filename))
 
+            # Add the modulepath to the lookup
+            lookup[modulepath] = {}
+
             # Add each of functions and classes - ignore default values for now
             for function in functions:
                 lookup[modulepath][function.name] = [
@@ -53,7 +57,9 @@ class Functiondb(MetricBase):
                         arg.arg for arg in method.args.args
                     ]
 
-        # Look for folders with an init
+        # Keep track of counts
+        count = 0
+        issue_count = 0
         for filename in recursive_find(self.git.folder, "*.py"):
 
             # Skip files that aren't a module
@@ -62,20 +68,25 @@ class Functiondb(MetricBase):
                 continue
 
             # The module path is needed for a script calling the function
+            count += 1
             modulepath = ".".join(
                 os.path.dirname(filename)
                 .replace(self.git.folder, "")
                 .strip("/")
                 .split("/")
             )
-            lookup[modulepath] = {}
 
             # Ignore any scripts that ast cannot parse
             try:
                 add_functions(filename, modulepath)
             except:
+                logger.debug("Issue parsing %s, skipping" % filename)
+                issue_count += 1
                 pass
 
+        logger.debug(
+            "Successfully parsed %s files. %s were skipped." % (count, issue_count)
+        )
         return lookup
 
     def get_file_results(self):
