@@ -73,6 +73,9 @@ class GitManager:
     def config(self, key, value, dest=None):
         self.run_command(self.init_cmd(dest) + ["config", key, value])
 
+    def checkout(self, commit, dest=None):
+        self.run_command(self.init_cmd(dest) + ["checkout", commit])
+
     def ls_files(self, dest=None):
         """init an empty repository in a directory of choice"""
         dest = dest or self.folder or ""

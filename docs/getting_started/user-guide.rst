@@ -530,8 +530,24 @@ We can easily create a MetricsExtractor class and then read content there as fol
 For loading the metric, you can also provide a different ``repository`` (defaults to vsoch/caliper-metrics), 
 ``metric`` name (required), ``subfolder`` (defaults to empty string), and ``branch`` (defaults to main).
 If the metric exists in the repository, it will download and load the data for you
-into result. If not, None will be returned.
+into result. If not, None will be returned. You can also load a zip metric from
+a repository:
 
+.. code:: python
+
+    result = extractor.load_metric("functiondb", extension="zip")
+
+
+And finally, you can also load the metric directly from a filename, which might be 
+appropriate if the file is too big for version control:
+
+.. code:: python
+
+    result = extractor.load_metric("functiondb", filename="functiondb-results.zip")
+
+
+Either zip or json files are supported. Once you load the result, the extracted data
+should be available:
 
 .. code:: python
 

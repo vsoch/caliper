@@ -4,12 +4,20 @@ __license__ = "MPL 2.0"
 
 from caliper.metrics.base import MetricFinder
 from caliper.managers import GitManager
-from caliper.utils.file import write_json, mkdir_p
+from caliper.utils.file import (
+    write_json,
+    mkdir_p,
+    zip_from_string,
+    write_zip,
+    read_json,
+    read_zip,
+)
 from caliper.utils.prompt import confirm
 from caliper.utils.command import wget_and_extract
 from caliper.logger import logger
 
 import importlib
+import json
 import requests
 import shutil
 import tempfile
@@ -47,33 +55,61 @@ class MetricsExtractor:
         for name, result in self._extractors.items():
             yield name, result
 
-    def load_metric(self, metric, repository=None, subfolder=None, branch=None):
-        """Load a metric from from a GitHub repository that has them extracted,
-        optionally specifying a custom repository and subfolder.
+    def load_metric(
+        self,
+        metric,
+        filename=None,
+        repository="vsoch/caliper-metrics",
+        subfolder="",
+        branch="main",
+        extension="json",
+    ):
+        """Load a metric from from a file or GitHub repo that has them extracted,
+        optionally specifying a custom repository and subfolder. Smaller metrics
+        are typically provided via json, and larger ones via zip.
         """
-        repository = repository or "vsoch/caliper-metrics"
-        subfolder = subfolder or ""
-        branch = branch or "main"
-
         # A manager is required
         if not self.manager:
             logger.exit("A manager is required to load a metric for.")
 
+        if filename:
+            return self._load_metric_file(filename, metric)
+        return self._load_metric_repo(metric, repository, subfolder, branch, extension)
+
+    def _load_metric_file(self, filename, metric):
+        """helper function to load a metric from a filename. If it's zipped,
+        we need to read and decompress.
+        """
+        name = "%s-results.json" % metric
+        if filename.endswith("zip"):
+            return json.loads(read_zip(filename, name))
+        return read_json(name)
+
+    def _load_metric_repo(self, metric, repository, subfolder, branch, extension):
+        """helper function to load a metric from a repository."""
         # If we have a subfolder, add // around it
         if subfolder:
             subfolder = "%s/" % subfolder.strip("/")
         manager = self.manager.replace(":", "/")
-        url = "https://raw.githubusercontent.com/%s/%s/%s%s/%s/%s-results.json" % (
+        url = "https://raw.githubusercontent.com/%s/%s/%s%s/%s/%s-results.%s" % (
             repository,
             branch,
             subfolder,
             manager,
             metric,
             metric,
+            extension,
         )
-        response = requests.get(url)
-        if response.status_code == 200:
+
+        logger.info("Downloading %s" % url)
+        response = requests.get(url, stream=(extension == "zip"))
+        if response.status_code == 200 and extension == "json":
             return response.json()
+        elif response.status_code == 200 and extension == "zip":
+            data = zip_from_string(
+                response.content, filename="%s-results.json" % metric
+            )
+            return json.loads(data)
 
     @property
     def metrics(self):
@@ -160,27 +196,36 @@ class MetricsExtractor:
         logger.info("Repository for %s is created at %s" % (self.manager, self.tmpdir))
         return self.git
 
-    def save_all(self, outdir, force=False):
+    def save_all(self, outdir, force=False, fmt="json"):
         """Save data as json exports using an outdir root."""
         if not self.manager or not self._extractors:
             logger.exit("You must add a manager and do an extract() before save.")
 
+        if fmt not in ["json", "zip"]:
+            logger.exit("Export format %s is not recognized. Choose json or zip." % fmt)
         package_dir = os.path.join(outdir, self.manager.name, self.manager.uri)
 
-        written = True
+        written = False
         for _, extractor in self._extractors.items():
             extractor_dir = os.path.join(package_dir, extractor.name)
             mkdir_p(extractor_dir)
 
             # Prepare to write results to file
-            outfile = os.path.join(extractor_dir, "%s-results.json" % extractor.name)
+            jsonfile = "%s-results.json" % extractor.name
+            outfile = os.path.join(
+                extractor_dir, "%s-results.%s" % (extractor.name, fmt)
+            )
             if os.path.exists(outfile) and not force:
                 logger.warning("%s exists and force is False, skipping." % outfile)
                 continue
 
             written = True
             results = extractor.get_results()
-            write_json(results, outfile)
+
+            if fmt == "json":
+                write_json(results, outfile)
+            elif fmt == "zip":
+                write_zip({jsonfile: results}, outfile)
 
         if written:
             logger.info("Results written to %s" % outdir)

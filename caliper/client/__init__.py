@@ -104,6 +104,16 @@ def get_parser():
     )
 
     extract.add_argument(
+        "-f",
+        "--fmt",
+        "--format",
+        dest="fmt",
+        help="the format to extract. Defaults to json, but zip is recommended for larger projects.",
+        choices=["json", "zip"],
+        default="json",
+    )
+
+    extract.add_argument(
         "packages",
         help="package to extract, e.g., pypi:, github:",
         nargs="*",

@@ -86,7 +86,9 @@ class PypiManager(ManagerBase):
             )
 
         # Pypi is already sorted by version (at least it seems)
-        logger.info("Found %s versions for %s" % (len(self._specs), name))
+        logger.info(
+            "Found %s versions for %s" % (len(self._specs), name or self.package_name)
+        )
         return self._specs
 
     def get_python_versions(self):
@@ -112,10 +114,9 @@ class PypiManager(ManagerBase):
 
         return python_versions
 
-    def find_release(self, releases=None, arch=None, python_version=None):
+    def find_release(self, releases, arch=None, python_version=None):
         """Given a list of releases, find one that we can extract"""
         filename = None
-        releases = releases or self.releases
 
         if arch:
             releases = [r for r in releases if re.search(arch, r["filename"])]
