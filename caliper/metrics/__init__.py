@@ -4,7 +4,14 @@ __license__ = "MPL 2.0"
 
 from caliper.metrics.base import MetricFinder
 from caliper.managers import GitManager
-from caliper.utils.file import write_json, mkdir_p, zip_from_string, write_zip
+from caliper.utils.file import (
+    write_json,
+    mkdir_p,
+    zip_from_string,
+    write_zip,
+    read_json,
+    read_zip,
+)
 from caliper.utils.prompt import confirm
 from caliper.utils.command import wget_and_extract
 from caliper.logger import logger
@@ -51,12 +58,13 @@ class MetricsExtractor:
     def load_metric(
         self,
         metric,
+        filename=None,
         repository="vsoch/caliper-metrics",
         subfolder="",
         branch="main",
         extension="json",
     ):
-        """Load a metric from from a GitHub repository that has them extracted,
+        """Load a metric from from a file or GitHub repo that has them extracted,
         optionally specifying a custom repository and subfolder. Smaller metrics
         are typically provided via json, and larger ones via zip.
         """
@@ -64,6 +72,21 @@ class MetricsExtractor:
         if not self.manager:
             logger.exit("A manager is required to load a metric for.")
 
+        if filename:
+            return self._load_metric_file(filename, metric)
+        return self._load_metric_repo(metric, repository, subfolder, branch, extension)
+
+    def _load_metric_file(self, filename, metric):
+        """helper function to load a metric from a filename. If it's zipped,
+        we need to read and decompress.
+        """
+        name = "%s-results.json" % metric
+        if filename.endswith("zip"):
+            return json.loads(read_zip(filename, name))
+        return read_json(name)
+
+    def _load_metric_repo(self, metric, repository, subfolder, branch, extension):
+        """helper function to load a metric from a repository."""
         # If we have a subfolder, add // around it
         if subfolder:
             subfolder = "%s/" % subfolder.strip("/")

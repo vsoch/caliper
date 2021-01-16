@@ -30,6 +30,18 @@ def write_zip(members, saveto):
     return saveto
 
 
+def read_zip(zipname, filename):
+    """read a zipfile into a zipflie object. Optionally extract a specific
+    file from it. Currently the only support/need is to extract a specific
+    file from it.
+    """
+    with zipfile.ZipFile(zipname, "r") as zf:
+        if not filename:
+            return {name: zf.read(name) for name in zf.namelist()}
+        elif filename in zf.namelist():
+            return zf.read(filename)
+
+
 def zip_from_string(zipdata, filename=None):
     """Given zipdata (for example, provided from a request) load it into
     a zip object so we can then extract it (or otherwise parse it)
