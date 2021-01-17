@@ -119,6 +119,7 @@ class MetricBase:
 
         # Prepare to write results to file
         if fmt in ["json-single", "zip"]:
+            fmt = "json" if fmt == "json-single" else fmt
             outfile = os.path.join(extractor_dir, "%s-results.%s" % (self.name, fmt))
             if os.path.exists(outfile) and not force:
                 logger.warning("%s exists and force is False, skipping." % outfile)
