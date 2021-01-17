@@ -21,10 +21,6 @@ class Totalcounts(MetricBase):
             "files": total_files,
         }
 
-    def get_file_results(self):
+    def get_results(self):
         """return a lookup of changes, where each change has a list of files"""
-        return self._data
-
-    def get_group_results(self):
-        """Get summed values (e.g., lines changed) across files"""
         return self._data

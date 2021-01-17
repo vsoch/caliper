@@ -54,7 +54,11 @@ class Changedlines(ChangeMetricBase):
         """The second commit should be the parent"""
 
         diffs = {diff.a_path: diff for diff in commit1.diff(commit2)}
+
+        # Results by file (data) and by group
         data = []
+        summary_keys = ["insertions", "deletions", "lines"]
+        group = dict((x, 0) for x in summary_keys)
 
         # commit, we'll iterate through it to get the information we need.
         for filepath, metrics in commit1.stats.files.items():
@@ -79,22 +83,16 @@ class Changedlines(ChangeMetricBase):
                     ),
                 }
             )
+            # Update total counts
+            for key in summary_keys:
+                group[key] += metrics.get(key, 0)
+
             if metrics:
                 data.append(metrics)
 
-        return data
+        # Organize by file and group
+        return {"by-file": data, "by-group": group}
 
-    def get_file_results(self):
+    def get_results(self):
         """return a lookup of changes, where each change has a list of files"""
         return self._data
-
-    def get_group_results(self):
-        """Get summed values (e.g., lines changed) across files"""
-        results = {}
-        summary_keys = ["insertions", "deletions", "lines"]
-        for index, items in self._data.items():
-            results[index] = dict((x, 0) for x in summary_keys)
-            for item in items:
-                for key in summary_keys:
-                    results[index][key] += item.get(key, 0)
-        return results

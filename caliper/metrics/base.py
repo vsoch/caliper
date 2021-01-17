@@ -5,7 +5,7 @@ __license__ = "MPL 2.0"
 from abc import abstractmethod
 from collections.abc import Mapping
 from caliper.logger import logger
-from caliper.utils.file import get_tmpdir
+from caliper.utils.file import mkdir_p, write_json, read_json, get_tmpdir, write_zip
 from distutils.version import StrictVersion
 import os
 
@@ -18,6 +18,9 @@ class MetricBase:
     name = "metric"
     description = "Extract a metric for a particular tag or commit"
     date_time_format = "%Y-%m-%dT%H:%M:%S%z"
+
+    # The extractor is a default, and can be over-ridden by the subclass
+    extractor = "json-single"
 
     def __init__(self, git=None, filename=__file__):
         self._data = {}
@@ -46,16 +49,97 @@ class MetricBase:
         metric, but if given a results dictionary, the metric should be able
         to match a result to a visualization, for example.
         """
-        return {
-            "by-file": self.get_file_results(),
-            "by-group": self.get_group_results(),
-        }
+        pass
 
-    def get_file_results(self):
-        return []
+    def save_json(self, package_dir, force=False):
+        """save an entire folder of json (along with the index)"""
+        results = self.get_results()
+        urls = []
 
-    def get_group_results(self):
-        return []
+        # Get top level keys, labels for each
+        labels = list(results.keys())
+        self._setup_save(package_dir, "json", force)
+        extractor_dir = os.path.join(package_dir, self.name)
+
+        # Organize results by version inside of separate files
+        for label in labels:
+            result_file = os.path.join(extractor_dir, "%s-%s.json" % (self.name, label))
+            newresult = {label: results[label]}
+            urls.append(os.path.basename(result_file))
+            if os.path.exists(result_file) and force is False:
+                logger.warning(
+                    "Result file %s already exists and force is False, skipping overwrite."
+                    % result_file
+                )
+                continue
+            write_json(newresult, result_file)
+
+        # Update the index to include the (relative) list of files
+        self.update_index(extractor_dir, {"json": {"urls": urls}})
+
+    def save_zip(self, package_dir, force=False):
+        """Save a zip file of results (inside the single json file)"""
+        outfile = self._setup_save(package_dir, "zip", force)
+        if not outfile:
+            return
+
+        # Prepare to write results to file
+        jsonfile = "%s-results.json" % self.name
+
+        # Get the results, write to a single updated file
+        results = self.get_results()
+        write_zip({jsonfile: results}, outfile)
+        self.update_index(
+            os.path.dirname(outfile), {"zip": {"url": os.path.basename(outfile)}}
+        )
+
+    def save_json_single(self, package_dir, force=False):
+        """Save a single json file, meaning we generate an index that points to it
+        We return a boolean to indicate if results were written or not.
+        """
+        outfile = self._setup_save(package_dir, "json-single", force)
+        if not outfile:
+            return
+
+        # Get the results, write to a single updated file
+        results = self.get_results()
+        write_json(results, outfile)
+        self.update_index(
+            os.path.dirname(outfile),
+            {"json-single": {"url": os.path.basename(outfile)}},
+        )
+
+    def _setup_save(self, package_dir, fmt, force):
+        """Setup any kind of save, meaning creating necessary output directories
+        and the intended filename.
+        """
+        # Each metric has it's own subfolder
+        extractor_dir = os.path.join(package_dir, self.name)
+        mkdir_p(extractor_dir)
+
+        # Prepare to write results to file
+        if fmt in ["json-single", "zip"]:
+            fmt = "json" if fmt == "json-single" else fmt
+            outfile = os.path.join(extractor_dir, "%s-results.%s" % (self.name, fmt))
+            if os.path.exists(outfile) and not force:
+                logger.warning("%s exists and force is False, skipping." % outfile)
+                return
+            return outfile
+
+    def update_index(self, extractor_dir, content):
+        """If an index already exists, load it and update it with the data type
+        (represented as the key of a dictionary in content). If an index does not
+        exist, write a new one. Filepaths should be relative.
+        """
+        index_file = os.path.join(extractor_dir, "index.json")
+        if not os.path.exists(index_file):
+            index = {"data": {}}
+            write_json(index, index_file)
+
+        # Read in the index and update it
+        index = read_json(index_file)
+        index["data"].update(content)
+        write_json(index, index_file)
 
     def plot_results(self, result_file, outdir=None, force=False, title=None):
         """Given a metric has a template and a function to generate data
