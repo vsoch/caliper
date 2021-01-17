@@ -5,10 +5,7 @@ __license__ = "MPL 2.0"
 from caliper.metrics.base import MetricFinder
 from caliper.managers import GitManager
 from caliper.utils.file import (
-    write_json,
-    mkdir_p,
     zip_from_string,
-    write_zip,
     read_json,
     read_zip,
 )
@@ -196,36 +193,31 @@ class MetricsExtractor:
         logger.info("Repository for %s is created at %s" % (self.manager, self.tmpdir))
         return self.git
 
-    def save_all(self, outdir, force=False, fmt="json"):
-        """Save data as json exports using an outdir root."""
+    def save_all(self, outdir, force=False, fmt=None):
+        """Save data as json or zip exports using an outdir root. If fmt is None,
+        we use the extractor default (typically single-json except for metrics
+        that warrant larger / more extraction).
+        """
         if not self.manager or not self._extractors:
             logger.exit("You must add a manager and do an extract() before save.")
 
-        if fmt not in ["json", "zip"]:
-            logger.exit("Export format %s is not recognized. Choose json or zip." % fmt)
-        package_dir = os.path.join(outdir, self.manager.name, self.manager.uri)
-
-        written = False
-        for _, extractor in self._extractors.items():
-            extractor_dir = os.path.join(package_dir, extractor.name)
-            mkdir_p(extractor_dir)
-
-            # Prepare to write results to file
-            jsonfile = "%s-results.json" % extractor.name
-            outfile = os.path.join(
-                extractor_dir, "%s-results.%s" % (extractor.name, fmt)
+        if fmt and fmt not in self.manager.export_formats:
+            logger.exit(
+                "Export format %s is not recognized. Choose %s."
+                % (fmt, ", ".join(self.manager.export_formats))
             )
-            if os.path.exists(outfile) and not force:
-                logger.warning("%s exists and force is False, skipping." % outfile)
-                continue
+        package_dir = os.path.join(outdir, self.manager.name, self.manager.uri)
+        logger.info("Results will be written to %s" % package_dir)
 
-            written = True
-            results = extractor.get_results()
+        for _, extractor in self._extractors.items():
 
-            if fmt == "json":
-                write_json(results, outfile)
-            elif fmt == "zip":
-                write_zip({jsonfile: results}, outfile)
+            # Each metric can define a default format
+            fmt_ = fmt or extractor.extractor
 
-        if written:
-            logger.info("Results written to %s" % outdir)
+            # Do save based on selected type
+            if fmt_ == "json-single":
+                extractor.save_json_single(package_dir, force=force)
+            elif fmt_ == "zip":
+                extractor.save_zip(package_dir, force=force)
+            else:
+                extractor.save_json(package_dir, force=force)

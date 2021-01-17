@@ -6,6 +6,7 @@ __license__ = "MPL 2.0"
 
 import caliper
 from caliper.logger import setup_logger
+from caliper.managers.base import ManagerBase
 import argparse
 import sys
 
@@ -108,9 +109,9 @@ def get_parser():
         "--fmt",
         "--format",
         dest="fmt",
-        help="the format to extract. Defaults to json, but zip is recommended for larger projects.",
-        choices=["json", "zip"],
-        default="json",
+        help="the format to extract. Defaults to json (multiple files).",
+        choices=ManagerBase.export_formats + [None],
+        default=None,
     )
 
     extract.add_argument(

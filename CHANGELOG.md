@@ -14,6 +14,7 @@ and **Merged pull requests**. Critical items to know are:
 The versions coincide with releases on pip.
 
 ## [0.2.x](https://github.com/vsoch/caliper/tree/master) (0.0.x)
+ - updating export organization to allow for many json (0.0.16)
  - adding functiondb metric extractor (0.0.15)
  - small bux fixes and addition of docs (0.0.14)
  - adding caliper analyzer (0.0.13)

@@ -16,6 +16,7 @@ class Functiondb(MetricBase):
 
     name = "functiondb"
     description = "for each commit, derive a function database lookup"
+    extractor = "json"
 
     def __init__(self, git):
         super().__init__(git, __file__)
@@ -91,6 +92,6 @@ class Functiondb(MetricBase):
         )
         return lookup
 
-    def get_file_results(self):
+    def get_results(self):
         """we only return file level results, as there are no summed group results"""
         return self._data

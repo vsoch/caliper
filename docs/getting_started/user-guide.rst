@@ -279,7 +279,21 @@ Metrics Extractor
 Finally, a metrics extractor provides an easy interface to iterate over versions
 of a package, and extract some kind of metric. There are two ways to go about it -
 starting with a repository that already has tags of interest, or starting
-with a manager that will be used to create it.
+with a manager that will be used to create it. For each, you have three options 
+for how to save data:
+
+ - **json**: is a folder with a json file for each version. This is recommended for large repositories (e.g., tensorflow)
+ - **json-single**: is a single json file of results, recommended for smaller repositories (e.g., sregistry)
+ - **zip**: is an intermediate, a compression json file, recommended for large but not massive repositories.
+
+You can specify the format with ``--fmt (json|json-single|zip)``.
+The default is json, which is the most conservative to ensure small file sizes for GitHub.
+It's recommended that you test extractions and choose the size that is right for you.
+Whatever you choose, an ``index.json`` file is generated in the output metric folder
+that will make it possible to detect what is available programatically with a request.
+We currently only support one extraction type at once, however if you think it necessary,
+we can add support for multiple.
+
 
 Extraction Using Client
 -----------------------
@@ -317,20 +331,24 @@ to extract a version repository.
 
 The ``extract`` command allows to extract metrics for a package:
 
+
 .. code:: console
     
     $ caliper extract --help
-    usage: caliper extract [-h] [--metric METRIC] [--outdir OUTDIR] [--no-cleanup] [packages [packages ...]]
+    usage: caliper extract [-h] [--metric METRIC] [-f {json,zip,json-single}] [--no-cleanup] [--outdir OUTDIR] [--force]
+                           [packages [packages ...]]
 
     positional arguments:
-      packages         packages to extract, e.g., pypi, GitHub, or (eventually) spack.
+      packages              package to extract, e.g., pypi:, github:
 
     optional arguments:
-      -h, --help       show this help message and exit
-      --metric METRIC  one or more metrics to extract (comma separated), defaults to all metrics
-      --outdir OUTDIR  output directory to write files (defaults to temporary directory)
-      --no-cleanup     do not cleanup temporary extraction repositories.
-      --force          if a metric file exists, do not overwrite.
+      -h, --help            show this help message and exit
+      --metric METRIC       one or more metrics to extract (comma separated), defaults to all metrics
+      -f {json,zip,json-single}, --fmt {json,zip,json-single}, --format {json,zip,json-single}
+                            the format to extract. Defaults to json (multiple files).
+      --no-cleanup          do not cleanup temporary extraction repositories.
+      --outdir OUTDIR       output directory to write files (defaults to temporary directory)
+      --force               if a file exists, do not overwrite.
 
 But first we might want to see metrics available:
 
@@ -338,8 +356,9 @@ But first we might want to see metrics available:
 .. code:: console
 
     $ caliper metrics
-             totalcounts: caliper.metrics.collection.totalcounts.metric.Totalcounts
-            changedlines: caliper.metrics.collection.changedlines.metric.Changedlines
+         totalcounts: caliper.metrics.collection.totalcounts.metric.Totalcounts
+          functiondb: caliper.metrics.collection.functiondb.metric.Functiondb
+        changedlines: caliper.metrics.collection.changedlines.metric.Changedlines
 
 Let's say we want to extract the changedlines metric for a pypi repository, sif, which
 will return insertions, deletions, and overall change for each tagged release.
@@ -347,41 +366,74 @@ That would look like this:
 
 .. code:: console
 
-    caliper extract --metric changedlines pypi:sif
+    $ caliper extract --metric changedlines pypi:sif
     Found 2 versions for sif
-    Repository for [manager:sif] is created at /tmp/sif-26hqifbm
-    Results written to /tmp/caliper-p633odvg
+    Downloading and tagging 0.0.1, 1 of 2
+    Downloading and tagging 0.0.11, 2 of 2
+    Repository for [manager:pypi] is created at /tmp/sif-94zn1b6b
+    Results will be written to /home/vanessa/Desktop/Code/caliper-metrics/pypi/sif
 
-By default, if you don't specify an output directory, the metrics will be saved 
-to the present working directory. The organizaion is by package type,
-name, and then results files:
+You can change the format by specifying ``--fmt``
 
 .. code:: console
 
-    $ tree /tmp/caliper-p633odvg
-    /tmp/caliper-p633odvg
+    $ caliper extract --metric changedlines --fmt zip pypi:sif
+    $ caliper extract --metric changedlines --fmt json-single pypi:sif
+
+
+By default, if you don't specify an output directory, the metrics will be saved 
+to the present working directory. The organizaion is by package type,
+name, and then results files Here we can see results in all three 
+formats: ``zip``, ``json`` (multiple files), and ``json-single``:
+
+.. code:: console
+
+    $ tree
     └── pypi
         └── sif
             └── changedlines
-                ├── changedlines-file-results.json
-                └── changedlines-summed-results.json
+                ├── changedlines-0.0.1..0.0.11.json
+                ├── changedlines-EMPTY..0.0.1.json
+                ├── changedlines-results.json-single
+                ├── changedlines-results.zip
+                └── index.json
 
-    3 directories, 2 files
+And the index file makes it possible to see the contents of the folder (e.g.,
+from a programmatic standpoint):
 
-but you can instead save to an output folder of your choosing (with the same structure).
+.. code:: json
+
+    {
+        "data": {
+            "zip": {
+                "url": "totalcounts-results.zip"
+            },
+            "json": {
+                "urls": [
+                    "totalcounts-0.0.1.json",
+                    "totalcounts-0.0.11.json"
+                ]
+            },
+            "json-single": {
+                "url": "totalcounts-results.json-single"
+            }
+        }
+    }
+
+
+As an alternative to saving in the present working directory, you can instead save to 
+an output folder of your choosing (with the same structure).
 
 .. code:: console
     
     mkdir -p examples/metrics/
     caliper extract --metric changedlines --outdir examples/metrics/ pypi:sif
-    Found 2 versions for sif
-    Repository for [manager:sif] is created at /tmp/sif-0vpe767q
-    Results written to examples/metrics/
 
 
 For a change metric (a type that looks at change across tagged commits) you'll see 
 a range of version like `EMPTY..0.0.1`. For a metric specific to a commit you will
 see just the tag (e.g., `0.0.1`).
+
 
 Extraction Using Manager
 ------------------------
@@ -467,6 +519,7 @@ We can see the tags:
 
 This is really neat! Next we can use the extractor to calculate metrics.
 
+
 Extraction from Existing
 ------------------------
 
@@ -512,6 +565,19 @@ Note that you can also extract all metrics known to the extractor.
 
     extractor.extract_all()
 
+The recommended way to save is then to use the ``save_all`` function, which loops through
+the known metrics that have been run:
+
+.. code:: python
+
+    extractor.save_all(outdir, force=False, fmt="json")
+
+For formats you can again choose between ``json``, ``json-single``, and ``zip``.
+As stated earlier, you'd want to use ``json`` for the largest repos and metrics
+(e.g., a function database, functiondb is very large, and this scales with the number
+of releases), a ``json-single`` for smaller metric/release combinations, and ``zip``
+if it's somewhere in betwee. Caliper can load all three, so you don't need to worry.
+
 
 Extraction From Repository
 --------------------------
@@ -547,12 +613,13 @@ appropriate if the file is too big for version control:
 
 
 Either zip or json files are supported. Once you load the result, the extracted data
-should be available:
+should be available, with the top level a key for a version or a difference between
+two versions.
 
 .. code:: python
 
     result.keys()
-    # dict_keys(['by-file', 'by-group'])
+    # dict_keys(['0.0.1'])
 
 You can then continue to use the result as needed. For the example above, since we have
 function signatures for every version of tensorflow, we might generate a comparison  or similiarity
@@ -562,25 +629,19 @@ matric depending on those signatures.
 Parsing Results
 ---------------
 
-For each extractor, you can currently loop through them and extract either
-data on the level of individual files, or summary results:
+For each extractor, you can currently loop through them and extract 
+results for the metric. The results are organized by version (e.g., ``0.0.1``), or difference
+between versions (e.g., ``0.0.1..0.0.11``), depending on the metric.
 
 .. code:: console
 
     for name, metric in extractor:
         # Changedlines <caliper.metrics.collection.changedlines.metric.Changedlines at 0x7f7cd24f4940>
 
-        # A lookup with file level changes
-        metric.get_file_results()
-
-        # A lookup with group or summed changed
-        metric.get_group_results()
-
-        # A lookup with "by-file" and "by-group" that includes both the above
+        # A lookup with versions
         metric.get_results()
 
 
-Each metric can choose to return one or both levels of results.
 For example, an entry in the changedlines group results might look like this:
 
 

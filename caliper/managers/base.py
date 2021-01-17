@@ -10,6 +10,7 @@ class ManagerBase:
     """A manager base exists to define standard actions for a manager."""
 
     name = "base"
+    export_formats = ["json", "zip", "json-single"]
 
     def __init__(self, name=None):
         self.uri = name
