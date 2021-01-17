@@ -215,10 +215,10 @@ don't need to supply it (it will be auto-detected):
 and run the builds in serial. A parallel argument is supported, but in practice
 it doesn't work well building multiple containers at once.
 
-caliper.yml
------------
+caliper.yaml
+------------
 
-The caliper.yml file is a small configuration file to run caliper. Currently, it's fairly simply
+The caliper.yaml file is a small configuration file to run caliper. Currently, it's fairly simply
 and we need to define the dependency to run tests over (e.g., tensorflow), the Dockerfile template,
 a name, and then a list of runs:
 
@@ -245,7 +245,6 @@ If you don't define a list of ``versions`` (e.g., versions of tensorflow) all ve
 of the library will be tested. If you want to add custom arguments for your template (beyond a base image that
 is derived for your Python software, and the dependency name to derive wheels to install)
 you can do this with args:
-
 
 .. code:: yaml
 
@@ -652,6 +651,79 @@ For example, an entry in the changedlines group results might look like this:
 To say that between versions 0.2.34 and 0.2.35 there were 4 insertions, 4 deletions,
 and 8 lines changed total, and there was no change in overall size.
 We will eventually have more examples for how to parse and use this data.
+
+
+Checking and Updating Metrics
+-----------------------------
+
+Let's say you did an extraction, and have an output folder of current results.
+
+
+.. code:: console
+
+    pypi/sif/
+    ├── changedlines
+    │   ├── changedlines-results.json
+    │   └── index.json
+    ├── functiondb
+    │   ├── functiondb-results.json
+    │   └── index.json
+    └── totalcounts
+        ├── index.json
+        └── totalcounts-results.json
+
+
+If you have these results in a respository, you might want to run a nightly (or weekly)
+job to check for new releases, and if any new releases are found, to update your data.
+You can do that with ``caliper update --check`` and ``caliper update``. The suggested method
+is to use a ``caliper.yaml`` file to list the metric modules that you want to update.
+The simplest version just has a name for each:
+
+.. code:: yaml
+
+    metrics:
+      - name: pypi:tensorflow
+      - name: pypi:sif
+      - name: pypi:sregistry
+      - name: pypi:singularity-cli
+
+Notice that each package requires a prefix of the manager (pypi). You can then target 
+this file with ``caliper update``, or just specify a list of packages with the command:
+
+.. code:: console
+
+    $ caliper update pypi:tensorflow
+
+
+Either way. first you might want to check to look
+for new versions (the following command detects the caliper.yaml in the present working
+directory:
+
+
+.. code:: console
+
+    $ caliper update --check
+    Found 110 versions for tensorflow
+    Found 2 versions for sif
+    Found 82 versions for sregistry
+    [✔️  ] pypi:tensorflow|totalcounts is up to date.
+    [✔️  ] pypi:tensorflow|functiondb is up to date.
+    [✖️  ] pypi:tensorflow|changedlines has 1 new versions.
+    [✔️  ] pypi:sif|totalcounts is up to date.
+    [✔️  ] pypi:sif|functiondb is up to date.
+    [✖️  ] pypi:sif|changedlines has 1 new versions.
+    [👀️  ] pypi:singularity-cli|changedlines is not found.
+    [✔️  ] pypi:sregistry|totalcounts is up to date.
+    [✔️  ] pypi:sregistry|functiondb is up to date.
+    [✖️  ] pypi:sregistry|changedlines has 1 new versions.
+
+
+And then perform the update.
+
+.. code:: console
+
+    $ caliper update --check  
+
 
 Metrics View
 ============

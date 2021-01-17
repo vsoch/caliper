@@ -129,6 +129,54 @@ def get_parser():
         action="store_true",
     )
 
+    update = subparsers.add_parser(
+        "update",
+        help="update an extraction for one or more software packages.",
+    )
+
+    update.add_argument(
+        "--metric",
+        help="one or more metrics to update (comma separated), defaults to all metrics",
+        default="all",
+    )
+
+    update.add_argument(
+        "-f",
+        "--fmt",
+        "--format",
+        dest="fmt",
+        help="the format to update. Defaults to existing format in repository.",
+        choices=ManagerBase.export_formats + [None],
+        default=None,
+    )
+
+    update.add_argument(
+        "--config",
+        help="A caliper.yaml file to use for the update (required)",
+        default="caliper.yaml",
+    )
+
+    update.add_argument(
+        "packages",
+        help="package to extract, e.g., pypi:, github:, if caliper.yaml not provided",
+        nargs="*",
+        default=None,
+    )
+
+    update.add_argument(
+        "--check",
+        dest="check",
+        help="only check for updates and print status to the terminal.",
+        default=False,
+        action="store_true",
+    )
+
+    update.add_argument(
+        "--outdir",
+        help="output directory to write files (defaults to present working directory)",
+        default=None,
+    )
+
     view = subparsers.add_parser(
         "view",
         help="extract a metric and view a plot.",
@@ -186,7 +234,7 @@ def get_parser():
     for command in [extract, view]:
         command.add_argument(
             "--outdir",
-            help="output directory to write files (defaults to temporary directory)",
+            help="output directory to write files.",
             default=None,
         )
 
@@ -239,6 +287,8 @@ def main():
         from .extract import main
     elif args.command == "metrics":
         from .metrics import main
+    elif args.command == "update":
+        from .update import main
     elif args.command == "view":
         from .view import main
 
