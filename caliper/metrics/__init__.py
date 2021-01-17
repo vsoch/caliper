@@ -88,25 +88,43 @@ class MetricsExtractor:
         if subfolder:
             subfolder = "%s/" % subfolder.strip("/")
         manager = self.manager.replace(":", "/")
-        url = "https://raw.githubusercontent.com/%s/%s/%s%s/%s/%s-results.%s" % (
+
+        # Load the index for the metric, must exist for all output types
+        url = "https://raw.githubusercontent.com/%s/%s/%s%s/%s/index.json" % (
             repository,
             branch,
             subfolder,
             manager,
             metric,
-            metric,
-            extension,
         )
 
         logger.info("Downloading %s" % url)
-        response = requests.get(url, stream=(extension == "zip"))
-        if response.status_code == 200 and extension == "json":
-            return response.json()
-        elif response.status_code == 200 and extension == "zip":
-            data = zip_from_string(
-                response.content, filename="%s-results.json" % metric
-            )
-            return json.loads(data)
+        response = requests.get(url)
+        if response.status_code == 200:
+            index = response.json()
+            data = index.get('data', {}) 
+
+            # If the extension is json, prefer single file first
+            if extension == "json" and "json-single" in data:
+                url = "%s/%s" %(os.path.dirname(url), data['json-single']['url'])
+                response = requests.get(url)
+                if response.status_code == 200:
+                    return response.json()
+
+            elif extension == "zip" and "zip" in data:
+                response = requests.get(url, stream=True)
+                data = zip_from_string(response.content, filename="%s-results.json" % metric)
+                return json.loads(data)
+
+            elif extension == "json" and "json" in data:
+                results = {}
+                for filename in data["json"].get('urls', []):
+                    url = "%s/%s" %(os.path.dirname(url), filename)
+                    response = requests.get(url)
+                    if response.status_code == 200:
+                        results.update(response.json())
+                return results
+ 
 
     @property
     def metrics(self):

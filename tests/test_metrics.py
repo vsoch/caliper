@@ -14,7 +14,7 @@ def test_metrics_loading(tmp_path):
     extractor = MetricsExtractor("pypi:sif")
     result = extractor.load_metric("functiondb")
     assert result
-    assert "by-file" in result
+    assert "0.0.1" in result
 
 
 def test_metrics_extractor(tmp_path):
