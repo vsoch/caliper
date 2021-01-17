@@ -673,11 +673,29 @@ Let's say you did an extraction, and have an output folder of current results.
         └── totalcounts-results.json
 
 
-If you have these results in a respository, you might want to run a nightly (or weekly)
+For a given package, you can check the status of all metrics with ``caliper update --check``
+
+.. code:: yaml
+
+    $ caliper update --check pypi:sregistry 
+    Found 82 versions for sregistry
+    [✔️  ] pypi:sregistry|totalcounts is up to date.
+    [✔️  ] pypi:sregistry|functiondb is up to date.
+    [✔️  ] pypi:sregistry|changedlines is up to date.
+
+or a specific metric:
+
+.. code:: yaml
+
+    $ caliper update --check pypi:sregistry --metric functiondb
+    Found 82 versions for sregistry
+    [✔️  ] pypi:sregistry|functiondb is up to date.
+
+
+Or if you have many results in a respository, you might want to run a nightly (or weekly)
 job to check for new releases, and if any new releases are found, to update your data.
-You can do that with ``caliper update --check`` and ``caliper update``. The suggested method
-is to use a ``caliper.yaml`` file to list the metric modules that you want to update.
-The simplest version just has a name for each:
+To support much larger numbersof checks, you can use a ``caliper.yaml`` file 
+to list the metric modules that you want to update. The simplest version just has a name for each:
 
 .. code:: yaml
 
@@ -686,6 +704,10 @@ The simplest version just has a name for each:
       - name: pypi:sif
       - name: pypi:sregistry
       - name: pypi:singularity-cli
+
+
+But you can add additional arguments such as the metrics to check:
+
 
 Notice that each package requires a prefix of the manager (pypi). You can then target 
 this file with ``caliper update``, or just specify a list of packages with the command:

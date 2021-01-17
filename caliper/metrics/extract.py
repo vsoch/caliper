@@ -80,15 +80,6 @@ class MetricsExtractor:
             return self._load_metric_file(filename, metric)
         return self._load_metric_repo(metric, repository, subfolder, branch, extension)
 
-    def _load_metric_local(self, folder, metric):
-        """Given a metric repository (local on the filesystem), find an
-        associated index.json and load the metric
-        """
-        print("LOAD METRIC LOCAL")
-        import IPython
-
-        IPython.embed()
-
     def _load_metric_file(self, filename, metric):
         """helper function to load a metric from a filename. If it's zipped,"""
         name = "%s-results.json" % metric
@@ -134,7 +125,7 @@ class MetricsExtractor:
 
         if "zip" in data:
             metric_file = os.path.join(metric_dir, data["zip"].get("url", ""))
-            return json.loads(read_zip(metric_file, metric))
+            return json.loads(read_zip(metric_file, "%s-results.json" % metric))
 
         elif "json" in data:
             results = {}
@@ -291,10 +282,10 @@ class MetricsUpdater(MetricsExtractor):
 
     def check_metrics(self, packages, metrics, outdir, quiet=False):
         """Given a list of packages and metrics, return versions that are not
-        present.
+        present. Packages and metrics should each be a list of the same length
         """
         missing = {}
-        for package in packages:
+        for i, package in enumerate(packages):
             uri, name = package.split(":")  # pypi:sif
             missing[package] = {}
 
@@ -305,7 +296,7 @@ class MetricsUpdater(MetricsExtractor):
                 if not quiet:
                     logger.warning("%s is not a valid package manager uri." % package)
 
-            for metric in metrics:
+            for metric in metrics[i]:
 
                 # First look for existing data in outdir
                 index_file = os.path.join(outdir, uri, name, metric, "index.json")
@@ -322,7 +313,10 @@ class MetricsUpdater(MetricsExtractor):
                 current = list(results.keys())
 
                 # Change metrics show version ranges
-                current = [x.split("..")[0] for x in current if "EMPTY" not in x]
+                if current and ".." in current[0]:
+                    current = [
+                        x.split("..")[0] for x in current if "EMPTY" not in x
+                    ] + [x.split("..")[1] for x in current if "EMPTY" not in x]
 
                 # Compare found to current to get missing
                 found = [x.get("version") for x in manager.specs if x.get("version")]
@@ -333,13 +327,14 @@ class MetricsUpdater(MetricsExtractor):
                 if missing[package][metric]:
                     symbol = "✖️"
                 if not quiet:
-                    logger.info("[%s  ] %s metric %s" % (symbol, package, metric))
+                    print("[%s  ] %s metric %s" % (symbol, package, metric))
 
         return missing
 
     def update_metrics(self, packages, metrics, outdir):
         """Given a list of packages and metrics, check and update with new versions"""
         missing = self.check_metrics(packages, metrics, outdir)
+
         for package, metrics in missing.items():
 
             uri, name = package.split(":")  # pypi:sif

@@ -34,6 +34,11 @@ runTest 0 $output caliper extract --metric functiondb --fmt zip --outdir $tmpdir
 runTest 0 $output caliper extract --metric all --outdir $tmpdir pypi:sif
 
 echo
+echo "#### Testing caliper update"
+runTest 0 $output caliper update --check --outdir $tmpdir pypi:sif
+runTest 0 $output caliper update --outdir $tmpdir pypi:sif
+
+echo
 echo "#### Testing caliper view"
 runTest 0 $output caliper view --outdir $tmpdir $here/changedlines-pokemon-results.json
 runTest 1 $output caliper view --outdir $tmpdir $here/changedlines-pokemon-results.json

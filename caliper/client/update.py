@@ -33,22 +33,26 @@ def main(args, extra):
 
     # Read packages from the config, if provided
     packages = args.packages
-    if args.config:
+    if not packages and args.config:
         config = read_yaml(args.config)
         packages = [x["name"] for x in config.get("metrics", []) if x.get("name")]
+        metrics = [x.get("metrics", metrics) for x in config.get("metrics", [])]
+    else:
+        metrics = [metrics for x in range(len(packages))]
 
     # Check or Update the package metrics
     if args.check:
         missing = client.check_metrics(packages, metrics, outdir, quiet=True)
         for package, metrics in missing.items():
             if not metrics:
-                logger.info("[👀️  ] %s|%s is not found." % (package, metric))
+                print("[👀️ ] %s is not found." % package)
                 continue
             for metric, versions in metrics.items():
+
                 if not versions:
-                    logger.info("[✔️  ] %s|%s is up to date." % (package, metric))
+                    print("[✔️  ] %s|%s is up to date." % (package, metric))
                 else:
-                    logger.info(
+                    print(
                         "[✖️  ] %s|%s has %s new versions."
                         % (package, metric, len(versions))
                     )
