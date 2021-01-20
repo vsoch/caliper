@@ -294,6 +294,22 @@ We currently only support one extraction type at once, however if you think it n
 we can add support for multiple.
 
 
+Metrics Available
+-----------------
+
+All caliper metrics available can be found in the `metrics/collection <https://github.com/vsoch/caliper/tree/main/caliper/metrics/collection>`_
+folder in the caliper repository. Adding a new metric corresponds to creating a new folder here,
+and then adding the metric to this list.
+
+ - **functiondb**: is the function database metric. This means that for each version of a library we extract a lookup of all module functions, classes, and arguments. You might, for example, use this lookup to compare changes in the module over time.
+ - **changedlines**: is exactly what it sounds like - we look _between_ versions and count the number of changed lined. Thus, this uses a ``ChangeMetricBase`` instead of a standard ``MetricBase``.
+ - **totalcounts**: is also exactly what it sounds like! We look at each version and create a lookup that shows the total number of files for the metric. If other totals are wanted, we could add them here.
+
+You can look at the `caliper-metrics <https://github.com/vsoch/caliper-metrics>`_ repository
+to get a sense of the data. The changedlines metric is great for creating plots to show change in the module over time,
+while the functiondb is great for assessing overall change to the module structure.
+
+
 Extraction Using Client
 -----------------------
 
