@@ -425,13 +425,19 @@ an output folder of your choosing (with the same structure).
 
 .. code:: console
     
-    mkdir -p examples/metrics/
-    caliper extract --metric changedlines --outdir examples/metrics/ pypi:sif
+    $ mkdir -p examples/metrics/
+    $ caliper extract --metric changedlines --outdir examples/metrics/ pypi:sif
 
 
 For a change metric (a type that looks at change across tagged commits) you'll see 
 a range of version like `EMPTY..0.0.1`. For a metric specific to a commit you will
-see just the tag (e.g., `0.0.1`).
+see just the tag (e.g., `0.0.1`). To extract just one specific version (or a list of
+comma separated versions with no spaces) you can define ``--versions``:
+
+
+.. code:: console
+
+    $ caliper extract --metric functiondb --versions 0.12.1 pypi:tensorflow
 
 
 Extraction Using Manager

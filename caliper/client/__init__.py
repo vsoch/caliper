@@ -105,6 +105,11 @@ def get_parser():
     )
 
     extract.add_argument(
+        "--versions",
+        help="one or more versions to extract (comma separated), defaults to all versions",
+    )
+
+    extract.add_argument(
         "-f",
         "--fmt",
         "--format",

@@ -38,12 +38,15 @@ def main(args, extra):
         # Create a client to interact with
         client = MetricsExtractor(manager, quiet=True)
 
+        # Honor the args.version
+        versions = args.versions.split(",") if args.versions else None
+
         # Do the extraction
         for metric in metrics:
             if metric == "all":
-                client.extract_all()
+                client.extract_all(versions=versions)
             else:
-                client.extract_metric(metric)
+                client.extract_metric(metric, versions=versions)
 
         # Save results to files
         client.save_all(outdir, force=args.force, fmt=args.fmt)

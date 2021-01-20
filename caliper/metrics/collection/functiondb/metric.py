@@ -175,6 +175,10 @@ class Functiondb(MetricBase):
                 .split("/")
             )
 
+            # Remove purelib or platlib
+            # https://www.python.org/dev/peps/pep-0427/#what-s-the-deal-with-purelib-vs-platlib
+            modulepath = re.sub("^(purelib|platlib)[.]", "", modulepath)
+
             # Ignore any scripts that ast cannot parse
             try:
                 lookup = add_functions(filename, modulepath, lookup)

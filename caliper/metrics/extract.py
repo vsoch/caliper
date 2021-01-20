@@ -177,18 +177,20 @@ class MetricsExtractor:
                 return
         shutil.rmtree(self.tmpdir)
 
-    def extract_all(self):
+    def extract_all(self, versions=None):
+        versions = versions or []
         for name in self.metrics:
-            self.extract_metric(name)
+            self.extract_metric(name, versions)
 
-    def extract_metric(self, name):
+    def extract_metric(self, name, versions=None):
         """Given a metric, extract for each commit from the repository."""
+        versions = versions or []
         if name not in self.metrics:
             logger.exit("Metric %s is not known." % name)
 
         # If no git repository defined, prepare one
         if not self.git:
-            self.prepare_repository()
+            self.prepare_repository(versions)
 
         module, metric_name = self._metrics[name].rsplit(".", 1)
         metric = self.get_metric(name)
@@ -200,12 +202,13 @@ class MetricsExtractor:
         module, metric_name = self._metrics[name].rsplit(".", 1)
         return getattr(importlib.import_module(module), metric_name)(self.git)
 
-    def prepare_repository(self):
+    def prepare_repository(self, versions=None):
         """Since most source code archives won't include the git history,
         we would want to create a root directly with a new git installation,
         and then create tagged commits that correpond to each version. We
         can then use this git repository to derive metrics of change.
         """
+        versions = versions or []
         if not self.manager:
             logger.exit("A manager is required to prepare a repository.")
 
@@ -218,8 +221,12 @@ class MetricsExtractor:
         # Initialize empty respository
         self.git.init()
 
+        # If we have versions, filter down
+        self.filter_versions(versions)
+
         # For each version, download and create git commit and tag
         for i, spec in enumerate(self.manager.specs):
+
             logger.info(
                 "Downloading and tagging %s, %s of %s"
                 % (spec["version"], i + 1, len(self.manager.specs))
@@ -244,6 +251,17 @@ class MetricsExtractor:
 
         logger.info("Repository for %s is created at %s" % (self.manager, self.tmpdir))
         return self.git
+
+    def filter_versions(self, versions=None):
+        """Given a list of versions, filter down the specs to only include
+        the ones in the list
+        """
+        if versions:
+            specs = []
+            for spec in self.manager.specs:
+                if spec["version"] in versions:
+                    specs.append(spec)
+            self.manager._specs = specs
 
     def save_all(self, outdir, force=False, fmt=None):
         """Save data as json or zip exports using an outdir root. If fmt is None,
