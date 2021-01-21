@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<link ref="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+<script src="https://d3js.org/d3.v2.min.js?2.8.1"></script>
+<script src="https://vsoch.github.io/image-comparison-thresholding/static/js/tipsy.js"></script>
+
+<style>
+#controls {
+  position: absolute:
+  top: 10px;
+  left: 30px;
+}
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 2px;
+  max-width: 800px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+  box-sizing: border-box;
+  display: inline;
+  font-size: 10px;
+  width: 100%;
+  line-height: 1;
+  color: rgba(0, 0, 0, 0.8);
+  content: "\25BC";
+  position: absolute;
+  text-align: center;
+}
+
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+    margin: -1px 0 0 0;
+    top: 100%;
+    left: 0;
+}
+</style>
+<body>
+<div id="controls">
+ <select class="custom-select" id="version_selector" onchange="update_graph(this)">
+ </select>
+</div>
+<script>
+
+var margin = {top: 400, right: 100, bottom: 100, left: 200},
+    width = 1400,
+    height = 800;
+
+
+function generate_plot(version) {
+    version = version || "38"
+
+    // Tooltips
+    var tip = d3.tip()
+        .attr('class', 'd3-tip')
+        .offset([-10,10])
+        .html(function(d) {
+        if (d.retval == -1) {
+            return "<div class='row'><strong style='color:red'>Error: </strong>This container did not successfully build, so there is no output or return code.</div>";
+        }
+        if ((d.x_name == "build") && (d.retval == 0)) {
+           return "<div class='row'><strong style='color:green'>Output: </strong>This is the container build step, and not a test in the container. The container built successfully. </div><div class='col-md-6'><br><strong style='color:yellow'>Return Code:</strong><br>" + d.retval + "</div>";
+        }
+        if ((d.x_name == "build") && (d.retval == 1)) {
+           return "<div class='row'><strong style='color:red'>Error: </strong>This is the container build step, and not a test in the container. The container did not build successfully.</div><div class='col-md-6'><br><strong style='color:yellow'>Return Code:</strong><br>" + d.retval + "</div>";
+        }
+        return "<div class='row'><strong style='color:red'>Error: </strong><code>"+ d.error.join("<br>") +"</code></div><br><div class='col-md-6'><strong style='color:green'>Output:</strong><br><code>" + d.output.join('<br>') + "</code></div><div class='col-md-6'><br><strong style='color:yellow'>Return Code:</strong><br>" + d.retval + "</div>";
+       })
+
+    var element = document.getElementById("plotarea");
+    if (element) {
+        element.parentNode.removeChild(element);    
+    }
+
+    var svg = d3.select("body").append("svg")
+        .attr("id", "plotarea")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    // Call tooltips function
+    svg.call(tip);
+
+    svg.append("rect")
+        .attr("class", "background")
+        .attr("width", width)
+        .attr("height", height);
+
+    // Create a matrix for data, x is test, y is module version, and labels
+    var matrix = []
+    var row = []
+    var rowLabels = []
+    var columnLabels = new Set()
+    var row_version = window.data[version][0]['y_module']
+
+    // Derive column labels from first entry
+    for (var i = 0; i < window.data[version].length; i++) {
+        columnLabels.add(window.data[version][i]["x_name"])
+    }
+
+    columnLabels = Array.from(columnLabels);
+
+    for (var i = 0; i < window.data[version].length; i++) {
+        if (row_version != window.data[version][i]['y_module']) {
+            matrix.push(row)
+            var numcols = row.length
+            row_version = window.data[version][i]['y_module']
+            rowLabels.push(window.data[version][i]['y_module'])
+            row = [window.data[version][i]]
+        } else {
+            row.push(window.data[version][i])
+        }
+    }
+    var numrows = matrix.length
+
+    var x = d3.scale.ordinal()
+        .domain(d3.range(numcols))
+        .rangeBands([0, width]);
+
+    var y = d3.scale.ordinal()
+        .domain(d3.range(numrows))
+        .rangeBands([0, height]);
+
+    var row = svg.selectAll(".row")
+        .data(matrix)
+      .enter().append("g")
+        .attr("class", "row")
+        .attr("transform", function(d, i) { return "translate(0," + y(i) + ")"; });
+
+    row.selectAll(".cell")
+        .data(function(d) { return d; })
+      .enter().append("rect")
+        .attr("class", "cell")
+        .attr("x", function(d, i) { return x(i); })
+        .attr("width", x.rangeBand())
+        .attr("height", y.rangeBand())
+        .style("stroke-width", 0);
+
+    row.append("line")
+        .attr("x2", width);
+
+    row.append("text")
+        .attr("x", 0)
+        .attr("y", y.rangeBand() / 2)
+        .attr("dy", ".32em")
+        .style("font-size", "10px")
+        .attr("text-anchor", "end")
+        .text(function(d, i) { return rowLabels[i]; });
+
+    var column = svg.selectAll(".column")
+        .data(columnLabels)
+      .enter().append("g")
+        .attr("class", "column")
+        .style("font-size", "10px")
+        .attr("transform", function(d, i) { return "translate(" + x(i) + ")rotate(-90)"; });
+
+    column.append("line")
+        .attr("x1", -width);
+
+    column.append("text")
+        .attr("x", 6)
+        .attr("y", y.rangeBand() / 2)
+        .attr("dy", ".32em")
+        .style("font-size", "10px")
+        .attr("text-anchor", "start")
+        .text(function(d, i) {return d; });
+
+    row.selectAll(".cell")
+        .data(function(d, i) { return matrix[i]; })
+
+        // 1 indicates error, 0 indicates success, -1 is didn't run
+        .style("fill", function(d, i) {
+           if (d['retval'] == -1) {
+               return "black";
+           } else if (d['retval'] == 0) {
+               return "green";
+           }
+           return "red"
+        })
+        .on('mouseout.tip', tip.hide)
+        .on('mouseover.tip', tip.show);
+}
+
+// Change version on select change
+update_graph = function(selector) {
+   console.log(selector);
+   generate_plot(selector.value);
+}
+
+d3.json("test-results-by-python.json", function(data) {
+    window.data = data
+
+    // Keep track of versions to cycle through
+    var versions = Object.keys(window.data);
+    var selector = document.getElementById("version_selector");
+    for (var i = 0; i < versions.length; i++) {        
+        var option = document.createElement("option");
+        option.text = "Python Version " + versions[i];  
+        option.value = versions[i]
+        selector.appendChild(option);
+    }
+
+    // Get json name from the browser url
+    generate_plot(versions[0])
+
+});
+</script>

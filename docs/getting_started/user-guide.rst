@@ -215,6 +215,18 @@ don't need to supply it (it will be auto-detected):
 and run the builds in serial. A parallel argument is supported, but in practice
 it doesn't work well building multiple containers at once.
 
+Analyze Output
+--------------
+
+The output of analyze will be to write results to a ``.caliper`` folder, specifically
+to ``.caliper/data``. The result files can then be parsed to generate an interactive
+interface to explore them. A script is provided in the `examples/plot_analyze <https://github.com/vsoch/caliper/tree/main/examples/plot_analyze/>`_
+folder of the repository, an example shown at `vsoch/caliper-analysis <https://vsoch.github.io/caliper-analysis/ground-truth/>`_,
+and a screensht shown below.
+
+.. image:: img/caliper-analysis.png
+
+
 caliper.yaml
 ------------
 
