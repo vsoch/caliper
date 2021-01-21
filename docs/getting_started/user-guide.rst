@@ -215,6 +215,18 @@ don't need to supply it (it will be auto-detected):
 and run the builds in serial. A parallel argument is supported, but in practice
 it doesn't work well building multiple containers at once.
 
+Analyze Output
+--------------
+
+The output of analyze will be to write results to a ``.caliper`` folder, specifically
+to ``.caliper/data``. The result files can then be parsed to generate an interactive
+interface to explore them. A script is provided in the `examples/plot_analyze <https://github.com/vsoch/caliper/tree/main/examples/plot_analyze/>`_
+folder of the repository, an example shown at `vsoch/caliper-analysis <https://vsoch.github.io/caliper-analysis/ground-truth/>`_,
+and a screensht shown below.
+
+.. image:: img/caliper-analysis.png
+
+
 caliper.yaml
 ------------
 
@@ -292,6 +304,22 @@ Whatever you choose, an ``index.json`` file is generated in the output metric fo
 that will make it possible to detect what is available programatically with a request.
 We currently only support one extraction type at once, however if you think it necessary,
 we can add support for multiple.
+
+
+Metrics Available
+-----------------
+
+All caliper metrics available can be found in the `metrics/collection <https://github.com/vsoch/caliper/tree/main/caliper/metrics/collection>`_
+folder in the caliper repository. Adding a new metric corresponds to creating a new folder here,
+and then adding the metric to this list.
+
+ - **functiondb**: is the function database metric. This means that for each version of a library we extract a lookup of all module functions, classes, and arguments. You might, for example, use this lookup to compare changes in the module over time.
+ - **changedlines**: is exactly what it sounds like - we look _between_ versions and count the number of changed lined. Thus, this uses a ``ChangeMetricBase`` instead of a standard ``MetricBase``.
+ - **totalcounts**: is also exactly what it sounds like! We look at each version and create a lookup that shows the total number of files for the metric. If other totals are wanted, we could add them here.
+
+You can look at the `caliper-metrics <https://github.com/vsoch/caliper-metrics>`_ repository
+to get a sense of the data. The changedlines metric is great for creating plots to show change in the module over time,
+while the functiondb is great for assessing overall change to the module structure.
 
 
 Extraction Using Client
@@ -425,13 +453,19 @@ an output folder of your choosing (with the same structure).
 
 .. code:: console
     
-    mkdir -p examples/metrics/
-    caliper extract --metric changedlines --outdir examples/metrics/ pypi:sif
+    $ mkdir -p examples/metrics/
+    $ caliper extract --metric changedlines --outdir examples/metrics/ pypi:sif
 
 
 For a change metric (a type that looks at change across tagged commits) you'll see 
 a range of version like `EMPTY..0.0.1`. For a metric specific to a commit you will
-see just the tag (e.g., `0.0.1`).
+see just the tag (e.g., `0.0.1`). To extract just one specific version (or a list of
+comma separated versions with no spaces) you can define ``--versions``:
+
+
+.. code:: console
+
+    $ caliper extract --metric functiondb --versions 0.12.1 pypi:tensorflow
 
 
 Extraction Using Manager
