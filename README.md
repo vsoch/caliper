@@ -2,6 +2,7 @@
 
 [![PyPI version](https://badge.fury.io/py/caliper.svg)](https://badge.fury.io/py/caliper)
 [![Documentation Status](https://readthedocs.org/projects/caliper-python/badge/?version=latest)](https://caliper-python.readthedocs.io/en/latest/?badge=latest)
+[![DOI](https://zenodo.org/badge/322702177.svg)](https://zenodo.org/badge/latestdoi/322702177)
 
 Caliper is a tool for measuring and assessing change in packages.
 
