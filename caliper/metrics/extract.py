@@ -175,7 +175,7 @@ class MetricsExtractor:
                 "Are you sure you want to delete %s?" % self.tmpdir
             ):
                 return
-        shutil.rmtree(self.tmpdir)
+            shutil.rmtree(self.tmpdir)
 
     def extract_all(self, versions=None):
         versions = versions or []

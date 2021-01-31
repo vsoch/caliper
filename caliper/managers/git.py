@@ -59,6 +59,9 @@ class GitManager:
         # Destination folder can default to present working directory
         dest = dest or self.folder or ""
         self.run_command(["git", "clone", "--depth", "1", repo, dest])
+
+        # Disable warnings about detached head
+        self.config("advice.detachedHead", "false", dest)
         return dest
 
     def init(self, dest=None):

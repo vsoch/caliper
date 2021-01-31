@@ -14,6 +14,7 @@ and **Merged pull requests**. Critical items to know are:
 The versions coincide with releases on pip.
 
 ## [0.2.x](https://github.com/vsoch/caliper/tree/master) (0.0.x)
+ - fixing bug with cleanup - should only remove if directory exists (0.0.19)
  - adding support to extract functions from filename (0.0.18)
  - adding helper metric function to extract file functions (0.0.17)
  - updating export organization to allow for many json (0.0.16)
