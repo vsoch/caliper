@@ -180,7 +180,7 @@ class MetricsExtractor:
             try:
                 shutil.rmtree(self.tmpdir)
             except:
-                logger.error("Issue cleaning up %s" % self.tmpdir)                
+                logger.error("Issue cleaning up %s" % self.tmpdir)
                 pass
 
     def extract_all(self, versions=None):
