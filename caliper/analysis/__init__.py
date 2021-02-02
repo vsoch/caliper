@@ -1,6 +1,6 @@
 __author__ = "Vanessa Sochat"
 __copyright__ = "Copyright 2020-2021, Vanessa Sochat"
-__license__ = "MPL 2.0"
+__license__ = "Apache-2.0"
 
 from caliper.managers import PypiManager
 from caliper.utils.file import read_file, read_yaml
