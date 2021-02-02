@@ -175,7 +175,13 @@ class MetricsExtractor:
                 "Are you sure you want to delete %s?" % self.tmpdir
             ):
                 return
-            shutil.rmtree(self.tmpdir)
+
+            # GitHub actions appears to have race condition
+            try:
+                shutil.rmtree(self.tmpdir)
+            except:
+                logger.error("Issue cleaning up %s" % self.tmpdir)                
+                pass
 
     def extract_all(self, versions=None):
         versions = versions or []
