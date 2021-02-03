@@ -14,6 +14,7 @@ and **Merged pull requests**. Critical items to know are:
 The versions coincide with releases on pip.
 
 ## [0.2.x](https://github.com/vsoch/caliper/tree/master) (0.0.x)
+ - adding Dataverse manager (0.0.21)
  - try catching error on cleanup (0.0.2)
  - fixing bug with cleanup - should only remove if directory exists (0.0.19)
  - adding support to extract functions from filename (0.0.18)

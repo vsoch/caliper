@@ -23,7 +23,7 @@ Concepts
 Managers
 ========
 
-A manager is a handle to interact with a package.
+A manager is a handle to interact with a package, whether that be software or data.
 
 Pypi
 ----
@@ -169,6 +169,114 @@ You can imagine how this might be used - we can have a class that can take a man
 and then iterate over versions/releases and create a tagged commit for each.
 We can then easily extract metrics about files changed between versions.
 This is the metrics extractor discussed later.
+
+Dataverse
+---------
+
+`Dataverse <https://dataverse.org/>`_ is a well known open source repository for datasets.
+You'll need to install the extra dependency `pyDataverse <https://pypi.org/project/pyDataverse/>`_ to use it.
+Either of the following will install it:
+
+.. code:: console
+
+    pip install caliper[dataverse]
+    pip install pyDataverse
+
+
+Before using the client, you can optionally specify the base url that you want to
+use by exporting it to the environment. By default we use Harvard's Dataverse portal:
+
+.. code:: console
+
+    export CALIPER_DATAVERSE_BASEURL=https://dataverse.harvard.edu/
+
+
+Once you have it installed, you can do an extraction for 
+
+.. code:: console
+
+    caliper extract --outdir caliper-metrics/ dataverse:doi:10.7910/DVN/X1OVSU
+
+
+Dataverse Details
+^^^^^^^^^^^^^^^^^
+
+or we can instantiate a manager from Python, and walk through the steps
+that the client takes. First we create the manager.
+
+.. code:: python
+
+    from caliper.managers import PypiManager
+    manager = PypiManager("sregistry")
+
+
+The manager specs include the source archive, version, and hash for each version
+of the package. The schema of the spec is a subset of the spack package schema.
+Every manager exposes this metadata.
+
+.. code:: python
+
+    manager.specs[0]
+    Found 82 versions for sregistry
+    {'name': 'sregistry',
+     'version': '0.0.1',
+     'source': {'filename': 'https://files.pythonhosted.org/packages/ef/2f/ccc36e816dc081abbe0932c422586eda868719025ec07ac206ed254d6a3c/sregistry-0.0.1.tar.gz',
+      'type': 'source'},
+     'hash': 'd4ee6933321b5a3da13e0b1657ca74f90477f670e59096a6a0a4dbb30a0b1f07'}
+
+    manager.specs[-1]
+    {'name': 'sregistry',
+     'version': '0.2.36',
+     'source': {'filename': 'https://files.pythonhosted.org/packages/75/6c/2b5bcf0191c0ddc9b95dd156d827c8d80fa8fe86f01f7a053fdd97eaea41/sregistry-0.2.36.tar.gz',
+      'type': 'source'},
+     'hash': '238ebd3ca0e0408e0be6780d45deca79583ce99aed05ac6981da7a2b375ae79e'}
+
+
+If you just interact with `manager.specs`, you'll get a random architecture for each
+one. This can be okay if you want to do static file analysis, but if you want to choose
+a specific python version, your best bet is to call the get package metadata function
+directly and provide your preferences. For example, here we want Tensorflow for Python 3.5
+and a specific linux architecture:
+
+.. code:: python
+
+    manager.get_package_metadata(python_version="35", arch="manylinux1_x86_64")
+
+To derive these search strings, you can look at examples of wheels provided.
+This isn't the default because not all packages provide such rich choices.
+Here is an example from an early version of tensorflow.
+
+.. code:: console
+
+    tensorflow-0.12.0-cp27-cp27m-macosx_10_11_x86_64.whl
+    tensorflow-0.12.0-cp27-cp27mu-manylinux1_x86_64.whl
+    tensorflow-0.12.0-cp34-cp34m-manylinux1_x86_64.whl
+    tensorflow-0.12.0-cp35-cp35m-macosx_10_11_x86_64.whl
+    tensorflow-0.12.0-cp35-cp35m-manylinux1_x86_64.whl
+    tensorflow-0.12.0-cp35-cp35m-win_amd64.whl
+
+For more recent versions you would see Python 3.8 and 3.9, and definitely not 2.x.
+The above function still selects one release based on your preferences. You can also choose to return a subset of 
+_all_ versions with the filter function. For example, here let's narrow down the set
+to include those that can be installed on Linux.
+
+.. code:: python
+
+    releases = manager.filter_releases('manylinux1_x86_64')
+
+You can also get a set of unique Python versions across packages:
+
+.. code:: python
+
+    python_versions = manager.get_python_versions()
+    # {'cp27', 'cp33', 'cp34', 'cp35', 'cp36', 'cp37', 'cp38'}
+
+Not all package versions are guaranteed to have these Python versions, but that's
+something interesting to consider. And you can always interact with the raw package metadata at `manager.metadata`.
+
+
+_________HERE
+
 
 Caliper Analyze
 ===============

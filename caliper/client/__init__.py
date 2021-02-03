@@ -236,7 +236,9 @@ def get_parser():
         help="Force threads rather than processes.",
     )
 
+
     for command in [extract, view]:
+
         command.add_argument(
             "--outdir",
             help="output directory to write files.",

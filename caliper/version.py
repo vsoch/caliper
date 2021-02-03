@@ -2,7 +2,7 @@ __author__ = "Vanessa Sochat"
 __copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-__version__ = "0.0.2"
+__version__ = "0.0.21"
 AUTHOR = "Vanessa Sochat"
 AUTHOR_EMAIL = "vsochat@stanford.edu"
 NAME = "caliper"
@@ -22,6 +22,6 @@ INSTALL_REQUIRES = (
     ("Jinja2", {"min_version": "2.11.2"}),
 )
 TESTS_REQUIRES = (("pytest", {"min_version": "4.6.2"}),)
-
+DATAVERSE_REQUIRES = (("pyDataverse", {"min_version": None}),)
 
 ALL_REQUIRES = INSTALL_REQUIRES
