@@ -156,6 +156,9 @@ class Functiondb(MetricBase):
         # Add the temporary directory to the PYTHONPATH
         sys.path.insert(0, self.git.folder)
 
+        import IPython
+        IPython.embed()
+
         # Keep track of counts
         count = 0
         issue_count = 0
@@ -163,6 +166,8 @@ class Functiondb(MetricBase):
 
             # Skip files that aren't a module
             dirname = os.path.dirname(filename)
+
+            # TODO: we probably shouldn't skip if not a module...
             if not os.path.exists(os.path.join(dirname, "__init__.py")):
                 continue
 

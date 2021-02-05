@@ -4,6 +4,7 @@ __license__ = "MPL 2.0"
 
 from distutils.version import StrictVersion
 from abc import abstractmethod
+from caliper.utils.command import wget_and_extract
 
 
 class ManagerBase:
@@ -45,3 +46,19 @@ class ManagerBase:
         versions = [x[by].lstrip("v") for x in self._specs]
         versions.sort(key=StrictVersion)
         return [lookup[x] for x in versions]
+
+    def download(self, spec, dest):
+        """given a temporary directory and a spec, the default download
+        function assumes that the spec has a source->filename, and a
+        source file->type. If a manager deviates from this, it should
+        provide it's own download function for the particular spec to the
+        download folder provided.
+        """
+        download_to = os.path.join(dest, os.path.basename(spec["source"]["filename"]))
+
+        # Extraction type is based on source type
+        wget_and_extract(
+            url=spec["source"]["filename"],
+            download_type=spec["source"]["type"],
+            download_to=download_to,
+        )

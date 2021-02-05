@@ -22,6 +22,6 @@ INSTALL_REQUIRES = (
     ("Jinja2", {"min_version": "2.11.2"}),
 )
 TESTS_REQUIRES = (("pytest", {"min_version": "4.6.2"}),)
-DATAVERSE_REQUIRES = (("pyDataverse", {"min_version": None}),)
+DATAVERSE_REQUIRES = (("pyDataverse", {"exact_version": "0.2.1"}),)
 
 ALL_REQUIRES = INSTALL_REQUIRES
