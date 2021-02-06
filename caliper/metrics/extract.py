@@ -176,11 +176,7 @@ class MetricsExtractor:
                 return
 
             # GitHub actions appears to have race condition
-            try:
-                shutil.rmtree(self.tmpdir)
-            except:
-                logger.error("Issue cleaning up %s" % self.tmpdir)
-                pass
+            shutil.rmtree(self.tmpdir, ignore_errors=True)
 
     def extract_all(self, versions=None):
         versions = versions or []
