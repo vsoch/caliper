@@ -274,7 +274,9 @@ class MetricsExtractor:
                 "Export format %s is not recognized. Choose %s."
                 % (fmt, ", ".join(self.manager.export_formats))
             )
-        package_dir = os.path.join(outdir, self.manager.name, self.manager.uri)
+        package_dir = os.path.join(
+            outdir, self.manager.name, self.manager.uri.replace("/", "-")
+        )
         logger.info("Results will be written to %s" % package_dir)
 
         for _, extractor in self._extractors.items():

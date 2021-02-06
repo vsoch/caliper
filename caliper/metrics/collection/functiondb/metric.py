@@ -109,6 +109,51 @@ def get_function_lookup(filepath):
     return nodes
 
 
+def add_functions_jedi(filepath, modulepath, lookup=None):
+    """if ast cannot parse the script (SyntaxError) we can attempt a simple
+    parsing with jedi instead.
+    """
+    lookup = lookup or {}
+
+    # The user isn't required to have jedi installed
+    try:
+        import jedi
+    except ImportError:
+        logger.error("jedi is required to parse older Python versions.")
+        return lookup
+
+    filename = os.path.basename(filepath)
+
+    source = read_file(filepath, readlines=False)
+    script = jedi.Script(source, path=filename)
+
+    # If we have an init, then it's just the main class, otherwise module
+    if filename != "__init__.py":
+        modulepath = "%s.%s" % (modulepath, re.sub("[.]py$", "", filename))
+
+    # Add the modulepath to the lookup
+    lookup[modulepath] = {}
+
+    # Add each of functions and classes - ignore others for now
+    for function in script.get_names():
+
+        # A module
+        if function.description.startswith("def"):
+            lookup[modulepath][function.full_name] = [
+                param.name for param in function.params
+            ]
+
+        elif function.description.startswith("class"):
+            lookup[modulepath][function.full_name] = {}
+            for method in function.defined_names():
+                # TODO: we possibly should use the method full name instead
+                lookup[modulepath][function.full_name][method.name] = [
+                    param.name for param in method.params
+                ]
+
+    return lookup
+
+
 def add_functions(filepath, modulepath, lookup=None):
 
     lookup = lookup or {}
@@ -150,25 +195,35 @@ class Functiondb(MetricBase):
 
     def _extract(self, commit):
 
-        # We will return the lookup
-        lookup = {}
-
         # Add the temporary directory to the PYTHONPATH
         sys.path.insert(0, self.git.folder)
+        lookup = self.create_lookup(modules=True)
 
-        import IPython
-        IPython.embed()
+        # If we get here and there is nothing in the lookup, likely no module
+        if not lookup:
+            lookup = self.create_lookup(modules=False)
+
+        return lookup
+
+    def create_lookup(self, modules=True):
+        """Given the self.git.folder, parse over filenames and extract modules.
+        We won't be able to parse Python 2.x files. If modules=True, we require
+        an __init__.py to parse. Otherwise, we parse any Python files found.
+        """
+        # We will return the lookup
+        lookup = {}
 
         # Keep track of counts
         count = 0
         issue_count = 0
+
         for filename in recursive_find(self.git.folder, "*.py"):
 
             # Skip files that aren't a module
             dirname = os.path.dirname(filename)
 
-            # TODO: we probably shouldn't skip if not a module...
-            if not os.path.exists(os.path.join(dirname, "__init__.py")):
+            # Assume that we are looking for modules
+            if modules and not os.path.exists(os.path.join(dirname, "__init__.py")):
                 continue
 
             # The module path is needed for a script calling the function
@@ -187,14 +242,17 @@ class Functiondb(MetricBase):
             # Ignore any scripts that ast cannot parse
             try:
                 lookup = add_functions(filename, modulepath, lookup)
+            except SyntaxError:
+                lookup = add_functions_jedi(filename, modulepath, lookup)
             except:
                 logger.debug("Issue parsing %s, skipping" % filename)
                 issue_count += 1
                 pass
 
-        logger.debug(
-            "Successfully parsed %s files. %s were skipped." % (count, issue_count)
-        )
+        if lookup:
+            logger.debug(
+                "Successfully parsed %s files. %s were skipped." % (count, issue_count)
+            )
         return lookup
 
     def get_results(self):

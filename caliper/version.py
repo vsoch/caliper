@@ -21,7 +21,8 @@ INSTALL_REQUIRES = (
     ("pyaml", {"min_version": "20.4.0"}),
     ("Jinja2", {"min_version": "2.11.2"}),
 )
+JEDI_REQUIRES = (("jedi", {"exact_version": "0.18.0"}),)
 TESTS_REQUIRES = (("pytest", {"min_version": "4.6.2"}),)
 DATAVERSE_REQUIRES = (("pyDataverse", {"exact_version": "0.2.1"}),)
 
-ALL_REQUIRES = INSTALL_REQUIRES
+ALL_REQUIRES = INSTALL_REQUIRES + JEDI_REQUIRES + DATAVERSE_REQUIRES

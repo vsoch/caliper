@@ -6,6 +6,8 @@ from distutils.version import StrictVersion
 from abc import abstractmethod
 from caliper.utils.command import wget_and_extract
 
+import os
+
 
 class ManagerBase:
     """A manager base exists to define standard actions for a manager."""
