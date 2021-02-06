@@ -139,17 +139,19 @@ def add_functions_jedi(filepath, modulepath, lookup=None):
 
         # A module
         if function.description.startswith("def"):
-            lookup[modulepath][function.full_name] = [
-                param.name for param in function.params
-            ]
+            for signatures in function.get_signatures():
+                lookup[modulepath][function.full_name] = [
+                    param.name for param in signatures.params
+                ]
 
         elif function.description.startswith("class"):
             lookup[modulepath][function.full_name] = {}
             for method in function.defined_names():
-                # TODO: we possibly should use the method full name instead
-                lookup[modulepath][function.full_name][method.name] = [
-                    param.name for param in method.params
-                ]
+                for signatures in method.get_signatures():
+                    # TODO: we possibly should use the method full name instead
+                    lookup[modulepath][function.full_name][method.name] = [
+                        param.name for param in signatures.params
+                    ]
 
     return lookup
 
