@@ -2,12 +2,9 @@ __author__ = "Vanessa Sochat"
 __copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-from caliper.utils.command import do_request
 from caliper.logger import logger
 from caliper.managers.base import ManagerBase
 
-from copy import deepcopy
-import re
 import os
 
 
@@ -27,7 +24,6 @@ class DataverseManager(ManagerBase):
 
         try:
             from pyDataverse.api import Api
-            from pyDataverse.models import Dataverse
         except:
             logger.exit("pydataverse is required to use the dataverse manager.")
 
