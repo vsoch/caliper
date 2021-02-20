@@ -237,6 +237,7 @@ def get_parser():
     )
 
     for command in [extract, view]:
+
         command.add_argument(
             "--outdir",
             help="output directory to write files.",

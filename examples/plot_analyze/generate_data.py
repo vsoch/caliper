@@ -15,12 +15,13 @@ import re
 
 here = os.path.dirname(os.path.abspath(__file__))
 
+
 def get_parser():
     parser = argparse.ArgumentParser(description="Caliper Analysis Data Parser")
     parser.add_argument(
         "--package",
         dest="package",
-        help="package on pypi to plot (should correspond to input files)",,
+        help="package on pypi to plot (should correspond to input files)",
     )
     parser.add_argument(
         "-d",
@@ -73,7 +74,9 @@ def main():
 
     # A package is required!
     if not args.package:
-        sys.exit("Please specify a package that corresponds to your .caliper/data with --package.")
+        sys.exit(
+            "Please specify a package that corresponds to your .caliper/data with --package."
+        )
 
     dirname = os.path.abspath(args.dirname) if args.dirname else args.dirname
     if not dirname or not os.path.exists(dirname):

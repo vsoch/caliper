@@ -10,7 +10,6 @@ from caliper.utils.file import (
     read_zip,
 )
 from caliper.utils.prompt import confirm
-from caliper.utils.command import wget_and_extract
 from caliper.logger import logger
 from caliper.managers import get_named_manager
 
@@ -233,16 +232,9 @@ class MetricsExtractor:
                 "Downloading and tagging %s, %s of %s"
                 % (spec["version"], i + 1, len(self.manager.specs))
             )
-            download_to = os.path.join(
-                self.tmpdir, os.path.basename(spec["source"]["filename"])
-            )
 
-            # Extraction type is based on source type
-            wget_and_extract(
-                url=spec["source"]["filename"],
-                download_type=spec["source"]["type"],
-                download_to=download_to,
-            )
+            # The manager should provide it's own download function
+            self.manager.download(spec, self.tmpdir)
 
             # git add all content in folder, commit and tag with version
             self.git.add()
@@ -278,7 +270,9 @@ class MetricsExtractor:
                 "Export format %s is not recognized. Choose %s."
                 % (fmt, ", ".join(self.manager.export_formats))
             )
-        package_dir = os.path.join(outdir, self.manager.name, self.manager.uri)
+        package_dir = os.path.join(
+            outdir, self.manager.name, self.manager.uri.replace("/", "-")
+        )
         logger.info("Results will be written to %s" % package_dir)
 
         for _, extractor in self._extractors.items():

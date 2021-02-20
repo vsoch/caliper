@@ -29,7 +29,7 @@ def main(args, extra):
 
     # Now parse the package names and do the extraction!
     for package in args.packages:
-        uri, package = package.split(":")  # pypi:sif
+        uri, package = package.split(":", 1)  # pypi:sif
         try:
             manager = get_named_manager(uri, package)
         except NotImplementedError:
