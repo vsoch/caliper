@@ -81,5 +81,5 @@ class DataverseManager(ManagerBase):
             download_to = os.path.join(dest, fileObject["dataFile"]["filename"])
             file_id = fileObject["dataFile"]["id"]
             response = self.client.get_datafile(file_id)
-            with open(download_to, "w") as f:
-                f.write(response.text)
+            with open(download_to, "wb") as f:
+                f.write(response.content)
