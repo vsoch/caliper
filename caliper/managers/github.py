@@ -44,7 +44,7 @@ class GitHubManager(ManagerBase):
 
             # Only include valid versions
             try:
-                version = StrictVersion(release["name"].lstrip("v"))
+                StrictVersion(release["name"].lstrip("v"))
             except:
                 continue
 
