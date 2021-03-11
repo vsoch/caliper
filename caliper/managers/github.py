@@ -2,6 +2,7 @@ __author__ = "Vanessa Sochat"
 __copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
+from distutils.version import StrictVersion
 from caliper.utils.command import do_request
 from caliper.logger import logger
 from caliper.managers.base import ManagerBase
@@ -32,16 +33,25 @@ class GitHubManager(ManagerBase):
             raise ValueError("A package name is required.")
 
         # At some point we might need to add pagination
-        url = "%s/repos/%s/releases?per_page=100" % (self.baseurl, name)
+        # url = "%s/repos/%s/releases?per_page=100" % (self.baseurl, name)
+
+        # Currently we are using tags, as non verified releases are not included
+        url = "%s/repos/%s/tags?per_page=100" % (self.baseurl, name)
         self.metadata = do_request(url, headers=self._get_headers())
 
         # Parse metadata into simplified version of spack package schema
         for release in self.metadata:
 
+            # Only include valid versions
+            try:
+                StrictVersion(release["name"].lstrip("v"))
+            except:
+                continue
+
             self._specs.append(
                 {
                     "name": name,
-                    "version": release["tag_name"],
+                    "version": release["name"],
                     "source": {
                         "filename": release["tarball_url"],
                         "type": "targz",

@@ -31,14 +31,18 @@ class Changedlines(ChangeMetricBase):
             logger.exit("Data file %s is empty." % filename)
 
         # We currently support just the group plot
-        if "by-group" not in self._data:
-            logger.exit("by-group key is missing from data.")
-        self._data = self._data["by-group"]
+        data = {}
+        for key, group in self._data.items():
+            if "by-group" in group:
+                data[key] = group["by-group"]
+
+        if not data:
+            logger.exit("data are missing by-group entries.")
 
         # Prepare datasets, each of a different color, and title
         labels = self._derive_labels()
-        insertion_dataset = [self._data[label]["insertions"] for label in labels]
-        deletion_dataset = [self._data[label]["deletions"] for label in labels]
+        insertion_dataset = [data[label]["insertions"] for label in labels]
+        deletion_dataset = [data[label]["deletions"] for label in labels]
         datasets = [
             {"data": insertion_dataset, "title": "Insertions", "color": "turquoise"},
             {"data": deletion_dataset, "title": "Deletions", "color": "tomato"},
