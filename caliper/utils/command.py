@@ -64,7 +64,26 @@ def wget_and_extract_targz(url, download_to, chunk_size=1024):
     # Extract tar and determine root folder
     with tarfile.open(download_to, "r:gz") as tar:
         download_root = os.path.join(download_dir, os.path.commonprefix(tar.getnames()))
-        tar.extractall(download_dir)
+        def is_within_directory(directory, target):
+            
+            abs_directory = os.path.abspath(directory)
+            abs_target = os.path.abspath(target)
+        
+            prefix = os.path.commonprefix([abs_directory, abs_target])
+            
+            return prefix == abs_directory
+        
+        def safe_extract(tar, path=".", members=None, *, numeric_owner=False):
+        
+            for member in tar.getmembers():
+                member_path = os.path.join(path, member.name)
+                if not is_within_directory(path, member_path):
+                    raise Exception("Attempted Path Traversal in Tar File")
+        
+            tar.extractall(path, members, numeric_owner=numeric_owner) 
+            
+        
+        safe_extract(tar, download_dir)
 
     return download_to, download_root, download_dir
 
