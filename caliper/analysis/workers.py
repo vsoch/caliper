@@ -1,18 +1,18 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2023, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-from caliper.logger import logger
-import multiprocessing
 import itertools
-import time
+import multiprocessing
 import signal
 import sys
+import time
+
+from caliper.logger import logger
 
 
 class Workers:
     def __init__(self, workers=None, show_progress=True):
-
         # Set a conservative number of workers
         self.workers = workers or int(multiprocessing.cpu_count() / 2) - 1
         logger.debug("Using %s workers for multiprocess." % self.workers)
@@ -88,7 +88,7 @@ class Workers:
             pool.terminate()
             sys.exit(1)
 
-        except:
+        except Exception:
             logger.exit("Error running task.")
 
         return finished

@@ -1,16 +1,16 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2023, Vanessa Sochat"
 __license__ = "MPL 2.0"
-
-from caliper.utils.file import write_file, write_json
-from caliper.utils.command import CommandRunner
-from caliper.logger import logger
 
 import multiprocessing
 import os
 import sys
 import tempfile
 import time
+
+from caliper.logger import logger
+from caliper.utils.command import CommandRunner
+from caliper.utils.file import write_file, write_json
 
 
 def analysis_task(**kwargs):
@@ -27,7 +27,7 @@ def analysis_task(**kwargs):
         "dockerfile",
         "exists",
     ]:
-        if key not in kwargs or kwargs.get(key) == None:
+        if key not in kwargs or kwargs.get(key) is None:
             logger.exit("%s is missing or undefined for analysis task." % key)
 
     dockerfile = kwargs.get("dockerfile")

@@ -1,13 +1,13 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2023, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-from caliper.metrics import MetricsExtractor
 import re
+
+from caliper.metrics import MetricsExtractor
 
 
 def main(args, extra):
-
     client = MetricsExtractor()
     for name, metric in client.metrics.items():
         if not args.query:

@@ -76,7 +76,7 @@ function generate_plot(version) {
 
     var element = document.getElementById("plotarea");
     if (element) {
-        element.parentNode.removeChild(element);    
+        element.parentNode.removeChild(element);
     }
 
     var svg = d3.select("body").append("svg")
@@ -201,9 +201,9 @@ d3.json("test-results-by-python.json", function(data) {
     // Keep track of versions to cycle through
     var versions = Object.keys(window.data);
     var selector = document.getElementById("version_selector");
-    for (var i = 0; i < versions.length; i++) {        
+    for (var i = 0; i < versions.length; i++) {
         var option = document.createElement("option");
-        option.text = "Python Version " + versions[i];  
+        option.text = "Python Version " + versions[i];
         option.value = versions[i]
         selector.appendChild(option);
     }

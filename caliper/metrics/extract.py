@@ -1,30 +1,29 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2023, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-from caliper.metrics.base import MetricFinder
-from caliper.managers import GitManager
-from caliper.utils.file import (
-    zip_from_string,
-    read_json,
-    read_zip,
-)
-from caliper.utils.prompt import confirm
-from caliper.logger import logger
-from caliper.managers import get_named_manager
-
-from copy import deepcopy
 import importlib
 import json
-import requests
+import os
 import shutil
 import tempfile
-import os
+from copy import deepcopy
+
+import requests
+
+from caliper.logger import logger
+from caliper.managers import GitManager, get_named_manager
+from caliper.metrics.base import MetricFinder
+from caliper.utils.file import read_json, read_zip, zip_from_string
+from caliper.utils.prompt import confirm
 
 
 class MetricsExtractor:
 
-    """A Metrics Extractor should be used alongside a manager. The manager
+    """
+    Extract metrics for a manager (library) of interest.
+
+    A Metrics Extractor should be used alongside a manager. The manager
     is required to be provided on init, and should provide a list of specs
     in a simplified format of the spack package schema:
 
@@ -64,7 +63,8 @@ class MetricsExtractor:
         branch="main",
         extension="json",
     ):
-        """Load a metric from from a file, local caliper repository, or GitHub
+        """
+        Load a metric from from a file, local caliper repository, or GitHub
         repo that has them extracted, optionally specifying a custom repository
         and subfolder. Smaller metrics are typically provided via json, and
         larger ones via zip.
@@ -80,14 +80,18 @@ class MetricsExtractor:
         return self._load_metric_repo(metric, repository, subfolder, branch, extension)
 
     def _load_metric_file(self, filename, metric):
-        """helper function to load a metric from a filename. If it's zipped,"""
+        """
+        Helper function to load a metric from a filename. If it's zipped,
+        """
         name = "%s-results.json" % metric
         if filename.endswith("zip"):
             return json.loads(read_zip(filename, name))
         return read_json(name)
 
     def _load_metric_repo(self, metric, repository, subfolder, branch, extension):
-        """helper function to load a metric from a repository."""
+        """
+        Helper function to load a metric from a repository.
+        """
         # If we have a subfolder, add // around it
         if subfolder:
             subfolder = "%s/" % subfolder.strip("/")
@@ -112,7 +116,9 @@ class MetricsExtractor:
             return self._read_metric_repo(url, index, data, metric, extension)
 
     def read_metric_local(self, index_file, metric):
-        """Parse a local repository, returning data from a preferred type"""
+        """
+        Parse a local repository, returning data from a preferred type
+        """
         index = read_json(index_file)
         metric_dir = os.path.dirname(index_file)
         data = index.get("data", {})
@@ -134,7 +140,8 @@ class MetricsExtractor:
             return results
 
     def _read_metric_repo(self, url, index, data, metric, preferred):
-        """Read the index.json from a metric repository, then load and return
+        """
+        Read the index.json from a metric repository, then load and return
         data from a preferred type
         """
         if preferred == "json" and "json-single" in data:
@@ -161,14 +168,18 @@ class MetricsExtractor:
 
     @property
     def metrics(self):
-        """return a list of metrics available"""
+        """
+        Return a list of metrics available
+        """
         if not self._metrics:
             self._metrics_finder = MetricFinder()
             self._metrics = dict(self._metrics_finder.items())
         return self._metrics
 
     def cleanup(self, force=False):
-        """Delete a git directory. If force is not set, ask for confirmation"""
+        """
+        Delete a git directory. If force is not set, ask for confirmation
+        """
         if self.tmpdir and os.path.exists(self.tmpdir):
             if not force and not confirm(
                 "Are you sure you want to delete %s?" % self.tmpdir
@@ -179,15 +190,20 @@ class MetricsExtractor:
             shutil.rmtree(self.tmpdir, ignore_errors=True)
 
     def extract_all(self, versions=None):
+        """
+        Extract all metadata for every extractor defined.
+        """
         versions = versions or []
         for name in self.metrics:
             self.extract_metric(name, versions)
 
     def extract_metric(self, name, versions=None):
-        """Given a metric, extract for each commit from the repository."""
+        """
+        Given a metric, extract for each commit from the repository.
+        """
         versions = versions or []
         if name not in self.metrics:
-            logger.exit("Metric %s is not known." % name)
+            logger.exit(f"Metric {name} is not known.")
 
         # If no git repository defined, prepare one
         if not self.git:
@@ -197,14 +213,18 @@ class MetricsExtractor:
         metric = self.get_metric(name)
         metric.extract()
         self._extractors[metric_name] = metric
+        return metric
 
     def get_metric(self, name):
-        """Return a metric object based on name"""
+        """
+        Return a metric object based on name
+        """
         module, metric_name = self._metrics[name].rsplit(".", 1)
         return getattr(importlib.import_module(module), metric_name)(self.git)
 
     def prepare_repository(self, versions=None):
-        """Since most source code archives won't include the git history,
+        """
+        Since most source code archives won't include the git history,
         we would want to create a root directly with a new git installation,
         and then create tagged commits that correpond to each version. We
         can then use this git repository to derive metrics of change.
@@ -227,7 +247,6 @@ class MetricsExtractor:
 
         # For each version, download and create git commit and tag
         for i, spec in enumerate(self.manager.specs):
-
             logger.info(
                 "Downloading and tagging %s, %s of %s"
                 % (spec["version"], i + 1, len(self.manager.specs))
@@ -247,7 +266,8 @@ class MetricsExtractor:
         return self.git
 
     def filter_versions(self, versions=None):
-        """Given a list of versions, filter down the specs to only include
+        """
+        Given a list of versions, filter down the specs to only include
         the ones in the list
         """
         if versions:
@@ -258,9 +278,11 @@ class MetricsExtractor:
             self.manager._specs = specs
 
     def save_all(self, outdir, force=False, fmt=None):
-        """Save data as json or zip exports using an outdir root. If fmt is None,
-        we use the extractor default (typically single-json except for metrics
-        that warrant larger / more extraction).
+        """
+        Save data as json or zip exports using an outdir root.
+
+        If fmt is None, we use the extractor default (typically single-json
+        except for metrics that warrant larger / more extraction).
         """
         if not self.manager or not self._extractors:
             logger.exit("You must add a manager and do an extract() before save.")
@@ -276,7 +298,6 @@ class MetricsExtractor:
         logger.info("Results will be written to %s" % package_dir)
 
         for _, extractor in self._extractors.items():
-
             # Each metric can define a default format
             fmt_ = fmt or extractor.extractor
 
@@ -290,12 +311,15 @@ class MetricsExtractor:
 
 
 class MetricsUpdater(MetricsExtractor):
-    """A metrics updater is an extension of an extractor to also support checking
-    for and updating with new packages
+    """
+    Extend an extractor to also support checking for and updating with new packages
     """
 
     def check_metrics(self, packages, metrics, outdir, quiet=False):
-        """Given a list of packages and metrics, return versions that are not
+        """
+        Return packages/metric versions not present.
+
+        Given a list of packages and metrics, return versions that are not
         present. Packages and metrics should each be a list of the same length
         """
         missing = {}
@@ -311,7 +335,6 @@ class MetricsUpdater(MetricsExtractor):
                     logger.warning("%s is not a valid package manager uri." % package)
 
             for metric in metrics[i]:
-
                 # First look for existing data in outdir
                 index_file = os.path.join(outdir, uri, name, metric, "index.json")
 
@@ -346,11 +369,12 @@ class MetricsUpdater(MetricsExtractor):
         return missing
 
     def update_metrics(self, packages, metrics, outdir):
-        """Given a list of packages and metrics, check and update with new versions"""
+        """
+        Given a list of packages and metrics, check and update with new versions
+        """
         missing = self.check_metrics(packages, metrics, outdir)
 
         for package, metrics in missing.items():
-
             uri, name = package.split(":")  # pypi:sif
 
             # Use a shared manager to get updated versions

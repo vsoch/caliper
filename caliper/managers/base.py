@@ -1,16 +1,18 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2023, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-from distutils.version import StrictVersion
-from abc import abstractmethod
-from caliper.utils.command import wget_and_extract
-
 import os
+from abc import abstractmethod
+from distutils.version import StrictVersion
+
+from caliper.utils.command import wget_and_extract
 
 
 class ManagerBase:
-    """A manager base exists to define standard actions for a manager."""
+    """
+    A manager base exists to define standard actions for a manager.
+    """
 
     name = "base"
     export_formats = ["json", "zip", "json-single"]
@@ -26,7 +28,9 @@ class ManagerBase:
 
     @property
     def specs(self):
-        """Retrieve specs and populate _specs if they don't exist"""
+        """
+        Retrieve specs and populate _specs if they don't exist
+        """
         if not self._specs:
             return self.get_package_metadata()
         return self._specs

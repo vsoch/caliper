@@ -1,15 +1,15 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2023, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-from caliper.metrics import MetricsExtractor
-from caliper.managers import get_named_manager
-from caliper.logger import logger
 import os
+
+from caliper.logger import logger
+from caliper.managers import get_named_manager
+from caliper.metrics import MetricsExtractor
 
 
 def main(args, extra):
-
     # Ensure that all metrics are valid
     client = MetricsExtractor(quiet=True)
     metrics = args.metric.split(",")

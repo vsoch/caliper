@@ -1,13 +1,14 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2023, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
+import os
 from abc import abstractmethod
 from collections.abc import Mapping
-from caliper.logger import logger
-from caliper.utils.file import mkdir_p, write_json, read_json, get_tmpdir, write_zip
 from distutils.version import StrictVersion
-import os
+
+from caliper.logger import logger
+from caliper.utils.file import get_tmpdir, mkdir_p, read_json, write_json, write_zip
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -162,7 +163,6 @@ class MetricBase:
 
 
 class ChangeMetricBase(MetricBase):
-
     name = "changemetric"
     description = "Extract a metric between two tags or commits"
 
@@ -220,7 +220,6 @@ class MetricFinder(Mapping):
     _metrics = {}
 
     def __init__(self, metrics_path=None):
-
         # Default to the collection folder, add to metrics cache if not there
         self.metrics_path = metrics_path or os.path.join(here, "collection")
         self.update()

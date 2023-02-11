@@ -1,0 +1,46 @@
+types:
+
+  # Classes
+  - uid: class-function-addition
+    level: class
+    description: Add a function to a class
+
+  - uid: class-function-removal
+    level: class
+    description: Remove a function from a class
+# Note that a changed function name would be shown as a removal / addition (with directionality)
+
+  # Modules
+  - uid: module-addition
+    level: global
+    description: Add a module to a library
+
+  - uid: module-removal
+    level: global
+    description: Remove a module from a library
+
+  # Functions
+  - uid: function-addition
+    level: module
+    description: Add a function to a module
+
+  - uid: function-removal
+    level: module
+    description: Remove a function from a module
+
+  # Parameters
+  - uid: parameter-addition
+    level: function
+    description: Add a parameter to a function
+
+  - uid: parameter-removal
+    level: function
+    description: Remove a parameter from a function
+
+  - uid: parameter-type-change
+    level: function
+    description: Change the type of a parameter
+
+  - uid: parameter-default-change
+    level: function
+    description: Change the default of a parameter

@@ -1,18 +1,18 @@
 #!/usr/bin/env python
 
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2023, Vanessa Sochat"
 __license__ = "MPL 2.0"
+
+import argparse
+import sys
 
 import caliper
 from caliper.logger import setup_logger
 from caliper.managers.base import ManagerBase
-import argparse
-import sys
 
 
 def get_parser():
-
     parser = argparse.ArgumentParser(
         description="Caliper is a tool for measuring and assessing changes in packages."
     )
@@ -237,7 +237,6 @@ def get_parser():
     )
 
     for command in [extract, view]:
-
         command.add_argument(
             "--outdir",
             help="output directory to write files.",

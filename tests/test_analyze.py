@@ -3,8 +3,6 @@ __copyright__ = "Copyright 2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
 import os
-import sys
-import pytest
 
 here = os.path.abspath(os.path.dirname(__file__))
 

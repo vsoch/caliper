@@ -1,24 +1,27 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2023, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-from caliper.utils.command import do_request
+import re
+from copy import deepcopy
+
 from caliper.logger import logger
 from caliper.managers.base import ManagerBase
-
-from copy import deepcopy
-import re
+from caliper.utils.command import do_request
 
 
 class PypiManager(ManagerBase):
-    """Retreive Pypi package metadata."""
+    """
+    Retreive Pypi package metadata.
+    """
 
     name = "pypi"
     baseurl = "https://pypi.python.org/pypi"
     source_versions = ["cp27", "cp35", "cp38"]
 
     def do_metadata_request(self, name=None):
-        """A separate, shared function to retrieve package metadata without
+        """
+        A separate, shared function to retrieve package metadata without
         doing any custom filtering.
         """
         name = name or self.package_name
@@ -30,7 +33,8 @@ class PypiManager(ManagerBase):
 
     @property
     def source_only(self):
-        """We care that a package is source only so we know to use artifically
+        """
+        We care that a package is source only so we know to use artifically
         generated self.source_versions instead. Ideally this matches an install
         to a specific version of Python. We assume one of the following:
         1) that a package is all wheels,
@@ -54,16 +58,17 @@ class PypiManager(ManagerBase):
         return self.metadata.get("releases", {})
 
     def get_package_metadata(self, name=None, arch=None, python_version=None):
-        """Given a package name, retrieve it's metadata from pypi. Given an arch
+        """
+        Given a package name, retrieve it's metadata from pypi. Given an arch
         regex and python version, we look for a particular architecture. Otherwise
         the choices are a bit random.
         """
         # Note that without specifying an arch and python version, the
         # architecture returned can be fairly random.
+        name = name or self.package_name
 
         # Parse metadata into simplified version of spack package schema
         for version, releases in self.releases.items():
-
             # Find an appropriate linux/unix flavor release to extract
             release = self.find_release(releases, arch, python_version)
 
@@ -86,9 +91,7 @@ class PypiManager(ManagerBase):
             )
 
         # Pypi is already sorted by version (at least it seems)
-        logger.info(
-            "Found %s versions for %s" % (len(self._specs), name or self.package_name)
-        )
+        logger.info("Found %s versions for %s" % (len(self._specs), name))
         return self._specs
 
     def get_python_versions(self):
@@ -142,7 +145,6 @@ class PypiManager(ManagerBase):
             # Only add releases that match regular expression
             for r in releases:
                 if re.search(regex, r.get(search_field, "")):
-
                     # We only added sources if there aren't wheels
                     if r["python_version"] == "source" and self.source_only:
                         for source_version in self.source_versions:

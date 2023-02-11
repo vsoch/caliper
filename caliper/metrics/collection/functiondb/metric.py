@@ -1,24 +1,25 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2023, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-from caliper.metrics.base import MetricBase
-from caliper.utils.file import recursive_find, read_file
-from caliper.logger import logger
-
-from collections import namedtuple
 import ast
 import os
 import re
 import sys
+from collections import namedtuple
 
+from caliper.logger import logger
+from caliper.metrics.base import MetricBase
+from caliper.utils.file import read_file, recursive_find
 
 Import = namedtuple("Import", ["module", "name", "alias", "calls"])
 Variable = namedtuple("Variable", ["module", "name"])
 
 
 def walk(node):
-    """A custom walk function using ast to get function calls"""
+    """
+    A custom walk function using ast to get function calls
+    """
     end = [node]
     for n in ast.iter_child_nodes(node):
         if isinstance(n, ast.Call):
@@ -29,7 +30,9 @@ def walk(node):
 
 
 def unpack_node(node):
-    """Given a node, parse to the end until we hit the calling function"""
+    """
+    Given a node, parse to the end until we hit the calling function
+    """
     names = [node.func.attr] if hasattr(node.func, "attr") else []
     value = getattr(node.func, "value", node.func)
     while value:
@@ -47,7 +50,8 @@ def unpack_node(node):
 
 
 def get_node_modules(root):
-    """Given the root of a tree, walk and get a lookup of nodes based on the
+    """
+    Given the root of a tree, walk and get a lookup of nodes based on the
     name assigned or module name
     """
     nodes = {}
@@ -71,7 +75,9 @@ def get_node_modules(root):
 
 
 def get_function_lookup(filepath):
-    """A helper to, given an input file, parse out imports and functions used"""
+    """
+    A helper to, given an input file, parse out imports and functions used
+    """
     # Define a structure for an import with module, name, and alias
     root = ast.parse(read_file(filepath, False))
 
@@ -84,7 +90,6 @@ def get_function_lookup(filepath):
     # Find where are all called functions (doesn't account for class functions)
     # Also we aren't capturing args yet
     for node in tree:
-
         # An assignment might contain a call to a known module function
         names = []
         if isinstance(node, ast.Assign) and hasattr(node.value, "func"):
@@ -110,7 +115,8 @@ def get_function_lookup(filepath):
 
 
 def add_functions_jedi(filepath, modulepath, lookup=None):
-    """if ast cannot parse the script (SyntaxError) we can attempt a simple
+    """
+    if ast cannot parse the script (SyntaxError) we can attempt a simple
     parsing with jedi instead.
     """
     lookup = lookup or {}
@@ -136,7 +142,6 @@ def add_functions_jedi(filepath, modulepath, lookup=None):
 
     # Add each of functions and classes - ignore others for now
     for function in script.get_names():
-
         # A module
         if function.description.startswith("def"):
             for signatures in function.get_signatures():
@@ -157,7 +162,6 @@ def add_functions_jedi(filepath, modulepath, lookup=None):
 
 
 def add_functions(filepath, modulepath, lookup=None):
-
     lookup = lookup or {}
     filename = os.path.basename(filepath)
     node = ast.parse(read_file(filepath, False))
@@ -187,7 +191,6 @@ def add_functions(filepath, modulepath, lookup=None):
 
 
 class Functiondb(MetricBase):
-
     name = "functiondb"
     description = "for each commit, derive a function database lookup"
     extractor = "json"
@@ -196,7 +199,6 @@ class Functiondb(MetricBase):
         super().__init__(git, __file__)
 
     def _extract(self, commit):
-
         # Add the temporary directory to the PYTHONPATH
         sys.path.insert(0, self.git.folder)
         lookup = self.create_lookup(modules=True)
@@ -220,7 +222,6 @@ class Functiondb(MetricBase):
         issue_count = 0
 
         for filename in recursive_find(self.git.folder, "*.py"):
-
             # Skip files that aren't a module
             dirname = os.path.dirname(filename)
 
@@ -246,7 +247,7 @@ class Functiondb(MetricBase):
                 lookup = add_functions(filename, modulepath, lookup)
             except SyntaxError:
                 lookup = add_functions_jedi(filename, modulepath, lookup)
-            except:
+            except Exception:
                 logger.debug("Issue parsing %s, skipping" % filename)
                 issue_count += 1
                 pass
@@ -258,5 +259,7 @@ class Functiondb(MetricBase):
         return lookup
 
     def get_results(self):
-        """we only return file level results, as there are no summed group results"""
+        """
+        We only return file level results, as there are no summed group results
+        """
         return self._data

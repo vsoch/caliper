@@ -12,7 +12,7 @@ import tensorflow as tf
 # Set seeds for consistent results
 try:
     tf.random.set_seed(1)
-except:
+except Exception:
     tf.set_random_seed(1)
 
 # Simple hello world using TensorFlow

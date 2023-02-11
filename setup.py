@@ -5,9 +5,9 @@ __copyright__ = "Copyright 2020-2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
 
-from setuptools import setup, find_packages
-import codecs
 import os
+
+from setuptools import find_packages, setup
 
 
 def get_lookup():
@@ -26,8 +26,7 @@ def get_reqs(lookup=None, key="INSTALL_REQUIRES"):
     """get requirements, mean reading in requirements and versions from
     the lookup obtained with get_lookup
     """
-    if lookup == None:
-        lookup = get_lookup()
+    lookup = lookup or get_lookup()
 
     install_requires = []
     for module in lookup[key]:
@@ -36,7 +35,7 @@ def get_reqs(lookup=None, key="INSTALL_REQUIRES"):
         if "exact_version" in module_meta:
             dependency = "%s==%s" % (module_name, module_meta["exact_version"])
         elif "min_version" in module_meta:
-            if module_meta["min_version"] == None:
+            if module_meta["min_version"] is None:
                 dependency = module_name
             else:
                 dependency = "%s>=%s" % (module_name, module_meta["min_version"])
@@ -66,7 +65,6 @@ with open("README.md") as filey:
 ################################################################################
 
 if __name__ == "__main__":
-
     INSTALL_REQUIRES = get_reqs(lookup)
     TESTS_REQUIRES = get_reqs(lookup, "TESTS_REQUIRES")
     ALL_REQUIRES = get_reqs(lookup, "ALL_REQUIRES")

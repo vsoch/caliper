@@ -1,10 +1,11 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2023, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-from caliper.utils.file import mkdir_p, read_file, write_file
-from caliper.logger import logger
 import os
+
+from caliper.logger import logger
+from caliper.utils.file import mkdir_p, read_file, write_file
 
 here = os.path.abspath(os.path.dirname(__file__))
 

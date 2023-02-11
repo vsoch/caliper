@@ -1,14 +1,12 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2023, Vanessa Sochat"
 __license__ = "MPL 2.0"
-
-import os
-import sys
-import pytest
 
 
 def test_pypi_manager(tmp_path):
-    """test pypi manager"""
+    """
+    test pypi manager
+    """
     print("Testing Pypi Manager")
     from caliper.managers import PypiManager
 
@@ -28,7 +26,9 @@ def test_pypi_manager(tmp_path):
 
 
 def test_github_manager(tmp_path):
-    """test github manager"""
+    """
+    test github manager
+    """
     print("Testing GitHub Manager")
     from caliper.managers import GitHubManager
 
