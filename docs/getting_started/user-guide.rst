@@ -569,6 +569,37 @@ comma separated versions with no spaces) you can define ``--versions``:
     $ caliper extract --metric functiondb --versions 0.12.1 pypi:tensorflow
 
 
+Manual Extraction
+-----------------
+
+If you don't have a manager that knows how to iterate over states of code,
+you can do a manual extraction, meaning just running the metrics extractor
+over a directory with contents. 
+
+
+.. code:: python
+
+    from caliper.metrics import MetricsExtractor
+
+    # I have a Python module in my present working directory
+    extractor = MetricsExtractor(working_dir=os.getcwd())
+
+    # Extract metric for compspec, does not require a commit
+    metric = extractor.extract_metric("compspec")
+
+    # How to get results
+    data = metric.get_results()
+
+    # Just save to file and cleanup
+    metric.save_json("./data")
+
+
+Note that not all extractors support this mode, as some require git commits.
+The ``functiondb`` and ``compspec`` extractors do not require a commit to work.
+The data will save files that are named based on the date (year, month, day) 
+of extraction.
+
+
 Extraction Using Manager
 ------------------------
 

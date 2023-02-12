@@ -19,7 +19,9 @@ class GitHubManager(ManagerBase):
     baseurl = "https://api.github.com"
 
     def _get_headers(self):
-        """If a GitHub token is found in the environment, use it"""
+        """
+        If a GitHub token is found in the environment, use it
+        """
         token = os.environ.get("GITHUB_TOKEN")
         headers = {
             "Accept": "application/vnd.github.symmetra-preview+json",

@@ -198,7 +198,7 @@ class Functiondb(MetricBase):
     def __init__(self, git):
         super().__init__(git, __file__)
 
-    def _extract(self, commit):
+    def _extract(self, commit=None):
         # Add the temporary directory to the PYTHONPATH
         sys.path.insert(0, self.git.folder)
         lookup = self.create_lookup(modules=True)
@@ -210,7 +210,8 @@ class Functiondb(MetricBase):
         return lookup
 
     def create_lookup(self, modules=True):
-        """Given the self.git.folder, parse over filenames and extract modules.
+        """
+        Given the self.git.folder, parse over filenames and extract modules.
         We won't be able to parse Python 2.x files. If modules=True, we require
         an __init__.py to parse. Otherwise, we parse any Python files found.
         """

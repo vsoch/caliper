@@ -7,7 +7,7 @@ import os
 from caliper.logger import logger
 from caliper.metrics.base import ChangeMetricBase
 from caliper.utils.file import read_json
-
+from caliper.metrics.decorators import require_commit
 
 class Changedlines(ChangeMetricBase):
     name = "changedlines"
@@ -54,8 +54,11 @@ class Changedlines(ChangeMetricBase):
             "labels": labels,
         }
 
+    @require_commit
     def _extract(self, commit1, commit2):
-        """The second commit should be the parent"""
+        """
+        The second commit should be the parent
+        """
 
         diffs = {diff.a_path: diff for diff in commit1.diff(commit2)}
 

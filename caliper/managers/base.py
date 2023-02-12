@@ -38,7 +38,7 @@ class ManagerBase:
     @property
     def package_name(self):
         if self.uri:
-            return self.uri.replace("%s:" % self.name, "", 1)
+            return self.uri.replace(f"{self.name}:", "", 1)
 
     def __str__(self):
         return "[manager:%s]" % self.name
@@ -47,14 +47,19 @@ class ManagerBase:
         return self.__str__()
 
     def sort_specs(self, specs, by="version"):
-        """If the tags are out of order, we won't be able to derive"""
+        """
+        If the tags are out of order, we won't be able to derive
+        """
         lookup = {x["version"].lstrip("v"): x for x in specs}
         versions = [x[by].lstrip("v") for x in self._specs]
         versions.sort(key=StrictVersion)
         return [lookup[x] for x in versions]
 
     def download(self, spec, dest):
-        """given a temporary directory and a spec, the default download
+        """
+        Download a source to a destination.
+        
+        given a temporary directory and a spec, the default download
         function assumes that the spec has a source->filename, and a
         source file->type. If a manager deviates from this, it should
         provide it's own download function for the particular spec to the

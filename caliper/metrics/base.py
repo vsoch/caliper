@@ -6,7 +6,7 @@ import os
 from abc import abstractmethod
 from collections.abc import Mapping
 from distutils.version import StrictVersion
-
+from datetime import datetime
 from caliper.logger import logger
 from caliper.utils.file import get_tmpdir, mkdir_p, read_json, write_json, write_zip
 
@@ -29,9 +29,17 @@ class MetricBase:
         self.classpath = os.path.dirname(filename)
 
     def extract(self):
-        """extract for a metric base assumes one timepoint, so we checkout the
+        """
+        Extract for a metric base assumes one timepoint, so we checkout the
         commit for the user.
         """
+        # Not all extractors require commits (can be for current state)        
+        if not self.has_tags():
+            now = datetime.now().strftime('%Y-%m-%d')
+            logger.info(f"{self.git.folder} does not have tags, extracting for current state.")
+            self._data[now] = self._extract(commit=None)
+            return
+
         for tag, index in self.iter_tags():
             self.git.checkout(str(tag.commit), dest=self.git.folder)
             self._data[index] = self._extract(tag.commit)
@@ -53,7 +61,9 @@ class MetricBase:
         pass
 
     def save_json(self, package_dir, force=False):
-        """save an entire folder of json (along with the index)"""
+        """
+        Save an entire folder of json (along with the index)
+        """
         results = self.get_results()
         urls = []
 
@@ -67,7 +77,7 @@ class MetricBase:
             result_file = os.path.join(extractor_dir, "%s-%s.json" % (self.name, label))
             newresult = {label: results[label]}
             urls.append(os.path.basename(result_file))
-            if os.path.exists(result_file) and force is False:
+            if os.path.exists(result_file) and not force:
                 logger.warning(
                     "Result file %s already exists and force is False, skipping overwrite."
                     % result_file
@@ -79,7 +89,9 @@ class MetricBase:
         self.update_index(extractor_dir, {"json": {"urls": urls}})
 
     def save_zip(self, package_dir, force=False):
-        """Save a zip file of results (inside the single json file)"""
+        """
+        Save a zip file of results (inside the single json file)
+        """
         outfile = self._setup_save(package_dir, "zip", force)
         if not outfile:
             return
@@ -95,7 +107,8 @@ class MetricBase:
         )
 
     def save_json_single(self, package_dir, force=False):
-        """Save a single json file, meaning we generate an index that points to it
+        """
+        Save a single json file, meaning we generate an index that points to it
         We return a boolean to indicate if results were written or not.
         """
         outfile = self._setup_save(package_dir, "json-single", force)
@@ -111,7 +124,8 @@ class MetricBase:
         )
 
     def _setup_save(self, package_dir, fmt, force):
-        """Setup any kind of save, meaning creating necessary output directories
+        """
+        Setup any kind of save, meaning creating necessary output directories
         and the intended filename.
         """
         # Each metric has it's own subfolder
@@ -156,8 +170,16 @@ class MetricBase:
         else:
             logger.warning("A metric must have template.html and get_plot_data.")
 
+    def has_tags(self):
+        """
+        Determine if the git repository has tags
+        """
+        return bool(self.git and getattr(self.git, "tags", []))
+
     def iter_tags(self):
-        """yield a tag and a string to describe it."""
+        """
+        Yield a tag and a string to describe it.
+        """
         for tag in getattr(self.git, "tags", []):
             yield tag, str(tag)
 
@@ -213,7 +235,8 @@ class ChangeMetricBase(MetricBase):
 
 
 class MetricFinder(Mapping):
-    """This is a metric cache (inspired by spack packages) that will keep
+    """
+    This is a metric cache (inspired by spack packages) that will keep
     a cache of all installed metrics under caliper/metrics/collection
     """
 

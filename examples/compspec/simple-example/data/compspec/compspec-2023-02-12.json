@@ -1,0 +1,143 @@
+{
+    "2023-02-12": {
+        "testmodule.isfunction": {
+            "exports": [
+                {
+                    "description": "def add",
+                    "fullname": "examples.compspec.simple-example.isfunction.add",
+                    "modulename": "examples.compspec.simple-example.isfunction",
+                    "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/simple-example/isfunction.py",
+                    "type": "function",
+                    "is_definition": true,
+                    "is_stub": false,
+                    "docstring": "add(A: Union[int, float], B: Union[int, float]) -> Union[int, float]\n\nAdd two numbers, and an example using typing",
+                    "parameters": [
+                        {
+                            "name": "A",
+                            "type": "param",
+                            "kind": "POSITIONAL_OR_KEYWORD",
+                            "order": 0,
+                            "signature": "examples.compspec.simple-example.isfunction.add"
+                        },
+                        {
+                            "name": "B",
+                            "type": "param",
+                            "kind": "POSITIONAL_OR_KEYWORD",
+                            "order": 1,
+                            "signature": "examples.compspec.simple-example.isfunction.add"
+                        }
+                    ]
+                },
+                {
+                    "description": "def power",
+                    "fullname": "examples.compspec.simple-example.isfunction.power",
+                    "modulename": "examples.compspec.simple-example.isfunction",
+                    "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/simple-example/isfunction.py",
+                    "type": "function",
+                    "is_definition": true,
+                    "is_stub": false,
+                    "docstring": "power(A, by=2)\n\nReturn A to the by power, which defaults to 2",
+                    "parameters": [
+                        {
+                            "name": "A",
+                            "type": "param",
+                            "kind": "POSITIONAL_OR_KEYWORD",
+                            "order": 0,
+                            "signature": "examples.compspec.simple-example.isfunction.power"
+                        },
+                        {
+                            "name": "by",
+                            "type": "param",
+                            "kind": "POSITIONAL_OR_KEYWORD",
+                            "order": 1,
+                            "signature": "examples.compspec.simple-example.isfunction.power"
+                        }
+                    ]
+                },
+                {
+                    "description": "def ceiling",
+                    "fullname": "examples.compspec.simple-example.isfunction.ceiling",
+                    "modulename": "examples.compspec.simple-example.isfunction",
+                    "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/simple-example/isfunction.py",
+                    "type": "function",
+                    "is_definition": true,
+                    "is_stub": false,
+                    "docstring": "ceiling(A)\n\nGet the ceiling.",
+                    "parameters": [
+                        {
+                            "name": "A",
+                            "type": "param",
+                            "kind": "POSITIONAL_OR_KEYWORD",
+                            "order": 0,
+                            "signature": "examples.compspec.simple-example.isfunction.ceiling"
+                        }
+                    ]
+                },
+                {
+                    "description": "def contains",
+                    "fullname": "examples.compspec.simple-example.isfunction.contains",
+                    "modulename": "examples.compspec.simple-example.isfunction",
+                    "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/simple-example/isfunction.py",
+                    "type": "function",
+                    "is_definition": true,
+                    "is_stub": false,
+                    "docstring": "contains(string, substring)\n\nA terrible function to wrap re",
+                    "parameters": [
+                        {
+                            "name": "string",
+                            "type": "param",
+                            "kind": "POSITIONAL_OR_KEYWORD",
+                            "order": 0,
+                            "signature": "examples.compspec.simple-example.isfunction.contains"
+                        },
+                        {
+                            "name": "substring",
+                            "type": "param",
+                            "kind": "POSITIONAL_OR_KEYWORD",
+                            "order": 1,
+                            "signature": "examples.compspec.simple-example.isfunction.contains"
+                        }
+                    ]
+                }
+            ],
+            "imports": [
+                "typing.Union",
+                "math",
+                "re"
+            ]
+        },
+        "testmodule": {
+            "exports": []
+        },
+        "testmodule.isclass": {
+            "exports": [
+                {
+                    "description": "class Car",
+                    "fullname": "examples.compspec.simple-example.isclass.Car",
+                    "modulename": "examples.compspec.simple-example.isclass",
+                    "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/simple-example/isclass.py",
+                    "type": "class",
+                    "is_definition": true,
+                    "is_stub": false,
+                    "docstring": "Car(wheels=4, doors=4)\n\nBeep beep I have a motor!",
+                    "parameters": [
+                        {
+                            "name": "wheels",
+                            "type": "param",
+                            "kind": "POSITIONAL_OR_KEYWORD",
+                            "order": 0,
+                            "signature": "examples.compspec.simple-example.isclass.Car"
+                        },
+                        {
+                            "name": "doors",
+                            "type": "param",
+                            "kind": "POSITIONAL_OR_KEYWORD",
+                            "order": 1,
+                            "signature": "examples.compspec.simple-example.isclass.Car"
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}
