@@ -2,148 +2,179 @@ __author__ = "Vanessa Sochat"
 __copyright__ = "Copyright 2020-2023, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-from caliper.metrics.base import MetricBase
-from caliper.utils.file import recursive_find, read_file
-from caliper.logger import logger
-
-from collections import namedtuple
-import ast
 import os
 import re
 import sys
 
+from caliper.logger import logger
+from caliper.metrics.base import MetricBase
+from caliper.utils.file import read_file, recursive_find
 
-Import = namedtuple("Import", ["module", "name", "alias", "calls"])
-Variable = namedtuple("Variable", ["module", "name"])
-
-# Global variables, because we are terrible people
-seen = set()
-imports = set()
 
 def add_functions(filepath, modulepath):
     """
-    if ast cannot parse the script (SyntaxError) we can attempt a simple
-    parsing with jedi instead.
+    Parse with jedi and parse
     """
     try:
-        import jedi
+        import parso
+
     except ImportError:
-        logger.exit("jedi is required to for the compspec metric parser.")
+        logger.exit("parso is required to for the compspec metric parser.")
 
     lookup = {}
     filename = os.path.basename(filepath)
-
     source = read_file(filepath, readlines=False)
-    script = jedi.Script(source, path=filename)
+
+    # This can take a python version too.
+    module = parso.parse(source)
 
     # If we have an init, then it's just the main class, otherwise module
     if filename != "__init__.py":
         modulepath = "%s.%s" % (modulepath, re.sub("[.]py$", "", filename))
 
     # Add the modulepath to the lookup
-    lookup[modulepath] = {"exports": []}
+    lookup[modulepath] = {}
+    imports = get_module_imports(module)
+    exports = get_module_exports(module, modulepath)
 
-    # Reset imports for the entire module
-    global imports
-    imports = set()
-
-    # Add each of functions and classes - ignore others for now
-    for entity in script.get_names():
-
-        # Get the base entry for the jedi class
-        # TODO does jedi have a better way to do this?
-        entry = get_base_entry(entity)
-        if "import " in entity.get_line_code():
-            imports.add(entry['fullname'])
-            continue
-
-        lookup[modulepath]['exports'].append(entry)
-
-    # Add imports if they are defined
     if imports:
-        lookup[modulepath]['imports'] = list(imports)
+        lookup[modulepath]["imports"] = imports
+    if exports:
+        lookup[modulepath]["exports"] = exports
+
     return lookup
 
-def get_entry_definitions(entity):
+
+def get_module_exports(module, modulepath):
     """
-    Given an entity, get definitions
+    Get exports (functions, classes, etc) defined for a module
     """
-    defs = []
-    try:
-        names = entity.defined_named()
-    except:
-        return defs
+    exports = []
+    for cls in module.iter_classdefs():
+        exports.append(parse_class(cls, modulepath))
 
-    for definition in names:
+    for func in module.iter_funcdefs():
+        exports.append(parse_function(func, modulepath))
+    return exports
 
-        # This can turn into a recursive mess
-        if definition.full_name and definition.full_name in seen:
-            continue
 
-        # Mark seen
-        seen.add(definition.full_name)
-
-        # We get these as signatures
-        if definition.type == "param":
-            continue
-        defs.append(get_base_entry(definition))
-    return defs
-
-def get_base_entry(entity):
+def parse_function(func, modulepath):
     """
-    Given a jedi api class (some entity) get a base entry.
-
-    This is able to call itself by way of getting definitions and params.
+    Parse a function entry to add to exports defined by module.
     """
-    docstring = entity.docstring()
-    entry = {
-        "description": entity.description,
-        "fullname": entity.full_name,
-        "modulename": entity.module_name,
-        "modulepath": str(entity.module_path),
-        "type": entity.type,
-        "is_definition": entity.is_definition(),
-        "is_stub": entity.is_stub(),
+    new_func = {
+        "name": func.name.value,
+        "path": f"{modulepath}.{func.name.value}",
+        "type": "function",
     }
-    if docstring:
-        entry["docstring"] = docstring
+    decorators = parse_decorators(func.get_decorators())
+    if decorators:
+        new_func["decorators"] = decorators
 
-    # Assemble signature of parameters
-    params = get_entry_params(entity)
+    params = get_function_params(func)
     if params:
-        entry["parameters"] = params
+        new_func["params"] = params
+    return new_func
 
-    # Assume if it's a module within a module, we would parse the file directly
-    # If we don't do this we parse the entire Python install :)
-    if entity.type == "module":
-        return entry
 
-    # These would be functions for a class, etc.
-    defs = get_entry_definitions(entity)
-    if defs:
-        entry['definitions'] = defs
-    return entry
-
-def get_entry_params(entity):
+def parse_decorators(decorators):
     """
-    Get parameters for an entity (if relevant)
+    Parse decorators into simple listing.
+    """
+    import parso.python.tree
+
+    items = []
+    for decorator in decorators:
+        name = None
+        for child in decorator.children:
+            # This is the function name
+            if isinstance(child, parso.python.tree.Name):
+                name = child.value
+                break
+
+        # If we don't get the name, get the entire signatures
+        signature = decorator.get_code().strip()
+        if not name:
+            name = signature
+        items.append({"name": name, "signature": signature})
+    return items
+
+
+def parse_class(cls, modulepath):
+    """
+    Parse a class into an entry for our export listing.
+    """
+    classpath = f"{modulepath}.{cls.name.value}"
+    new_cls = {"name": cls.name.value, "path": classpath, "type": "class"}
+    exports = get_module_exports(cls, f"{modulepath}.{cls.name.value}")
+    imports = get_module_imports(cls)
+    if exports:
+        new_cls["functions"] = exports
+    if imports:
+        new_cls["imports"] = exports
+    return new_cls
+
+
+def get_function_params(func):
+    """
+    Get parameters for a function.
     """
     params = []
-    # TODO are there other signatures we are interested in?
-    for sig in entity.get_signatures():
-        for order, param in enumerate(sig.params):
-            docstring = param.docstring()
-            new_param = {
-                "name": param.name,
-                "type": param.type,
-                "kind": param.kind.name,
-                "order": order,
-                "signature": sig.full_name,
-            }
-            if docstring:
-                new_param["docstring"] = docstring
-            params.append(new_param)
+    for param in func.get_params():
+        new_param = {"name": param.name.value, "order": param.position_index}
+        if param.default:
+            # This seems to present numbers as strings
+            if not hasattr(param.default, "value"):
+                new_param["default"] = param.default.get_code().strip()
+                continue
+
+            if param.default.type == "number":
+                try:
+                    new_param["default"] = int(param.default.value)
+                except ValueError:
+                    new_param["default"] = float(param.default.value)
+            else:
+                new_param["default"] = param.default.value
+
+        # Is it expanded? (do we care?)
+        if param.star_count:
+            new_param["star_count"] = param.star_count
+
+        # For now just get raw type
+        if param.annotation:
+            new_param["type"] = param.annotation.get_code().strip()
+        params.append(new_param)
     return params
+
+
+def get_module_imports(module):
+    """
+    Get imports from a module.
+    """
+    imports = []
+    for lib in module.iter_imports():
+        new_import = {}
+
+        # This is in the format from X import ...
+        from_names = []
+        if hasattr(lib, "get_from_names"):
+            from_names = [x.value for x in lib.get_from_names()]
+
+        if from_names:
+            new_import["from"] = from_names
+
+        # From <thing> import *
+        if lib.is_star_import is True:
+            new_import["star_import"] = True
+
+        # This is the format <optional> import X
+        defined_names = []
+        for defined in lib.get_defined_names():
+            defined_names.append(defined.value)
+        if defined_names:
+            new_import["import"] = defined_names
+        imports.append(new_import)
+    return imports
 
 
 class Compspec(MetricBase):
@@ -152,11 +183,6 @@ class Compspec(MetricBase):
     extractor = "json"
 
     def _extract(self, commit=None):
-
-        # Reset global cache to what we've seen
-        global seen
-        seen = set()
-
         # Add the temporary directory to the PYTHONPATH
         sys.path.insert(0, self.git.folder)
 

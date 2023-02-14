@@ -1,15 +1,19 @@
 #!/usr/bin/env/python3
 
-import os
-
+# This is one way to get releases!
+from caliper.managers import CondaManager
 from caliper.metrics import MetricsExtractor
-
-here = os.path.dirname(os.path.abspath(__file__))
 
 
 def main():
+    # channel, subdir, package name
+    manager = CondaManager("conda-forge/noarch/redo")
+
     # Just do two specs for a diff
-    extractor = MetricsExtractor(working_dir=here)
+    extractor = MetricsExtractor(manager)
+
+    # This repository will have each release version represented as a tagged commit
+    extractor.prepare_repository()
 
     # Extract metric for compspec
     metric = extractor.extract_metric("compspec")
@@ -18,9 +22,9 @@ def main():
     data = metric.get_results()
     assert data
 
-    # TODO try https://github.com/davidhalter/parso
     # Just save to file and cleanup
     metric.save_json("./data", force=True)
+    extractor.cleanup(force=True)
 
 
 if __name__ == "__main__":

@@ -6,11 +6,11 @@ from caliper.metrics import MetricsExtractor
 
 
 def main():
-    manager = PypiManager("oras") 
-    
-    # Just do two specs for a diff 
+    manager = PypiManager("oras")
+
+    # Just do two specs for a diff
     extractor = MetricsExtractor(manager)
-    
+
     # This repository will have each release version represented as a tagged commit
     extractor.prepare_repository()
 
@@ -19,10 +19,12 @@ def main():
 
     # How to get results
     data = metric.get_results()
+    assert data
 
     # Just save to file and cleanup
-    metric.save_json('./data')
+    metric.save_json("./data")
     extractor.cleanup(force=True)
+
 
 if __name__ == "__main__":
     main()

@@ -69,7 +69,7 @@ if __name__ == "__main__":
     TESTS_REQUIRES = get_reqs(lookup, "TESTS_REQUIRES")
     ALL_REQUIRES = get_reqs(lookup, "ALL_REQUIRES")
     DATAVERSE_REQUIRES = get_reqs(lookup, "DATAVERSE_REQUIRES")
-    JEDI_REQUIRES = get_reqs(lookup, "JEDI_REQUIRES")
+    PARSER_REQUIRES = get_reqs(lookup, "PARSER_REQUIRES")
 
     setup(
         name=NAME,
@@ -93,7 +93,7 @@ if __name__ == "__main__":
         extras_require={
             "all": ALL_REQUIRES,
             "dataverse": DATAVERSE_REQUIRES,
-            "jedi": JEDI_REQUIRES,
+            "parser": PARSER_REQUIRES,
         },
         classifiers=[
             "Intended Audience :: Science/Research",

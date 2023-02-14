@@ -6,8 +6,9 @@ import os
 
 from caliper.logger import logger
 from caliper.metrics.base import ChangeMetricBase
-from caliper.utils.file import read_json
 from caliper.metrics.decorators import require_commit
+from caliper.utils.file import read_json
+
 
 class Changedlines(ChangeMetricBase):
     name = "changedlines"

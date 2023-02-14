@@ -42,6 +42,8 @@ def wget_and_extract(
         dest, root, dest_dir = wget_and_extract_targz(url, download_to, chunk_size)
     elif download_type in ["wheel", "gzip", "zip"]:
         dest, root, dest_dir = wget_and_extract_zip(url, download_to, chunk_size)
+    elif download_type == "bz2":
+        dest, root, dest_dir = wget_and_extract_bz2(url, download_to, chunk_size)
     else:
         logger.exit("%s is not a known archive type." % download_type)
 
@@ -60,13 +62,31 @@ def wget_and_extract(
 
 
 def wget_and_extract_targz(url, download_to, chunk_size=1024):
-    """Get an extract a targz archive."""
+    """
+    Get and extract a targz archive.
+    """
+    return wget_and_extract_tarfile(url, download_to, chunk_size)
+
+
+def wget_and_extract_bz2(url, download_to, chunk_size=1024):
+    """
+    Get and extract a bz2 archive.
+    """
+    return wget_and_extract_tarfile(url, download_to, chunk_size, ".bz2", "r:bz2")
+
+
+def wget_and_extract_tarfile(
+    url, download_to, chunk_size=1024, ext=".tar.gz", mode="r:gz"
+):
+    """
+    Get and extract with tarfile
+    """
     download_to = wget(url, download_to, chunk_size=chunk_size)
     download_dir = os.path.dirname(download_to)
-    download_root = download_to.rstrip(".tar.gz")
+    download_root = download_to.rstrip(ext)
 
     # Extract tar and determine root folder
-    with tarfile.open(download_to, "r:gz") as tar:
+    with tarfile.open(download_to, mode) as tar:
         download_root = os.path.join(download_dir, os.path.commonprefix(tar.getnames()))
         tar.extractall(download_dir)
 
@@ -74,7 +94,9 @@ def wget_and_extract_targz(url, download_to, chunk_size=1024):
 
 
 def wget_and_extract_zip(url, download_to, chunk_size=1024):
-    """Get an extract a zip or wheel archive."""
+    """
+    Get an extract a zip or wheel archive.
+    """
     download_to = wget(url, download_to, chunk_size=chunk_size)
     download_root = download_to.rsplit(".", 1)[0]
     download_dir = os.path.dirname(download_to)

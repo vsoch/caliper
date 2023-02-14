@@ -5,8 +5,9 @@ __license__ = "MPL 2.0"
 import os
 from abc import abstractmethod
 from collections.abc import Mapping
-from distutils.version import StrictVersion
 from datetime import datetime
+from distutils.version import StrictVersion
+
 from caliper.logger import logger
 from caliper.utils.file import get_tmpdir, mkdir_p, read_json, write_json, write_zip
 
@@ -33,10 +34,12 @@ class MetricBase:
         Extract for a metric base assumes one timepoint, so we checkout the
         commit for the user.
         """
-        # Not all extractors require commits (can be for current state)        
+        # Not all extractors require commits (can be for current state)
         if not self.has_tags():
-            now = datetime.now().strftime('%Y-%m-%d')
-            logger.info(f"{self.git.folder} does not have tags, extracting for current state.")
+            now = datetime.now().strftime("%Y-%m-%d")
+            logger.info(
+                f"{self.git.folder} does not have tags, extracting for current state."
+            )
             self._data[now] = self._extract(commit=None)
             return
 

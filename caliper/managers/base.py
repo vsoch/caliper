@@ -58,7 +58,7 @@ class ManagerBase:
     def download(self, spec, dest):
         """
         Download a source to a destination.
-        
+
         given a temporary directory and a spec, the default download
         function assumes that the spec has a source->filename, and a
         source file->type. If a manager deviates from this, it should

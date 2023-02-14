@@ -2,7 +2,7 @@
 
 This is an experiment to extract ABI corpora (facts about a libraries surface, or imports and exports).
 We are using caliper and creating a "compspec" extraction type, and on this backend we can
-technically use any tool that makes sense. 
+technically use any tool that makes sense.
 
 <p align="center">
   <img height="300" src="https://raw.githubusercontent.com/compspec/spec/main/img/compspec-circle.png">
@@ -28,10 +28,10 @@ work given some testing environment. However, this gets complex in that not all 
 
 This is the generic data structure we can use to describe the corpus of a library.
 Importantly, we want to flatten things out to make it easier to parse than having
-to deal with a graph. First, install development caliper with jedi:
+to deal with a graph. First, install development caliper with compspec:
 
 ```bash
-$ pip install -e .[jedi]
+$ pip install -e .[compspec]
 ```
 
 And then run the example:
@@ -43,7 +43,7 @@ $ python example.py
 ## Comparison Types
 
 The first part of this work defines data structures that might define different types of language-specific
-comparisons (that can be used to generate or detect compatibility issues). 
+comparisons (that can be used to generate or detect compatibility issues).
 Since we are primarily interested in python to start, Python is provided here.
 For now, each is represented in a yaml file named in the format `<language>-types.yaml`.
 
@@ -100,12 +100,12 @@ from library_b import ClassName
 
 def foo():
     myclass = ClassName()
-    myclass.do()    
+    myclass.do()
 ```
 
 ## TODO
 
-- update caliper to have a "compspec" type that uses jedi and outputs a more organized (typed) format
+- [x] update caliper to have a "compspec" type that uses jedi and outputs a more organized (typed) format
 - generate facts across versions of a library (oras)
 - think about concepts of a diff vs. trace
 - likely we want a conda manager!

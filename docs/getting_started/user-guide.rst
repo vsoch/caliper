@@ -574,7 +574,7 @@ Manual Extraction
 
 If you don't have a manager that knows how to iterate over states of code,
 you can do a manual extraction, meaning just running the metrics extractor
-over a directory with contents. 
+over a directory with contents.
 
 
 .. code:: python
@@ -596,7 +596,7 @@ over a directory with contents.
 
 Note that not all extractors support this mode, as some require git commits.
 The ``functiondb`` and ``compspec`` extractors do not require a commit to work.
-The data will save files that are named based on the date (year, month, day) 
+The data will save files that are named based on the date (year, month, day)
 of extraction.
 
 

@@ -5,6 +5,7 @@ __license__ = "MPL 2.0"
 from caliper.metrics.base import MetricBase
 from caliper.metrics.decorators import require_commit
 
+
 class Totalcounts(MetricBase):
     name = "totalcounts"
     description = "retrieve total counts of files and lines for each commit"
