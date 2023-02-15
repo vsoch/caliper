@@ -1,354 +1,402 @@
 {
     "0.0.0": {
-        "oras": [
-            {
-                "description": "module __version__",
-                "fullname": "oras.version.__version__",
-                "modulename": "examples.compspec",
-                "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/__init__.py",
-                "type": "module",
-                "is_definition": true,
-                "is_stub": false
-            }
-        ],
-        "oras.version": [
-            {
-                "description": "__author__ = \"Vanessa Sochat\"",
-                "fullname": "examples.compspec.version.__author__",
-                "modulename": "examples.compspec.version",
-                "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/version.py",
-                "type": "statement",
-                "is_definition": true,
-                "is_stub": false
-            },
-            {
-                "description": "__copyright__ = \"Copyright 2021, Vanessa Sochat\"",
-                "fullname": "examples.compspec.version.__copyright__",
-                "modulename": "examples.compspec.version",
-                "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/version.py",
-                "type": "statement",
-                "is_definition": true,
-                "is_stub": false
-            },
-            {
-                "description": "__license__ = \"MPL 2.0\"",
-                "fullname": "examples.compspec.version.__license__",
-                "modulename": "examples.compspec.version",
-                "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/version.py",
-                "type": "statement",
-                "is_definition": true,
-                "is_stub": false
-            },
-            {
-                "description": "__version__ = \"0.0.0\"",
-                "fullname": "examples.compspec.version.__version__",
-                "modulename": "examples.compspec.version",
-                "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/version.py",
-                "type": "statement",
-                "is_definition": true,
-                "is_stub": false
-            },
-            {
-                "description": "AUTHOR = \"Vanessa Sochat\"",
-                "fullname": "examples.compspec.version.AUTHOR",
-                "modulename": "examples.compspec.version",
-                "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/version.py",
-                "type": "statement",
-                "is_definition": true,
-                "is_stub": false
-            },
-            {
-                "description": "EMAIL = \"vsoch@users.noreply.github.com\"",
-                "fullname": "examples.compspec.version.EMAIL",
-                "modulename": "examples.compspec.version",
-                "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/version.py",
-                "type": "statement",
-                "is_definition": true,
-                "is_stub": false
-            },
-            {
-                "description": "NAME = \"oras\"",
-                "fullname": "examples.compspec.version.NAME",
-                "modulename": "examples.compspec.version",
-                "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/version.py",
-                "type": "statement",
-                "is_definition": true,
-                "is_stub": false
-            },
-            {
-                "description": "PACKAGE_URL = \"https://github.com/vsoch/oras-python\"",
-                "fullname": "examples.compspec.version.PACKAGE_URL",
-                "modulename": "examples.compspec.version",
-                "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/version.py",
-                "type": "statement",
-                "is_definition": true,
-                "is_stub": false
-            },
-            {
-                "description": "KEYWORDS = \"oci, registry, storage\"",
-                "fullname": "examples.compspec.version.KEYWORDS",
-                "modulename": "examples.compspec.version",
-                "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/version.py",
-                "type": "statement",
-                "is_definition": true,
-                "is_stub": false
-            },
-            {
-                "description": "DESCRIPTION = \"OCI Registry as Storage Python client\"",
-                "fullname": "examples.compspec.version.DESCRIPTION",
-                "modulename": "examples.compspec.version",
-                "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/version.py",
-                "type": "statement",
-                "is_definition": true,
-                "is_stub": false
-            },
-            {
-                "description": "LICENSE = \"LICENSE\"",
-                "fullname": "examples.compspec.version.LICENSE",
-                "modulename": "examples.compspec.version",
-                "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/version.py",
-                "type": "statement",
-                "is_definition": true,
-                "is_stub": false
-            },
-            {
-                "description": "INSTALL_REQUIRES = ( (\"jsonschema\", {\"min_version\": None}), )",
-                "fullname": "examples.compspec.version.INSTALL_REQUIRES",
-                "modulename": "examples.compspec.version",
-                "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/version.py",
-                "type": "statement",
-                "is_definition": true,
-                "is_stub": false
-            },
-            {
-                "description": "TESTS_REQUIRES = ((\"pytest\", {\"min_version\": \"4.6.2\"}),)",
-                "fullname": "examples.compspec.version.TESTS_REQUIRES",
-                "modulename": "examples.compspec.version",
-                "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/version.py",
-                "type": "statement",
-                "is_definition": true,
-                "is_stub": false
-            },
-            {
-                "description": "INSTALL_REQUIRES_ALL = INSTALL_REQUIRES + TESTS_REQUIRES",
-                "fullname": "examples.compspec.version.INSTALL_REQUIRES_ALL",
-                "modulename": "examples.compspec.version",
-                "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/version.py",
-                "type": "statement",
-                "is_definition": true,
-                "is_stub": false
-            }
-        ],
-        "oras.logger": [
-            {
-                "description": "__author__ = \"Vanessa Sochat\"",
-                "fullname": "examples.compspec.logger.__author__",
-                "modulename": "examples.compspec.logger",
-                "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/logger.py",
-                "type": "statement",
-                "is_definition": true,
-                "is_stub": false
-            },
-            {
-                "description": "__copyright__ = \"Copyright 2021, Vanessa Sochat\"",
-                "fullname": "examples.compspec.logger.__copyright__",
-                "modulename": "examples.compspec.logger",
-                "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/logger.py",
-                "type": "statement",
-                "is_definition": true,
-                "is_stub": false
-            },
-            {
-                "description": "__license__ = \"MPL 2.0\"",
-                "fullname": "examples.compspec.logger.__license__",
-                "modulename": "examples.compspec.logger",
-                "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/logger.py",
-                "type": "statement",
-                "is_definition": true,
-                "is_stub": false
-            },
-            {
-                "description": "module _logging",
-                "fullname": "logging",
-                "modulename": "examples.compspec.logger",
-                "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/logger.py",
-                "type": "module",
-                "is_definition": true,
-                "is_stub": false,
-                "docstring": "Logging package for Python. Based on PEP 282 and comments thereto in\ncomp.lang.python.\n\nCopyright (C) 2001-2019 Vinay Sajip. All Rights Reserved.\n\nTo use, simply 'import logging' and log away!"
-            },
-            {
-                "description": "module platform",
-                "fullname": "platform",
-                "modulename": "examples.compspec.logger",
-                "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/logger.py",
-                "type": "module",
-                "is_definition": true,
-                "is_stub": false,
-                "docstring": "This module tries to retrieve as much platform-identifying data as\npossible. It makes this information available via function APIs.\n\nIf called from the command line, it prints the platform\ninformation concatenated as single string to stdout. The output\nformat is useable as part of a filename."
-            },
-            {
-                "description": "module sys",
-                "fullname": "sys",
-                "modulename": "examples.compspec.logger",
-                "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/logger.py",
-                "type": "module",
-                "is_definition": true,
-                "is_stub": false,
-                "docstring": "This module provides access to some objects used or maintained by the\ninterpreter and to functions that interact strongly with the interpreter.\n\nDynamic objects:\n\nargv -- command line arguments; argv[0] is the script pathname if known\npath -- module search path; path[0] is the script directory, else ''\nmodules -- dictionary of loaded modules\n\ndisplayhook -- called to show results in an interactive session\nexcepthook -- called to handle any uncaught exception other than SystemExit\n  To customize printing in an interactive session or to install a custom\n  top-level exception handler, assign other functions to replace these.\n\nstdin -- standard input file object; used by input()\nstdout -- standard output file object; used by print()\nstderr -- standard error object; used for error messages\n  By assigning other file objects (or objects that behave like files)\n  to these, it is possible to redirect all of the interpreter's I/O.\n\nlast_type -- type of last uncaught exception\nlast_value -- value of last uncaught exception\nlast_traceback -- traceback of last uncaught exception\n  These three are only available in an interactive session after a\n  traceback has been printed.\n\nStatic objects:\n\nbuiltin_module_names -- tuple of module names built into this interpreter\ncopyright -- copyright notice pertaining to this interpreter\nexec_prefix -- prefix used to find the machine-specific Python library\nexecutable -- absolute path of the executable binary of the Python interpreter\nfloat_info -- a named tuple with information about the float implementation.\nfloat_repr_style -- string indicating the style of repr() output for floats\nhash_info -- a named tuple with information about the hash algorithm.\nhexversion -- version information encoded as a single integer\nimplementation -- Python implementation information.\nint_info -- a named tuple with information about the int implementation.\nmaxsize -- the largest supported length of containers.\nmaxunicode -- the value of the largest Unicode code point\nplatform -- platform identifier\nprefix -- prefix used to find the Python library\nthread_info -- a named tuple with information about the thread implementation.\nversion -- the version of this interpreter as a string\nversion_info -- version information as a named tuple\n__stdin__ -- the original stdin; don't touch!\n__stdout__ -- the original stdout; don't touch!\n__stderr__ -- the original stderr; don't touch!\n__displayhook__ -- the original displayhook; don't touch!\n__excepthook__ -- the original excepthook; don't touch!\n\nFunctions:\n\ndisplayhook() -- print an object to the screen, and save it in builtins._\nexcepthook() -- print an exception and its traceback to sys.stderr\nexc_info() -- return thread-safe information about the current exception\nexit() -- exit the interpreter by raising SystemExit\ngetdlopenflags() -- returns flags to be used for dlopen() calls\ngetprofile() -- get the global profiling function\ngetrefcount() -- return the reference count for an object (plus one :-)\ngetrecursionlimit() -- return the max recursion depth for the interpreter\ngetsizeof() -- return the size of an object in bytes\ngettrace() -- get the global debug tracing function\nsetdlopenflags() -- set the flags to be used for dlopen() calls\nsetprofile() -- set the global profiling function\nsetrecursionlimit() -- set the max recursion depth for the interpreter\nsettrace() -- set the global debug tracing function"
-            },
-            {
-                "description": "module os",
-                "fullname": "os",
-                "modulename": "examples.compspec.logger",
-                "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/logger.py",
-                "type": "module",
-                "is_definition": true,
-                "is_stub": false,
-                "docstring": "OS routines for NT or Posix depending on what system we're on.\n\nThis exports:\n  - all functions from posix or nt, e.g. unlink, stat, etc.\n  - os.path is either posixpath or ntpath\n  - os.name is either 'posix' or 'nt'\n  - os.curdir is a string representing the current directory (always '.')\n  - os.pardir is a string representing the parent directory (always '..')\n  - os.sep is the (or a most common) pathname separator ('/' or '\\\\')\n  - os.extsep is the extension separator (always '.')\n  - os.altsep is the alternate pathname separator (None or '/')\n  - os.pathsep is the component separator used in $PATH etc\n  - os.linesep is the line separator in text files ('\\r' or '\\n' or '\\r\\n')\n  - os.defpath is the default search path for executables\n  - os.devnull is the file path of the null device ('/dev/null', etc.)\n\nPrograms that import and use 'os' stand a better chance of being\nportable between different platforms.  Of course, they must then\nonly use functions that are defined by all platforms (e.g., unlink\nand opendir), and leave all pathname manipulation to os.path\n(e.g., split and join)."
-            },
-            {
-                "description": "module threading",
-                "fullname": "threading",
-                "modulename": "examples.compspec.logger",
-                "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/logger.py",
-                "type": "module",
-                "is_definition": true,
-                "is_stub": false,
-                "docstring": "Thread module emulating a subset of Java's threading model."
-            },
-            {
-                "description": "module inspect",
-                "fullname": "inspect",
-                "modulename": "examples.compspec.logger",
-                "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/logger.py",
-                "type": "module",
-                "is_definition": true,
-                "is_stub": false,
-                "docstring": "Get useful information from live Python objects.\n\nThis module encapsulates the interface provided by the internal special\nattributes (co_*, im_*, tb_*, etc.) in a friendlier fashion.\nIt also provides some help for examining source code and class layout.\n\nHere are some of the useful functions provided by this module:\n\n    ismodule(), isclass(), ismethod(), isfunction(), isgeneratorfunction(),\n        isgenerator(), istraceback(), isframe(), iscode(), isbuiltin(),\n        isroutine() - check object types\n    getmembers() - get members of an object that satisfy a given condition\n\n    getfile(), getsourcefile(), getsource() - find an object's source code\n    getdoc(), getcomments() - get documentation on an object\n    getmodule() - determine the module that an object came from\n    getclasstree() - arrange classes so as to represent their hierarchy\n\n    getargvalues(), getcallargs() - get info about function arguments\n    getfullargspec() - same, with support for Python 3 features\n    formatargvalues() - format an argument spec\n    getouterframes(), getinnerframes() - get info about frames\n    currentframe() - get the current stack frame\n    stack(), trace() - get info about frames on the stack or in a traceback\n\n    signature() - get a Signature object for the callable"
-            },
-            {
-                "description": "class ColorizingStreamHandler",
-                "fullname": "examples.compspec.logger.ColorizingStreamHandler",
-                "modulename": "examples.compspec.logger",
-                "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/logger.py",
-                "type": "class",
-                "is_definition": true,
-                "is_stub": false,
-                "docstring": "ColorizingStreamHandler(nocolor=False, stream=sys.stderr, use_threads=False)",
-                "parameters": [
-                    {
-                        "name": "nocolor",
-                        "type": "param",
-                        "kind": "POSITIONAL_OR_KEYWORD",
-                        "order": 1,
-                        "signature": "examples.compspec.logger.ColorizingStreamHandler",
-                        "docstring": "bool(x, /) -> bool"
-                    },
-                    {
-                        "name": "stream",
-                        "type": "param",
-                        "kind": "POSITIONAL_OR_KEYWORD",
-                        "order": 1,
-                        "signature": "examples.compspec.logger.ColorizingStreamHandler"
-                    },
-                    {
-                        "name": "use_threads",
-                        "type": "param",
-                        "kind": "POSITIONAL_OR_KEYWORD",
-                        "order": 1,
-                        "signature": "examples.compspec.logger.ColorizingStreamHandler",
-                        "docstring": "bool(x, /) -> bool"
-                    }
-                ]
-            },
-            {
-                "description": "class Logger",
-                "fullname": "examples.compspec.logger.Logger",
-                "modulename": "examples.compspec.logger",
-                "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/logger.py",
-                "type": "class",
-                "is_definition": true,
-                "is_stub": false,
-                "docstring": "Logger()"
-            },
-            {
-                "description": "logger = Logger()",
-                "fullname": "examples.compspec.logger.logger",
-                "modulename": "examples.compspec.logger",
-                "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/logger.py",
-                "type": "statement",
-                "is_definition": true,
-                "is_stub": false
-            },
-            {
-                "description": "def setup_logger",
-                "fullname": "examples.compspec.logger.setup_logger",
-                "modulename": "examples.compspec.logger",
-                "modulepath": "/home/vanessa/Desktop/Code/compspec/caliper/examples/compspec/logger.py",
-                "type": "function",
-                "is_definition": true,
-                "is_stub": false,
-                "docstring": "setup_logger(quiet=False, printshellcmds=False, nocolor=False, stdout=False, debug=False, use_threads=False, wms_monitor=None)",
-                "parameters": [
-                    {
-                        "name": "quiet",
-                        "type": "param",
-                        "kind": "POSITIONAL_OR_KEYWORD",
-                        "order": 1,
-                        "signature": "examples.compspec.logger.setup_logger",
-                        "docstring": "bool(x, /) -> bool"
-                    },
-                    {
-                        "name": "printshellcmds",
-                        "type": "param",
-                        "kind": "POSITIONAL_OR_KEYWORD",
-                        "order": 1,
-                        "signature": "examples.compspec.logger.setup_logger",
-                        "docstring": "bool(x, /) -> bool"
-                    },
-                    {
-                        "name": "nocolor",
-                        "type": "param",
-                        "kind": "POSITIONAL_OR_KEYWORD",
-                        "order": 1,
-                        "signature": "examples.compspec.logger.setup_logger",
-                        "docstring": "bool(x, /) -> bool"
-                    },
-                    {
-                        "name": "stdout",
-                        "type": "param",
-                        "kind": "POSITIONAL_OR_KEYWORD",
-                        "order": 1,
-                        "signature": "examples.compspec.logger.setup_logger",
-                        "docstring": "bool(x, /) -> bool"
-                    },
-                    {
-                        "name": "debug",
-                        "type": "param",
-                        "kind": "POSITIONAL_OR_KEYWORD",
-                        "order": 1,
-                        "signature": "examples.compspec.logger.setup_logger",
-                        "docstring": "bool(x, /) -> bool"
-                    },
-                    {
-                        "name": "use_threads",
-                        "type": "param",
-                        "kind": "POSITIONAL_OR_KEYWORD",
-                        "order": 1,
-                        "signature": "examples.compspec.logger.setup_logger",
-                        "docstring": "bool(x, /) -> bool"
-                    },
-                    {
-                        "name": "wms_monitor",
-                        "type": "param",
-                        "kind": "POSITIONAL_OR_KEYWORD",
-                        "order": 1,
-                        "signature": "examples.compspec.logger.setup_logger",
-                        "docstring": "NoneType()"
-                    }
-                ]
-            }
-        ]
+        "oras": {
+            "imports": [
+                {
+                    "from": [
+                        "oras",
+                        "version"
+                    ],
+                    "import": [
+                        "__version__"
+                    ]
+                }
+            ]
+        },
+        "oras.version": {},
+        "oras.logger": {
+            "imports": [
+                {
+                    "import": [
+                        "_logging"
+                    ]
+                },
+                {
+                    "import": [
+                        "platform"
+                    ]
+                },
+                {
+                    "import": [
+                        "sys"
+                    ]
+                },
+                {
+                    "import": [
+                        "os"
+                    ]
+                },
+                {
+                    "import": [
+                        "threading"
+                    ]
+                },
+                {
+                    "import": [
+                        "inspect"
+                    ]
+                }
+            ],
+            "exports": [
+                {
+                    "name": "ColorizingStreamHandler",
+                    "path": "oras.logger.ColorizingStreamHandler",
+                    "type": "class",
+                    "functions": [
+                        {
+                            "name": "__init__",
+                            "path": "oras.logger.ColorizingStreamHandler.__init__",
+                            "type": "function",
+                            "params": [
+                                {
+                                    "name": "self",
+                                    "order": 0
+                                },
+                                {
+                                    "name": "nocolor",
+                                    "order": 1,
+                                    "default": "False"
+                                },
+                                {
+                                    "name": "use_threads",
+                                    "order": 3,
+                                    "default": "False"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "can_color_tty",
+                            "path": "oras.logger.ColorizingStreamHandler.can_color_tty",
+                            "type": "function",
+                            "params": [
+                                {
+                                    "name": "self",
+                                    "order": 0
+                                }
+                            ]
+                        },
+                        {
+                            "name": "is_tty",
+                            "path": "oras.logger.ColorizingStreamHandler.is_tty",
+                            "type": "function",
+                            "decorators": [
+                                {
+                                    "name": "property",
+                                    "signature": "@property"
+                                }
+                            ],
+                            "params": [
+                                {
+                                    "name": "self",
+                                    "order": 0
+                                }
+                            ]
+                        },
+                        {
+                            "name": "emit",
+                            "path": "oras.logger.ColorizingStreamHandler.emit",
+                            "type": "function",
+                            "params": [
+                                {
+                                    "name": "self",
+                                    "order": 0
+                                },
+                                {
+                                    "name": "record",
+                                    "order": 1
+                                }
+                            ]
+                        },
+                        {
+                            "name": "decorate",
+                            "path": "oras.logger.ColorizingStreamHandler.decorate",
+                            "type": "function",
+                            "params": [
+                                {
+                                    "name": "self",
+                                    "order": 0
+                                },
+                                {
+                                    "name": "record",
+                                    "order": 1
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "Logger",
+                    "path": "oras.logger.Logger",
+                    "type": "class",
+                    "functions": [
+                        {
+                            "name": "__init__",
+                            "path": "oras.logger.Logger.__init__",
+                            "type": "function",
+                            "params": [
+                                {
+                                    "name": "self",
+                                    "order": 0
+                                }
+                            ]
+                        },
+                        {
+                            "name": "cleanup",
+                            "path": "oras.logger.Logger.cleanup",
+                            "type": "function",
+                            "params": [
+                                {
+                                    "name": "self",
+                                    "order": 0
+                                }
+                            ]
+                        },
+                        {
+                            "name": "handler",
+                            "path": "oras.logger.Logger.handler",
+                            "type": "function",
+                            "params": [
+                                {
+                                    "name": "self",
+                                    "order": 0
+                                },
+                                {
+                                    "name": "msg",
+                                    "order": 1
+                                }
+                            ]
+                        },
+                        {
+                            "name": "set_stream_handler",
+                            "path": "oras.logger.Logger.set_stream_handler",
+                            "type": "function",
+                            "params": [
+                                {
+                                    "name": "self",
+                                    "order": 0
+                                },
+                                {
+                                    "name": "stream_handler",
+                                    "order": 1
+                                }
+                            ]
+                        },
+                        {
+                            "name": "set_level",
+                            "path": "oras.logger.Logger.set_level",
+                            "type": "function",
+                            "params": [
+                                {
+                                    "name": "self",
+                                    "order": 0
+                                },
+                                {
+                                    "name": "level",
+                                    "order": 1
+                                }
+                            ]
+                        },
+                        {
+                            "name": "location",
+                            "path": "oras.logger.Logger.location",
+                            "type": "function",
+                            "params": [
+                                {
+                                    "name": "self",
+                                    "order": 0
+                                },
+                                {
+                                    "name": "msg",
+                                    "order": 1
+                                }
+                            ]
+                        },
+                        {
+                            "name": "info",
+                            "path": "oras.logger.Logger.info",
+                            "type": "function",
+                            "params": [
+                                {
+                                    "name": "self",
+                                    "order": 0
+                                },
+                                {
+                                    "name": "msg",
+                                    "order": 1
+                                }
+                            ]
+                        },
+                        {
+                            "name": "warning",
+                            "path": "oras.logger.Logger.warning",
+                            "type": "function",
+                            "params": [
+                                {
+                                    "name": "self",
+                                    "order": 0
+                                },
+                                {
+                                    "name": "msg",
+                                    "order": 1
+                                }
+                            ]
+                        },
+                        {
+                            "name": "debug",
+                            "path": "oras.logger.Logger.debug",
+                            "type": "function",
+                            "params": [
+                                {
+                                    "name": "self",
+                                    "order": 0
+                                },
+                                {
+                                    "name": "msg",
+                                    "order": 1
+                                }
+                            ]
+                        },
+                        {
+                            "name": "error",
+                            "path": "oras.logger.Logger.error",
+                            "type": "function",
+                            "params": [
+                                {
+                                    "name": "self",
+                                    "order": 0
+                                },
+                                {
+                                    "name": "msg",
+                                    "order": 1
+                                }
+                            ]
+                        },
+                        {
+                            "name": "exit",
+                            "path": "oras.logger.Logger.exit",
+                            "type": "function",
+                            "params": [
+                                {
+                                    "name": "self",
+                                    "order": 0
+                                },
+                                {
+                                    "name": "msg",
+                                    "order": 1
+                                },
+                                {
+                                    "name": "return_code",
+                                    "order": 2,
+                                    "default": 1
+                                }
+                            ]
+                        },
+                        {
+                            "name": "progress",
+                            "path": "oras.logger.Logger.progress",
+                            "type": "function",
+                            "params": [
+                                {
+                                    "name": "self",
+                                    "order": 0
+                                },
+                                {
+                                    "name": "done",
+                                    "order": 1,
+                                    "default": "None"
+                                },
+                                {
+                                    "name": "total",
+                                    "order": 2,
+                                    "default": "None"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "shellcmd",
+                            "path": "oras.logger.Logger.shellcmd",
+                            "type": "function",
+                            "params": [
+                                {
+                                    "name": "self",
+                                    "order": 0
+                                },
+                                {
+                                    "name": "msg",
+                                    "order": 1
+                                }
+                            ]
+                        },
+                        {
+                            "name": "text_handler",
+                            "path": "oras.logger.Logger.text_handler",
+                            "type": "function",
+                            "params": [
+                                {
+                                    "name": "self",
+                                    "order": 0
+                                },
+                                {
+                                    "name": "msg",
+                                    "order": 1
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "setup_logger",
+                    "path": "oras.logger.setup_logger",
+                    "type": "function",
+                    "params": [
+                        {
+                            "name": "quiet",
+                            "order": 0,
+                            "default": "False"
+                        },
+                        {
+                            "name": "printshellcmds",
+                            "order": 1,
+                            "default": "False"
+                        },
+                        {
+                            "name": "nocolor",
+                            "order": 2,
+                            "default": "False"
+                        },
+                        {
+                            "name": "stdout",
+                            "order": 3,
+                            "default": "False"
+                        },
+                        {
+                            "name": "debug",
+                            "order": 4,
+                            "default": "False"
+                        },
+                        {
+                            "name": "use_threads",
+                            "order": 5,
+                            "default": "False"
+                        },
+                        {
+                            "name": "wms_monitor",
+                            "order": 6,
+                            "default": "None"
+                        }
+                    ]
+                }
+            ]
+        }
     }
 }

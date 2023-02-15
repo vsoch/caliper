@@ -106,7 +106,7 @@ def foo():
 ## TODO
 
 - [x] update caliper to have a "compspec" type that uses jedi and outputs a more organized (typed) format
-- generate facts across versions of a library (oras)
-- think about concepts of a diff vs. trace
-- likely we want a conda manager!
+- [x] generate facts across versions of a library (oras)
+- [x] think about concepts of a diff vs. trace (a diff compares across versions, and a trace gets signatures used for a call or set of tests)
+- [x] likely we want a conda manager!
 - try tracing with https://github.com/alonho/pytrace/tree/master
