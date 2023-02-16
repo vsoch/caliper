@@ -33,7 +33,8 @@ def write_zip(members, saveto):
 
 
 def read_zip(zipname, filename):
-    """read a zipfile into a zipflie object. Optionally extract a specific
+    """
+    Read a zipfile into a zipflie object. Optionally extract a specific
     file from it. Currently the only support/need is to extract a specific
     file from it.
     """
@@ -108,7 +109,7 @@ def recursive_find(base, pattern="*.py"):
 
 def read_file(filename, readlines=True):
     """
-    write_file will open a file, "filename" and write content
+    Write_file will open a file, "filename" and write content
     and properly close the file.
 
     Arguments:
@@ -183,7 +184,7 @@ def mkdir_p(path):
             raise e
 
 
-def get_tmpfile(prefix=""):
+def get_tmpfile(prefix="", suffix=None):
     """
     Get a temporary file with an optional prefix. By default, the file
     is closed (and just a name returned).
@@ -193,7 +194,7 @@ def get_tmpfile(prefix=""):
     """
     tmpdir = tempfile.gettempdir()
     prefix = os.path.join(tmpdir, os.path.basename(prefix))
-    fd, tmp_file = tempfile.mkstemp(prefix=prefix)
+    fd, tmp_file = tempfile.mkstemp(prefix=prefix, suffix=suffix)
     os.close(fd)
     return tmp_file
 

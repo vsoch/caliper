@@ -145,7 +145,8 @@ class MetricBase:
             return outfile
 
     def update_index(self, extractor_dir, content):
-        """If an index already exists, load it and update it with the data type
+        """
+        If an index already exists, load it and update it with the data type
         (represented as the key of a dictionary in content). If an index does not
         exist, write a new one. Filepaths should be relative.
         """

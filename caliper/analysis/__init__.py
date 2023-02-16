@@ -17,7 +17,8 @@ from .workers import Workers
 
 
 class CaliperAnalyzerBase:
-    """A Caliper Analyzer takes a caliper.yaml, reads it in, and then builds
+    """
+    A Caliper Analyzer takes a caliper.yaml, reads it in, and then builds
     containers across a grid of builds to test a set of user provided scripts.
     This analyzer base provides the functionality to read in and validate
     the caliper.yaml, and abstract functions for the main classes. Output
@@ -36,7 +37,9 @@ class CaliperAnalyzerBase:
         return self.__str__()
 
     def _load_config(self, config_file):
-        """Given a caliper.yaml file, load the config an ensure that it is valid."""
+        """
+        Given a caliper.yaml file, load the config an ensure that it is valid.
+        """
         if not os.path.exists(config_file):
             logger.exit("%s does not exist." % config_file)
         self.config_file = config_file
@@ -75,7 +78,8 @@ class CaliperAnalyzerBase:
 
 class CaliperAnalyzer(CaliperAnalyzerBase):
     def get_analyzer(self):
-        """Given the validated and loaded config, return the correct analyzer
+        """
+        Given the validated and loaded config, return the correct analyzer
         class depending on the packagemanger field. Currently we only support
         pypi
         """
@@ -88,7 +92,9 @@ class CaliperAnalyzer(CaliperAnalyzerBase):
 
 
 class CaliperPypiAnalyzer(CaliperAnalyzerBase):
-    """A Pypi Analyzer expects a package that is intended for pypi."""
+    """
+    A Pypi Analyzer expects a package that is intended for pypi.
+    """
 
     name = "pypi"
 
@@ -102,7 +108,9 @@ class CaliperPypiAnalyzer(CaliperAnalyzerBase):
         force=False,
         cleanup=False,
     ):
-        """Once the config is loaded, run the analysis."""
+        """
+        Once the config is loaded, run the analysis.
+        """
         # The release filter is a regular expression we use to find the correct
         # platform / architecture. We select linux wheels and source
         release_filter = release_filter or "(.*manylinux.*x86_64.*|[.]tar[.]gz)"
@@ -183,14 +191,17 @@ class CaliperPypiAnalyzer(CaliperAnalyzerBase):
         return self._run_serial(tasks)
 
     def _run_parallel(self, tasks, nproc, show_progress=True):
-        """Run tasks in parallel"""
+        """
+        Run tasks in parallel
+        """
         workers = Workers(nproc, show_progress=show_progress)
         for key, task in tasks.items():
             workers.add_task(key, func=task[0], params=task[1])
         return workers.run()
 
     def _run_serial(self, tasks, show_progress=True):
-        """Run tasks in serial. The workers save result files, so we don't
+        """
+        Run tasks in serial. The workers save result files, so we don't
         care about the results (would take more memory to try and return the
         same content).
         """

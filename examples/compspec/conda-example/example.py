@@ -15,7 +15,7 @@ def main():
     # This repository will have each release version represented as a tagged commit
     extractor.prepare_repository()
 
-    # Extract metric for compspec
+    # Extract metric for compspec - this saves to a database too
     metric = extractor.extract_metric("compspec")
 
     # How to get results

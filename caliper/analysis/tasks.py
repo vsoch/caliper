@@ -14,7 +14,8 @@ from caliper.utils.file import write_file, write_json
 
 
 def analysis_task(**kwargs):
-    """A shared analysis task for the serial or parallel workers. We will
+    """
+    A shared analysis task for the serial or parallel workers. We will
     read in the Dockerfile template, and generate and run/test a container
     for a particular Python version, etc.
     """

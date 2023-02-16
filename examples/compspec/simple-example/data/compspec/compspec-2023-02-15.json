@@ -1,0 +1,211 @@
+{
+    "2023-02-15": {
+        "2023-02-15": {
+            "exports": [
+                {
+                    "path": "2023-02-15.isfunction",
+                    "name": "2023-02-15.isfunction.add",
+                    "type": "add",
+                    "params": [
+                        {
+                            "name": "Union[int, float]",
+                            "type": 0,
+                            "position": null,
+                            "default": 1
+                        },
+                        {
+                            "name": "Union[int, float]",
+                            "type": 1,
+                            "position": null,
+                            "default": 1
+                        }
+                    ]
+                },
+                {
+                    "path": "2023-02-15.isfunction",
+                    "name": "2023-02-15.isfunction.power",
+                    "type": "power",
+                    "params": [
+                        {
+                            "name": null,
+                            "type": 0,
+                            "position": null,
+                            "default": 2
+                        },
+                        {
+                            "name": null,
+                            "type": 1,
+                            "position": "2",
+                            "default": 2
+                        }
+                    ]
+                },
+                {
+                    "path": "2023-02-15.isfunction",
+                    "name": "2023-02-15.isfunction.float_power",
+                    "type": "float_power",
+                    "params": [
+                        {
+                            "name": null,
+                            "type": 0,
+                            "position": null,
+                            "default": 3
+                        },
+                        {
+                            "name": null,
+                            "type": 1,
+                            "position": "2.2",
+                            "default": 3
+                        }
+                    ]
+                },
+                {
+                    "path": "2023-02-15.isfunction",
+                    "name": "2023-02-15.isfunction.ceiling",
+                    "type": "ceiling",
+                    "params": [
+                        {
+                            "name": null,
+                            "type": 0,
+                            "position": null,
+                            "default": 4
+                        }
+                    ]
+                },
+                {
+                    "path": "2023-02-15.isfunction",
+                    "name": "2023-02-15.isfunction.contains",
+                    "type": "contains",
+                    "params": [
+                        {
+                            "name": null,
+                            "type": 0,
+                            "position": null,
+                            "default": 5
+                        },
+                        {
+                            "name": null,
+                            "type": 1,
+                            "position": null,
+                            "default": 5
+                        }
+                    ]
+                },
+                {
+                    "path": "2023-02-15.isclass",
+                    "name": "2023-02-15.isclass.Car",
+                    "type": "Car"
+                },
+                {
+                    "path": "2023-02-15.isclass.Car",
+                    "name": "2023-02-15.isclass.Car.__init__",
+                    "type": "__init__",
+                    "params": [
+                        {
+                            "name": null,
+                            "type": 0,
+                            "position": null,
+                            "default": 7
+                        },
+                        {
+                            "name": null,
+                            "type": 1,
+                            "position": "4",
+                            "default": 7
+                        },
+                        {
+                            "name": null,
+                            "type": 2,
+                            "position": "4",
+                            "default": 7
+                        }
+                    ]
+                },
+                {
+                    "path": "2023-02-15.isclass.Car",
+                    "name": "2023-02-15.isclass.Car.honk",
+                    "type": "honk",
+                    "params": [
+                        {
+                            "name": null,
+                            "type": 0,
+                            "position": null,
+                            "default": 8
+                        }
+                    ]
+                },
+                {
+                    "path": "2023-02-15.isclass.Car",
+                    "name": "2023-02-15.isclass.Car.slow_down",
+                    "type": "slow_down",
+                    "params": [
+                        {
+                            "name": null,
+                            "type": 0,
+                            "position": null,
+                            "default": 9
+                        },
+                        {
+                            "name": null,
+                            "type": 1,
+                            "position": null,
+                            "default": 9
+                        }
+                    ]
+                },
+                {
+                    "path": "2023-02-15.isclass.Car",
+                    "name": "2023-02-15.isclass.Car.accelerate",
+                    "type": "accelerate",
+                    "params": [
+                        {
+                            "name": null,
+                            "type": 0,
+                            "position": null,
+                            "default": 10
+                        },
+                        {
+                            "name": null,
+                            "type": 1,
+                            "position": null,
+                            "default": 10
+                        }
+                    ]
+                },
+                {
+                    "path": "2023-02-15.decorators",
+                    "name": "2023-02-15.decorators.useless",
+                    "type": "useless",
+                    "params": [
+                        {
+                            "name": null,
+                            "type": 0,
+                            "position": null,
+                            "default": 11
+                        }
+                    ]
+                },
+                {
+                    "path": "2023-02-15.decorators",
+                    "name": "2023-02-15.decorators.say_whee",
+                    "type": "say_whee"
+                }
+            ],
+            "imports": [
+                {
+                    "path": "2023-02-15.isfunction",
+                    "import": "math"
+                },
+                {
+                    "path": "2023-02-15.isfunction",
+                    "import": "re"
+                },
+                {
+                    "path": "2023-02-15.isfunction",
+                    "from": "typing",
+                    "import": "Union"
+                }
+            ]
+        }
+    }
+}
