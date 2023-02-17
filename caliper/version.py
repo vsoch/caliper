@@ -1,8 +1,8 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2023, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-__version__ = "0.0.23"
+__version__ = "0.1.0"
 AUTHOR = "Vanessa Sochat"
 AUTHOR_EMAIL = "vsochat@stanford.edu"
 NAME = "caliper"
@@ -20,9 +20,13 @@ INSTALL_REQUIRES = (
     ("GitPython", {"min_version": "3.1.7"}),
     ("pyaml", {"min_version": "20.4.0"}),
     ("Jinja2", {"min_version": "2.11.2"}),
+    ("rich", {"min_version": None}),
 )
-JEDI_REQUIRES = (("jedi", {"exact_version": "0.18.0"}),)
+PARSER_REQUIRES = (
+    ("jedi", {"exact_version": "0.18.0"}),
+    ("parso", {"min_version": None}),
+)
 TESTS_REQUIRES = (("pytest", {"min_version": "4.6.2"}),)
 DATAVERSE_REQUIRES = (("pyDataverse", {"exact_version": "0.2.1"}),)
 
-ALL_REQUIRES = INSTALL_REQUIRES + JEDI_REQUIRES + DATAVERSE_REQUIRES
+ALL_REQUIRES = INSTALL_REQUIRES + PARSER_REQUIRES + DATAVERSE_REQUIRES

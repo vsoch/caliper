@@ -20,7 +20,7 @@ and use the metrics in other kinds of analyses.
 Break a Workflow
 ================
 
-An interesting use case for caliper is to use metrics to figure out if we can 
+An interesting use case for caliper is to use metrics to figure out if we can
 predict breaking. For example, we might have:
 
 1. A Dockerfile with an entrypoint and command that generates some output
@@ -36,18 +36,6 @@ degree of changes for each:
 2. How close the developer was to representing a "correct" set of versions.
 
 "Correct" is in quotes because we cannot easily assess dependency interaction
-(but perhaps can make some kind of proxy for it eventually). 
+(but perhaps can make some kind of proxy for it eventually).
 
 **Note** this is all still being developed, and likely to change!
-
-
-
-
-
-
-
-
-
-
-
-

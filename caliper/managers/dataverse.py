@@ -1,11 +1,11 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2023, Vanessa Sochat"
 __license__ = "MPL 2.0"
+
+import os
 
 from caliper.logger import logger
 from caliper.managers.base import ManagerBase
-
-import os
 
 
 class DataverseManager(ManagerBase):
@@ -15,7 +15,8 @@ class DataverseManager(ManagerBase):
     client = None
 
     def init_client(self, baseurl="https://dataverse.harvard.edu/"):
-        """initialize a dataverse client. We default to the Harvard dataverse,
+        """
+        Initialize a dataverse client. We default to the Harvard dataverse,
         and can also retrieve a different url from the environment.
         """
         # If we've already instantiated a client, return
@@ -24,7 +25,7 @@ class DataverseManager(ManagerBase):
 
         try:
             from pyDataverse.api import Api
-        except:
+        except Exception:
             logger.exit("pydataverse is required to use the dataverse manager.")
 
         # Arguments for the manager come from the environment
@@ -34,7 +35,8 @@ class DataverseManager(ManagerBase):
         self.client = Api(baseurl)
 
     def get_package_metadata(self, name=None):
-        """Given a dataset DOI, retrieve it from a dataverse install. Since
+        """
+        Given a dataset DOI, retrieve it from a dataverse install. Since
         we only retrieve one version, this manager typically only includes
         one set of files corresponding to the latest version.
         """
@@ -71,7 +73,8 @@ class DataverseManager(ManagerBase):
         return self._specs
 
     def download(self, spec, dest):
-        """dataverse specs typically only provide the latest version, and a
+        """
+        Dataverse specs typically only provide the latest version, and a
         listing of files instead of a single archive.
         """
         # Initialize a client

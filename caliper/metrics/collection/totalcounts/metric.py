@@ -1,19 +1,23 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2023, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
 from caliper.metrics.base import MetricBase
+from caliper.metrics.decorators import require_commit
 
 
 class Totalcounts(MetricBase):
-
     name = "totalcounts"
     description = "retrieve total counts of files and lines for each commit"
 
     def __init__(self, git):
         super().__init__(git, __file__)
 
+    @require_commit
     def _extract(self, commit):
+        """
+        If no commit provided, cannot derive.
+        """
         total_files = len(self.git.ls_files())
         return {
             "commit": commit.hexsha,

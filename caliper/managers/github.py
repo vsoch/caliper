@@ -1,23 +1,27 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2023, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
+import os
 from distutils.version import StrictVersion
-from caliper.utils.command import do_request
+
 from caliper.logger import logger
 from caliper.managers.base import ManagerBase
-
-import os
+from caliper.utils.command import do_request
 
 
 class GitHubManager(ManagerBase):
-    """Retreive GitHub releases"""
+    """
+    Retreive GitHub releases
+    """
 
     name = "github"
     baseurl = "https://api.github.com"
 
     def _get_headers(self):
-        """If a GitHub token is found in the environment, use it"""
+        """
+        If a GitHub token is found in the environment, use it
+        """
         token = os.environ.get("GITHUB_TOKEN")
         headers = {
             "Accept": "application/vnd.github.symmetra-preview+json",
@@ -27,7 +31,9 @@ class GitHubManager(ManagerBase):
         return headers
 
     def get_package_metadata(self, name=None):
-        """Given a package name, retrieve it's metadata from pypi"""
+        """
+        Given a package name, retrieve it's metadata from pypi
+        """
         name = name or self.package_name
         if not name:
             raise ValueError("A package name is required.")
@@ -41,11 +47,10 @@ class GitHubManager(ManagerBase):
 
         # Parse metadata into simplified version of spack package schema
         for release in self.metadata:
-
             # Only include valid versions
             try:
                 StrictVersion(release["name"].lstrip("v"))
-            except:
+            except Exception:
                 continue
 
             self._specs.append(

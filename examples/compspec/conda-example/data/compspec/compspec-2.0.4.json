@@ -1,0 +1,174 @@
+{
+    "2.0.4": {
+        "redo": {
+            "exports": [
+                {
+                    "path": "redo",
+                    "name": "redo.retrier",
+                    "type": "retrier",
+                    "params": [
+                        {
+                            "name": "attempts",
+                            "position": 0,
+                            "default": "5"
+                        },
+                        {
+                            "name": "sleeptime",
+                            "position": 1,
+                            "default": "10"
+                        },
+                        {
+                            "name": "max_sleeptime",
+                            "position": 2,
+                            "default": "300"
+                        },
+                        {
+                            "name": "sleepscale",
+                            "position": 3,
+                            "default": "1.5"
+                        },
+                        {
+                            "name": "jitter",
+                            "position": 4,
+                            "default": "1"
+                        }
+                    ]
+                },
+                {
+                    "path": "redo",
+                    "name": "redo.retry",
+                    "type": "retry",
+                    "params": [
+                        {
+                            "name": "action",
+                            "position": 0
+                        },
+                        {
+                            "name": "attempts",
+                            "position": 1,
+                            "default": "5"
+                        },
+                        {
+                            "name": "sleeptime",
+                            "position": 2,
+                            "default": "60"
+                        },
+                        {
+                            "name": "sleepscale",
+                            "position": 4,
+                            "default": "1.5"
+                        },
+                        {
+                            "name": "jitter",
+                            "position": 5,
+                            "default": "1"
+                        },
+                        {
+                            "name": "cleanup",
+                            "position": 7,
+                            "default": "None"
+                        },
+                        {
+                            "name": "log_args",
+                            "position": 10,
+                            "default": "True"
+                        }
+                    ]
+                },
+                {
+                    "path": "redo",
+                    "name": "redo.retriable",
+                    "type": "retriable",
+                    "params": [
+                        {
+                            "name": "retry_args",
+                            "position": 0
+                        },
+                        {
+                            "name": "retry_kwargs",
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "path": "redo",
+                    "name": "redo.retrying",
+                    "type": "retrying",
+                    "params": [
+                        {
+                            "name": "func",
+                            "position": 0
+                        },
+                        {
+                            "name": "retry_args",
+                            "position": 1
+                        },
+                        {
+                            "name": "retry_kwargs",
+                            "position": 2
+                        }
+                    ]
+                },
+                {
+                    "path": "redo.cmd",
+                    "name": "redo.cmd.main",
+                    "type": "main",
+                    "params": [
+                        {
+                            "name": "argv",
+                            "position": 0,
+                            "default": "None"
+                        }
+                    ]
+                }
+            ],
+            "imports": [
+                {
+                    "path": "redo",
+                    "import": "logging"
+                },
+                {
+                    "path": "redo",
+                    "import": "random"
+                },
+                {
+                    "path": "redo",
+                    "import": "time"
+                },
+                {
+                    "path": "redo",
+                    "from": "contextlib",
+                    "import": "contextmanager"
+                },
+                {
+                    "path": "redo",
+                    "from": "functools",
+                    "import": "wraps"
+                },
+                {
+                    "path": "redo.cmd",
+                    "import": "logging"
+                },
+                {
+                    "path": "redo.cmd",
+                    "import": "sys"
+                },
+                {
+                    "path": "redo.cmd",
+                    "from": "subprocess",
+                    "import": "CalledProcessError"
+                },
+                {
+                    "path": "redo.cmd",
+                    "from": "subprocess",
+                    "import": "check_call"
+                },
+                {
+                    "path": "redo.cmd",
+                    "from": "redo",
+                    "import": "retrying"
+                }
+            ]
+        }
+    }
+}

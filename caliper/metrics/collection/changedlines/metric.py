@@ -1,15 +1,16 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2023, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-from caliper.logger import logger
-from caliper.utils.file import read_json
-from caliper.metrics.base import ChangeMetricBase
 import os
+
+from caliper.logger import logger
+from caliper.metrics.base import ChangeMetricBase
+from caliper.metrics.decorators import require_commit
+from caliper.utils.file import read_json
 
 
 class Changedlines(ChangeMetricBase):
-
     name = "changedlines"
     description = "count lines added and removed between versions"
 
@@ -54,8 +55,11 @@ class Changedlines(ChangeMetricBase):
             "labels": labels,
         }
 
+    @require_commit
     def _extract(self, commit1, commit2):
-        """The second commit should be the parent"""
+        """
+        The second commit should be the parent
+        """
 
         diffs = {diff.a_path: diff for diff in commit1.diff(commit2)}
 
@@ -66,7 +70,6 @@ class Changedlines(ChangeMetricBase):
 
         # commit, we'll iterate through it to get the information we need.
         for filepath, metrics in commit1.stats.files.items():
-
             # Select the diff for the path in the stats
             diff = diffs.get(filepath)
 

@@ -14,6 +14,7 @@ and **Merged pull requests**. Critical items to know are:
 The versions coincide with releases on pip.
 
 ## [0.2.x](https://github.com/vsoch/caliper/tree/master) (0.0.x)
+ - formalize output format for static parsing (0.1.0)
  - update caliper view for new organization of data (0.0.23)
  - adding Dataverse manager (0.0.22)
  - try catching error on cleanup (0.0.2)(0.0.21)
@@ -21,7 +22,7 @@ The versions coincide with releases on pip.
  - adding support to extract functions from filename (0.0.18)
  - adding helper metric function to extract file functions (0.0.17)
  - updating export organization to allow for many json (0.0.16)
- - adding update --check and update commands 
+ - adding update --check and update commands
  - adding functiondb metric extractor (0.0.15)
  - small bux fixes and addition of docs (0.0.14)
  - adding caliper analyzer (0.0.13)

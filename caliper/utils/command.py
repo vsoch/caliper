@@ -1,12 +1,9 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2023, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-from caliper.utils.file import move_files
-from caliper.logger import logger
 import json
 import os
-import requests
 import shutil
 import subprocess
 import sys
@@ -14,9 +11,16 @@ import tarfile
 import threading
 import zipfile
 
+import requests
+
+from caliper.logger import logger
+from caliper.utils.file import move_files
+
 
 def wget(url, download_to, chunk_size=1024):
-    """mimicking wget using requests"""
+    """
+    Mimicking wget using requests
+    """
     response = requests.get(url, stream=True)
     with open(download_to, "wb") as fd:
         for chunk in response.iter_content(chunk_size=chunk_size):
@@ -38,6 +42,8 @@ def wget_and_extract(
         dest, root, dest_dir = wget_and_extract_targz(url, download_to, chunk_size)
     elif download_type in ["wheel", "gzip", "zip"]:
         dest, root, dest_dir = wget_and_extract_zip(url, download_to, chunk_size)
+    elif download_type == "bz2":
+        dest, root, dest_dir = wget_and_extract_bz2(url, download_to, chunk_size)
     else:
         logger.exit("%s is not a known archive type." % download_type)
 
@@ -56,13 +62,31 @@ def wget_and_extract(
 
 
 def wget_and_extract_targz(url, download_to, chunk_size=1024):
-    """Get an extract a targz archive."""
+    """
+    Get and extract a targz archive.
+    """
+    return wget_and_extract_tarfile(url, download_to, chunk_size)
+
+
+def wget_and_extract_bz2(url, download_to, chunk_size=1024):
+    """
+    Get and extract a bz2 archive.
+    """
+    return wget_and_extract_tarfile(url, download_to, chunk_size, ".bz2", "r:bz2")
+
+
+def wget_and_extract_tarfile(
+    url, download_to, chunk_size=1024, ext=".tar.gz", mode="r:gz"
+):
+    """
+    Get and extract with tarfile
+    """
     download_to = wget(url, download_to, chunk_size=chunk_size)
     download_dir = os.path.dirname(download_to)
-    download_root = download_to.rstrip(".tar.gz")
+    download_root = download_to.rstrip(ext)
 
     # Extract tar and determine root folder
-    with tarfile.open(download_to, "r:gz") as tar:
+    with tarfile.open(download_to, mode) as tar:
         download_root = os.path.join(download_dir, os.path.commonprefix(tar.getnames()))
         tar.extractall(download_dir)
 
@@ -70,7 +94,9 @@ def wget_and_extract_targz(url, download_to, chunk_size=1024):
 
 
 def wget_and_extract_zip(url, download_to, chunk_size=1024):
-    """Get an extract a zip or wheel archive."""
+    """
+    Get an extract a zip or wheel archive.
+    """
     download_to = wget(url, download_to, chunk_size=chunk_size)
     download_root = download_to.rsplit(".", 1)[0]
     download_dir = os.path.dirname(download_to)
@@ -97,11 +123,10 @@ def do_request(url, headers=None, data=None, method="GET"):
     response = requests.request(method, url, headers=headers, data=json.dumps(data))
 
     if response.status_code not in [200, 201]:
-
         # Try to serialize the message, if possible
         try:
             message = response.json()
-        except:
+        except Exception:
             message = ""
         sys.exit(
             f"Error with {url}: {response.status_code}, {response.reason}\n{message}"
@@ -111,7 +136,8 @@ def do_request(url, headers=None, data=None, method="GET"):
 
 
 def decodeUtf8String(inputStr):
-    """Convert an UTF8 sequence into a string
+    """
+    Convert an UTF8 sequence into a string
     Required for compatibility with Python 2 where str==bytes
     inputStr -- Either a str or bytes instance with UTF8 encoding
     """
@@ -178,7 +204,6 @@ def run_command(
     environ=None,
     quiet=False,
 ):
-
     """run_command uses subprocess to send a command to the terminal. If
     capture is True, we use the parent stdout, so output is piped to the user.
     This means we don't return the output to parse. This is a function (simpler)

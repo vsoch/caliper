@@ -1,20 +1,22 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2023, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
 import errno
 import fnmatch
-import json
 import io
+import json
 import os
 import shutil
 import tempfile
-import yaml
 import zipfile
+
+import yaml
 
 
 def write_zip(members, saveto):
-    """Given a dictionary with filenames (keys) and data (values),
+    """
+    Given a dictionary with filenames (keys) and data (values),
     write the data to a zipfile.
 
     Parameters
@@ -31,7 +33,8 @@ def write_zip(members, saveto):
 
 
 def read_zip(zipname, filename):
-    """read a zipfile into a zipflie object. Optionally extract a specific
+    """
+    Read a zipfile into a zipflie object. Optionally extract a specific
     file from it. Currently the only support/need is to extract a specific
     file from it.
     """
@@ -43,7 +46,8 @@ def read_zip(zipname, filename):
 
 
 def zip_from_string(zipdata, filename=None):
-    """Given zipdata (for example, provided from a request) load it into
+    """
+    Given zipdata (for example, provided from a request) load it into
     a zip object so we can then extract it (or otherwise parse it)
     """
     # Read into in-memory zip, return specific file or lookup of files
@@ -55,7 +59,9 @@ def zip_from_string(zipdata, filename=None):
 
 
 def move_files(source, dest):
-    """move one or more files from a source to a destination"""
+    """
+    Move one or more files from a source to a destination
+    """
     moved_files = []
 
     for path in os.listdir(source):
@@ -68,13 +74,19 @@ def move_files(source, dest):
         elif os.path.exists(topath) and os.path.isdir(topath):
             shutil.rmtree(topath)
 
+        dest_dir = os.path.dirname(dest)
+        if not os.path.exists(dest_dir):
+            os.makedirs(dest_dir)
+
         shutil.move(frompath, dest)
         moved_files.append(topath)
     return moved_files
 
 
 def get_latest_modified(base, pattern="*.json"):
-    """Given a folder, get the latest modified file"""
+    """
+    Given a folder, get the latest modified file
+    """
     files = list(recursive_find(base, pattern))
     if not files:
         return None
@@ -82,7 +94,8 @@ def get_latest_modified(base, pattern="*.json"):
 
 
 def recursive_find(base, pattern="*.py"):
-    """recursive find will yield python files in all directory levels
+    """
+    Recursive find will yield python files in all directory levels
     below a base path.
 
     Arguments:
@@ -95,7 +108,8 @@ def recursive_find(base, pattern="*.py"):
 
 
 def read_file(filename, readlines=True):
-    """write_file will open a file, "filename" and write content
+    """
+    Write_file will open a file, "filename" and write content
     and properly close the file.
 
     Arguments:
@@ -111,19 +125,24 @@ def read_file(filename, readlines=True):
 
 
 def write_file(filename, content):
-    """Write some text content to a file"""
+    """
+    Write some text content to a file
+    """
     with open(filename, "w") as fd:
         fd.write(content)
 
 
 def read_yaml(filename):
-    """Given a yaml file, read with pyaml"""
+    """
+    Given a yaml file, read with pyaml
+    """
     stream = read_file(filename, readlines=False)
     return yaml.load(stream, Loader=yaml.FullLoader)
 
 
 def write_json(json_obj, filename, pretty=True):
-    """write_json will write a json object to file, pretty printed
+    """
+    Write a json object to file, pretty printed
 
     Arguents:
      - json_obj (dict) : the dict to print to json
@@ -138,7 +157,8 @@ def write_json(json_obj, filename, pretty=True):
 
 
 def read_json(input_file):
-    """Read json from an input file.
+    """
+    Read json from an input file.
 
     Arguments:
       - input_file (str) : the filename to read
@@ -149,7 +169,8 @@ def read_json(input_file):
 
 
 def mkdir_p(path):
-    """mkdir_p attempts to get the same functionality as mkdir -p
+    """
+    mkdir_p attempts to get the same functionality as mkdir -p
 
     Arguments:
      - path (str) : the path to create
@@ -163,8 +184,9 @@ def mkdir_p(path):
             raise e
 
 
-def get_tmpfile(prefix=""):
-    """get a temporary file with an optional prefix. By default, the file
+def get_tmpfile(prefix="", suffix=None):
+    """
+    Get a temporary file with an optional prefix. By default, the file
     is closed (and just a name returned).
 
     Arguments:
@@ -172,20 +194,21 @@ def get_tmpfile(prefix=""):
     """
     tmpdir = tempfile.gettempdir()
     prefix = os.path.join(tmpdir, os.path.basename(prefix))
-    fd, tmp_file = tempfile.mkstemp(prefix=prefix)
+    fd, tmp_file = tempfile.mkstemp(prefix=prefix, suffix=suffix)
     os.close(fd)
     return tmp_file
 
 
 def get_tmpdir(prefix="", create=True):
-    """get a temporary directory for an operation.
+    """
+    Get a temporary directory for an operation.
 
     Arguments:
      - prefix (str) : prefix with this string
      - create (bool) : create the folder (defaults to true)
     """
     tmpdir = tempfile.gettempdir()
-    prefix = prefix or "rseng-temp"
+    prefix = prefix or "caliper-temp"
     prefix = "%s.%s" % (prefix, next(tempfile._get_candidate_names()))
     tmpdir = os.path.join(tmpdir, prefix)
     if not os.path.exists(tmpdir) and create:

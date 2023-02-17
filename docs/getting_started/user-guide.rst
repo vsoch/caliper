@@ -7,7 +7,7 @@ User Guide
 Caliper is a tool for measuring and assessing change in packages. It's currently
 of interest if you want to study how developers create software, or some kind
 of change that might predict something breaking. It might eventually be useful
-as a tool to, given a script with dependencies speciied, know the kind of flexibility
+as a tool to, given a script with dependencies specified, know the kind of flexibility
 you have to honor those dependencies (or not). This could be hugely useful for package
 managers and solvers that need to try more flexible constraints given a conflict.
 
@@ -95,7 +95,7 @@ Here is an example from an early version of tensorflow.
     tensorflow-0.12.0-cp35-cp35m-win_amd64.whl
 
 For more recent versions you would see Python 3.8 and 3.9, and definitely not 2.x.
-The above function still selects one release based on your preferences. You can also choose to return a subset of 
+The above function still selects one release based on your preferences. You can also choose to return a subset of
 _all_ versions with the filter function. For example, here let's narrow down the set
 to include those that can be installed on Linux.
 
@@ -199,7 +199,7 @@ use by exporting it to the environment. By default we use Harvard's Dataverse po
     export CALIPER_DATAVERSE_BASEURL=https://dataverse.harvard.edu/
 
 
-Once you have it installed, you can do an extraction for 
+Once you have it installed, you can do an extraction for
 
 .. code:: console
 
@@ -296,7 +296,7 @@ For example, we might use the example and do:
 
 .. code:: console
 
-    $ caliper analyze --config examples/analyze/caliper.yaml 
+    $ caliper analyze --config examples/analyze/caliper.yaml
 
 to do a ``docker system prune --all`` after each build (recommended) add ``--cleanup``
 
@@ -353,7 +353,7 @@ a name, and then a list of runs:
 
 
 If you don't define a list of ``python_versions`` all will be used by default.
-If you don't define a list of ``versions`` (e.g., versions of tensorflow) all versions 
+If you don't define a list of ``versions`` (e.g., versions of tensorflow) all versions
 of the library will be tested. If you want to add custom arguments for your template (beyond a base image that
 is derived for your Python software, and the dependency name to derive wheels to install)
 you can do this with args:
@@ -365,7 +365,7 @@ you can do this with args:
       packagemanager: pypi
       dockerfile: Dockerfile
       args:
-         additionaldeps: 
+         additionaldeps:
            - scikit-learn
 
 The functionality of your arguments is up to you. In the example above, ``additionaldeps``
@@ -390,7 +390,7 @@ Metrics Extractor
 Finally, a metrics extractor provides an easy interface to iterate over versions
 of a package, and extract some kind of metric. There are two ways to go about it -
 starting with a repository that already has tags of interest, or starting
-with a manager that will be used to create it. For each, you have three options 
+with a manager that will be used to create it. For each, you have three options
 for how to save data:
 
  - **json**: is a folder with a json file for each version. This is recommended for large repositories (e.g., tensorflow)
@@ -401,7 +401,7 @@ You can specify the format with ``--fmt (json|json-single|zip)``.
 The default is json, which is the most conservative to ensure small file sizes for GitHub.
 It's recommended that you test extractions and choose the size that is right for you.
 Whatever you choose, an ``index.json`` file is generated in the output metric folder
-that will make it possible to detect what is available programatically with a request.
+that will make it possible to detect what is available programmatically with a request.
 We currently only support one extraction type at once, however if you think it necessary,
 we can add support for multiple.
 
@@ -414,6 +414,7 @@ folder in the caliper repository. Adding a new metric corresponds to creating a 
 and then adding the metric to this list.
 
  - **functiondb**: is the function database metric. This means that for each version of a library we extract a lookup of all module functions, classes, and arguments. You might, for example, use this lookup to compare changes in the module over time.
+ - **compspec**: a more formalized (structured) variant of a function database, intending to assess library compatibility.
  - **changedlines**: is exactly what it sounds like - we look _between_ versions and count the number of changed lined. Thus, this uses a ``ChangeMetricBase`` instead of a standard ``MetricBase``.
  - **totalcounts**: is also exactly what it sounds like! We look at each version and create a lookup that shows the total number of files for the metric. If other totals are wanted, we could add them here.
 
@@ -429,7 +430,7 @@ When installed, caliper comes with an executable, ``caliper`` that can make it e
 to extract a version repository.
 
 .. code:: console
-    
+
     $ caliper --help
     usage: caliper [-h] [--version] {version,metrics,analyze,extract,view} ...
 
@@ -460,7 +461,7 @@ The ``extract`` command allows to extract metrics for a package:
 
 
 .. code:: console
-    
+
     $ caliper extract --help
     usage: caliper extract [-h] [--metric METRIC] [-f {json,zip,json-single}] [--no-cleanup] [--outdir OUTDIR] [--force]
                            [packages [packages ...]]
@@ -508,9 +509,9 @@ You can change the format by specifying ``--fmt``
     $ caliper extract --metric changedlines --fmt json-single pypi:sif
 
 
-By default, if you don't specify an output directory, the metrics will be saved 
-to the present working directory. The organizaion is by package type,
-name, and then results files Here we can see results in all three 
+By default, if you don't specify an output directory, the metrics will be saved
+to the present working directory. The organization is by package type,
+name, and then results files Here we can see results in all three
 formats: ``zip``, ``json`` (multiple files), and ``json-single``:
 
 .. code:: console
@@ -548,16 +549,16 @@ from a programmatic standpoint):
     }
 
 
-As an alternative to saving in the present working directory, you can instead save to 
+As an alternative to saving in the present working directory, you can instead save to
 an output folder of your choosing (with the same structure).
 
 .. code:: console
-    
+
     $ mkdir -p examples/metrics/
     $ caliper extract --metric changedlines --outdir examples/metrics/ pypi:sif
 
 
-For a change metric (a type that looks at change across tagged commits) you'll see 
+For a change metric (a type that looks at change across tagged commits) you'll see
 a range of version like `EMPTY..0.0.1`. For a metric specific to a commit you will
 see just the tag (e.g., `0.0.1`). To extract just one specific version (or a list of
 comma separated versions with no spaces) you can define ``--versions``:
@@ -568,10 +569,41 @@ comma separated versions with no spaces) you can define ``--versions``:
     $ caliper extract --metric functiondb --versions 0.12.1 pypi:tensorflow
 
 
+Manual Extraction
+-----------------
+
+If you don't have a manager that knows how to iterate over states of code,
+you can do a manual extraction, meaning just running the metrics extractor
+over a directory with contents.
+
+
+.. code:: python
+
+    from caliper.metrics import MetricsExtractor
+
+    # I have a Python module in my present working directory
+    extractor = MetricsExtractor(working_dir=os.getcwd())
+
+    # Extract metric for compspec, does not require a commit
+    metric = extractor.extract_metric("compspec")
+
+    # How to get results
+    data = metric.get_results()
+
+    # Just save to file and cleanup
+    metric.save_json("./data")
+
+
+Note that not all extractors support this mode, as some require git commits.
+The ``functiondb`` and ``compspec`` extractors do not require a commit to work.
+The data will save files that are named based on the date (year, month, day)
+of extraction.
+
+
 Extraction Using Manager
 ------------------------
 
-The manager knows all the files for a release of some particular software, so 
+The manager knows all the files for a release of some particular software, so
 we can use it to start an extraction. For example, let's say we have the Pypi manager above:
 
 .. code:: python
@@ -604,7 +636,7 @@ We can then hand it off to the extractor:
 
 
 At this point you'll see the extractor iterating through each repository version,
-and commiting changes based on the version. It's fun to open the repository folder 
+and committing changes based on the version. It's fun to open the repository folder
 (in /tmp named based on the package) and watch the changes happening in real time.
 At this point we would have our **version repository** that we can calculate metrics
 over. For example, we can see commits that correspond to versions:
@@ -673,7 +705,7 @@ You can see that we've created a git manager at this root:
     <caliper.managers.git.GitManager at 0x7ff92a66ca60>
 
 
-And we then might want to see what metrics are available for extraction. 
+And we then might want to see what metrics are available for extraction.
 
 .. code:: console
 
@@ -684,8 +716,8 @@ And we then might want to see what metrics are available for extraction.
 
 Without going into detail, there are different base classes of metrics - a ``MetricBase``
 expects to extract some metric for one timepoint (a tag/commit) and a ``ChangeMetricBase``
-expects to extract metrics that compare two of these timepoints. The metric ``changedlines`` 
-above is a change metric, and ``totalcounts`` is a base metric (for one commit timepoint). 
+expects to extract metrics that compare two of these timepoints. The metric ``changedlines``
+above is a change metric, and ``totalcounts`` is a base metric (for one commit timepoint).
 We can then run the extraction:
 
 .. code:: python
@@ -709,7 +741,7 @@ For formats you can again choose between ``json``, ``json-single``, and ``zip``.
 As stated earlier, you'd want to use ``json`` for the largest repos and metrics
 (e.g., a function database, functiondb is very large, and this scales with the number
 of releases), a ``json-single`` for smaller metric/release combinations, and ``zip``
-if it's somewhere in betwee. Caliper can load all three, so you don't need to worry.
+if it's somewhere in between. Caliper can load all three, so you don't need to worry.
 
 
 Extraction From Repository
@@ -726,7 +758,7 @@ We can easily create a MetricsExtractor class and then read content there as fol
     result = extractor.load_metric("functiondb")
 
 
-For loading the metric, you can also provide a different ``repository`` (defaults to vsoch/caliper-metrics), 
+For loading the metric, you can also provide a different ``repository`` (defaults to vsoch/caliper-metrics),
 ``metric`` name (required), ``subfolder`` (defaults to empty string), and ``branch`` (defaults to main).
 If the metric exists in the repository, it will download and load the data for you
 into result. If not, None will be returned. You can also load a zip metric from
@@ -737,7 +769,7 @@ a repository:
     result = extractor.load_metric("functiondb", extension="zip")
 
 
-And finally, you can also load the metric directly from a filename, which might be 
+And finally, you can also load the metric directly from a filename, which might be
 appropriate if the file is too big for version control:
 
 .. code:: python
@@ -755,14 +787,14 @@ two versions.
     # dict_keys(['0.0.1'])
 
 You can then continue to use the result as needed. For the example above, since we have
-function signatures for every version of tensorflow, we might generate a comparison  or similiarity
+function signatures for every version of tensorflow, we might generate a comparison  or similarity
 matric depending on those signatures.
 
 
 Parsing Results
 ---------------
 
-For each extractor, you can currently loop through them and extract 
+For each extractor, you can currently loop through them and extract
 results for the metric. The results are organized by version (e.g., ``0.0.1``), or difference
 between versions (e.g., ``0.0.1..0.0.11``), depending on the metric.
 
@@ -811,7 +843,7 @@ For a given package, you can check the status of all metrics with ``caliper upda
 
 .. code:: yaml
 
-    $ caliper update --check pypi:sregistry 
+    $ caliper update --check pypi:sregistry
     Found 82 versions for sregistry
     [✔️  ] pypi:sregistry|totalcounts is up to date.
     [✔️  ] pypi:sregistry|functiondb is up to date.
@@ -826,9 +858,9 @@ or a specific metric:
     [✔️  ] pypi:sregistry|functiondb is up to date.
 
 
-Or if you have many results in a respository, you might want to run a nightly (or weekly)
+Or if you have many results in a repository, you might want to run a nightly (or weekly)
 job to check for new releases, and if any new releases are found, to update your data.
-To support much larger numbersof checks, you can use a ``caliper.yaml`` file 
+To support much larger numbersof checks, you can use a ``caliper.yaml`` file
 to list the metric modules that you want to update. The simplest version just has a name for each:
 
 .. code:: yaml
@@ -843,7 +875,7 @@ to list the metric modules that you want to update. The simplest version just ha
 But you can add additional arguments such as the metrics to check:
 
 
-Notice that each package requires a prefix of the manager (pypi). You can then target 
+Notice that each package requires a prefix of the manager (pypi). You can then target
 this file with ``caliper update``, or just specify a list of packages with the command:
 
 .. code:: console
@@ -878,7 +910,7 @@ And then perform the update.
 
 .. code:: console
 
-    $ caliper update --check  
+    $ caliper update --check
 
 
 Metrics View
@@ -913,19 +945,19 @@ as input:
 We might also add a custom title:
 
 .. code:: console
-    
+
     $ caliper view ../caliper-metrics/github/spack/spack/changedlines/changedlines-results.json --title "Spack Version Changes"
 
 Note that caliper will attempt to derive the metric name from the file. If you've renamed the
 file, then you'll need to provide it directly:
 
 .. code:: console
-  
+
     $ caliper view --metric changedlines mystery-file.json
 
 Note from the usage that you can also select an output directory. Caliper tries
 to derive the name of the metric from the filename (e.g., ``<metric>-results.json``
-however if you rename the file, you can specify the metric directly with ``--metric``. 
+however if you rename the file, you can specify the metric directly with ``--metric``.
 An example output is shows here:
 
 .. image:: img/spack-changes.png

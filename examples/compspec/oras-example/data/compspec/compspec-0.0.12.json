@@ -1,0 +1,2275 @@
+{
+    "0.0.12": {
+        "oras": {
+            "exports": [
+                {
+                    "path": "oras.defaults",
+                    "name": "oras.defaults.registry",
+                    "type": "registry"
+                },
+                {
+                    "path": "oras.container",
+                    "name": "oras.container.Container",
+                    "type": "Container"
+                },
+                {
+                    "path": "oras.container.Container",
+                    "name": "oras.container.Container.__init__",
+                    "type": "__init__",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "name",
+                            "position": 1,
+                            "type": "str"
+                        },
+                        {
+                            "name": "registry",
+                            "position": 2,
+                            "type": "Optional[str]",
+                            "default": "None"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.container.Container",
+                    "name": "oras.container.Container.get_blob_url",
+                    "type": "get_blob_url",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "digest",
+                            "position": 1,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.container.Container",
+                    "name": "oras.container.Container.upload_blob_url",
+                    "type": "upload_blob_url",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.container.Container",
+                    "name": "oras.container.Container.tags_url",
+                    "type": "tags_url",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "N",
+                            "position": 1,
+                            "default": "10000"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.container.Container",
+                    "name": "oras.container.Container.put_manifest_url",
+                    "type": "put_manifest_url",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.container.Container",
+                    "name": "oras.container.Container.get_manifest_url",
+                    "type": "get_manifest_url",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.container.Container",
+                    "name": "oras.container.Container.__str__",
+                    "type": "__str__",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.container.Container",
+                    "name": "oras.container.Container.uri",
+                    "type": "uri",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.container.Container",
+                    "name": "oras.container.Container.parse",
+                    "type": "parse",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "name",
+                            "position": 1,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.oci",
+                    "name": "oras.oci.Annotations",
+                    "type": "Annotations"
+                },
+                {
+                    "path": "oras.oci.Annotations",
+                    "name": "oras.oci.Annotations.__init__",
+                    "type": "__init__",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "filename",
+                            "position": 1,
+                            "default": "None"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.oci.Annotations",
+                    "name": "oras.oci.Annotations.load",
+                    "type": "load",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "filename",
+                            "position": 1,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.oci.Annotations",
+                    "name": "oras.oci.Annotations.get_annotations",
+                    "type": "get_annotations",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "section",
+                            "position": 1,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.oci",
+                    "name": "oras.oci.Layer",
+                    "type": "Layer"
+                },
+                {
+                    "path": "oras.oci.Layer",
+                    "name": "oras.oci.Layer.__init__",
+                    "type": "__init__",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "blob_path",
+                            "position": 1,
+                            "type": "str"
+                        },
+                        {
+                            "name": "media_type",
+                            "position": 2,
+                            "type": "Optional[str]",
+                            "default": "None"
+                        },
+                        {
+                            "name": "is_dir",
+                            "position": 3,
+                            "type": "bool",
+                            "default": "False"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.oci.Layer",
+                    "name": "oras.oci.Layer.set_media_type",
+                    "type": "set_media_type",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "media_type",
+                            "position": 1,
+                            "type": "Optional[str]",
+                            "default": "None"
+                        },
+                        {
+                            "name": "is_dir",
+                            "position": 2,
+                            "type": "bool",
+                            "default": "False"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.oci.Layer",
+                    "name": "oras.oci.Layer.to_dict",
+                    "type": "to_dict",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.oci",
+                    "name": "oras.oci.NewLayer",
+                    "type": "NewLayer",
+                    "params": [
+                        {
+                            "name": "blob_path",
+                            "position": 0,
+                            "type": "str"
+                        },
+                        {
+                            "name": "media_type",
+                            "position": 1,
+                            "type": "Optional[str]",
+                            "default": "None"
+                        },
+                        {
+                            "name": "is_dir",
+                            "position": 2,
+                            "type": "bool",
+                            "default": "False"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.oci",
+                    "name": "oras.oci.ManifestConfig",
+                    "type": "ManifestConfig",
+                    "params": [
+                        {
+                            "name": "path",
+                            "position": 0,
+                            "type": "str",
+                            "default": "None"
+                        },
+                        {
+                            "name": "media_type",
+                            "position": 1,
+                            "type": "str",
+                            "default": "None"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.oci",
+                    "name": "oras.oci.NewManifest",
+                    "type": "NewManifest"
+                },
+                {
+                    "path": "oras.auth",
+                    "name": "oras.auth.authHeader",
+                    "type": "authHeader"
+                },
+                {
+                    "path": "oras.auth.authHeader",
+                    "name": "oras.auth.authHeader.__init__",
+                    "type": "__init__",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "lookup",
+                            "position": 1,
+                            "type": "dict"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.auth",
+                    "name": "oras.auth.load_configs",
+                    "type": "load_configs",
+                    "params": [
+                        {
+                            "name": "configs",
+                            "position": 0,
+                            "type": "Optional[List[str]]",
+                            "default": "None"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.auth",
+                    "name": "oras.auth.get_basic_auth",
+                    "type": "get_basic_auth",
+                    "params": [
+                        {
+                            "name": "username",
+                            "position": 0,
+                            "type": "str"
+                        },
+                        {
+                            "name": "password",
+                            "position": 1,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.auth",
+                    "name": "oras.auth.parse_auth_header",
+                    "type": "parse_auth_header",
+                    "params": [
+                        {
+                            "name": "authHeaderRaw",
+                            "position": 0,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.client",
+                    "name": "oras.client.OrasClient",
+                    "type": "OrasClient"
+                },
+                {
+                    "path": "oras.client.OrasClient",
+                    "name": "oras.client.OrasClient.__init__",
+                    "type": "__init__",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "hostname",
+                            "position": 1,
+                            "type": "Optional[str]",
+                            "default": "None"
+                        },
+                        {
+                            "name": "registry",
+                            "position": 2,
+                            "type": "Optional[oras.provider.Registry]",
+                            "default": "None"
+                        },
+                        {
+                            "name": "insecure",
+                            "position": 3,
+                            "type": "bool",
+                            "default": "False"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.client.OrasClient",
+                    "name": "oras.client.OrasClient.__repr__",
+                    "type": "__repr__",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.client.OrasClient",
+                    "name": "oras.client.OrasClient.__str__",
+                    "type": "__str__",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.client.OrasClient",
+                    "name": "oras.client.OrasClient.set_basic_auth",
+                    "type": "set_basic_auth",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "username",
+                            "position": 1,
+                            "type": "str"
+                        },
+                        {
+                            "name": "password",
+                            "position": 2,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.client.OrasClient",
+                    "name": "oras.client.OrasClient.version",
+                    "type": "version",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "return_items",
+                            "position": 1,
+                            "type": "bool",
+                            "default": "False"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.client.OrasClient",
+                    "name": "oras.client.OrasClient.get_tags",
+                    "type": "get_tags",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "name",
+                            "position": 1,
+                            "type": "str"
+                        },
+                        {
+                            "name": "N",
+                            "position": 2,
+                            "type": "int",
+                            "default": "10000"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.client.OrasClient",
+                    "name": "oras.client.OrasClient.push",
+                    "type": "push",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "args",
+                            "position": 1
+                        },
+                        {
+                            "name": "kwargs",
+                            "position": 2
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.client.OrasClient",
+                    "name": "oras.client.OrasClient.pull",
+                    "type": "pull",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "args",
+                            "position": 1
+                        },
+                        {
+                            "name": "kwargs",
+                            "position": 2
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.client.OrasClient",
+                    "name": "oras.client.OrasClient.login",
+                    "type": "login",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "username",
+                            "position": 1,
+                            "type": "str"
+                        },
+                        {
+                            "name": "password",
+                            "position": 2,
+                            "type": "str"
+                        },
+                        {
+                            "name": "password_stdin",
+                            "position": 3,
+                            "type": "bool",
+                            "default": "False"
+                        },
+                        {
+                            "name": "insecure",
+                            "position": 4,
+                            "type": "bool",
+                            "default": "False"
+                        },
+                        {
+                            "name": "hostname",
+                            "position": 5,
+                            "type": "Optional[str]",
+                            "default": "None"
+                        },
+                        {
+                            "name": "config_path",
+                            "position": 6,
+                            "type": "Optional[List[str]]",
+                            "default": "None"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.client.OrasClient",
+                    "name": "oras.client.OrasClient.logout",
+                    "type": "logout",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "hostname",
+                            "position": 1,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.provider",
+                    "name": "oras.provider.Registry",
+                    "type": "Registry"
+                },
+                {
+                    "path": "oras.provider.Registry",
+                    "name": "oras.provider.Registry.__init__",
+                    "type": "__init__",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "hostname",
+                            "position": 1,
+                            "type": "Optional[str]",
+                            "default": "None"
+                        },
+                        {
+                            "name": "insecure",
+                            "position": 2,
+                            "type": "bool",
+                            "default": "False"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.provider.Registry",
+                    "name": "oras.provider.Registry.logout",
+                    "type": "logout",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "hostname",
+                            "position": 1,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.provider.Registry",
+                    "name": "oras.provider.Registry.load_configs",
+                    "type": "load_configs",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "container",
+                            "position": 1,
+                            "type": "Union[str, oras.container.Container]"
+                        },
+                        {
+                            "name": "configs",
+                            "position": 2,
+                            "type": "Optional[list]",
+                            "default": "None"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.provider.Registry",
+                    "name": "oras.provider.Registry._load_auth",
+                    "type": "_load_auth",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "hostname",
+                            "position": 1,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.provider.Registry",
+                    "name": "oras.provider.Registry.set_basic_auth",
+                    "type": "set_basic_auth",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "username",
+                            "position": 1,
+                            "type": "str"
+                        },
+                        {
+                            "name": "password",
+                            "position": 2,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.provider.Registry",
+                    "name": "oras.provider.Registry.reset_basic_auth",
+                    "type": "reset_basic_auth",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.provider.Registry",
+                    "name": "oras.provider.Registry.set_header",
+                    "type": "set_header",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "name",
+                            "position": 1,
+                            "type": "str"
+                        },
+                        {
+                            "name": "value",
+                            "position": 2,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.provider.Registry",
+                    "name": "oras.provider.Registry._validate_path",
+                    "type": "_validate_path",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "path",
+                            "position": 1,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.provider.Registry",
+                    "name": "oras.provider.Registry._parse_manifest_ref",
+                    "type": "_parse_manifest_ref",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "ref",
+                            "position": 1,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.provider.Registry",
+                    "name": "oras.provider.Registry._upload_blob",
+                    "type": "_upload_blob",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "blob",
+                            "position": 1,
+                            "type": "str"
+                        },
+                        {
+                            "name": "container",
+                            "position": 2,
+                            "type": "Union[str, oras.container.Container]"
+                        },
+                        {
+                            "name": "layer",
+                            "position": 3,
+                            "type": "dict"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.provider.Registry",
+                    "name": "oras.provider.Registry.get_tags",
+                    "type": "get_tags",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "container",
+                            "position": 1,
+                            "type": "Union[str, oras.container.Container]"
+                        },
+                        {
+                            "name": "N",
+                            "position": 2,
+                            "type": "int",
+                            "default": "10000"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.provider.Registry",
+                    "name": "oras.provider.Registry.get_blob",
+                    "type": "get_blob",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "container",
+                            "position": 1,
+                            "type": "Union[str, oras.container.Container]"
+                        },
+                        {
+                            "name": "digest",
+                            "position": 2,
+                            "type": "str"
+                        },
+                        {
+                            "name": "stream",
+                            "position": 3,
+                            "type": "bool",
+                            "default": "False"
+                        },
+                        {
+                            "name": "head",
+                            "position": 4,
+                            "type": "bool",
+                            "default": "False"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.provider.Registry",
+                    "name": "oras.provider.Registry.get_container",
+                    "type": "get_container",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "name",
+                            "position": 1,
+                            "type": "Union[str, oras.container.Container]"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.provider.Registry",
+                    "name": "oras.provider.Registry._download_blob",
+                    "type": "_download_blob",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "container",
+                            "position": 1,
+                            "type": "Union[str, oras.container.Container]"
+                        },
+                        {
+                            "name": "digest",
+                            "position": 2,
+                            "type": "str"
+                        },
+                        {
+                            "name": "outfile",
+                            "position": 3,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.provider.Registry",
+                    "name": "oras.provider.Registry._put_upload",
+                    "type": "_put_upload",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "blob",
+                            "position": 1,
+                            "type": "str"
+                        },
+                        {
+                            "name": "container",
+                            "position": 2,
+                            "type": "oras.container.Container"
+                        },
+                        {
+                            "name": "layer",
+                            "position": 3,
+                            "type": "dict"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.provider.Registry",
+                    "name": "oras.provider.Registry._get_location",
+                    "type": "_get_location",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "r",
+                            "position": 1,
+                            "type": "requests.Response"
+                        },
+                        {
+                            "name": "container",
+                            "position": 2,
+                            "type": "oras.container.Container"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.provider.Registry",
+                    "name": "oras.provider.Registry._chunked_upload",
+                    "type": "_chunked_upload",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "blob",
+                            "position": 1,
+                            "type": "str"
+                        },
+                        {
+                            "name": "container",
+                            "position": 2,
+                            "type": "oras.container.Container"
+                        },
+                        {
+                            "name": "layer",
+                            "position": 3,
+                            "type": "dict"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.provider.Registry",
+                    "name": "oras.provider.Registry._check_200_response",
+                    "type": "_check_200_response",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "response",
+                            "position": 1,
+                            "type": "requests.Response"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.provider.Registry",
+                    "name": "oras.provider.Registry._parse_response_errors",
+                    "type": "_parse_response_errors",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "response",
+                            "position": 1,
+                            "type": "requests.Response"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.provider.Registry",
+                    "name": "oras.provider.Registry._upload_manifest",
+                    "type": "_upload_manifest",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "manifest",
+                            "position": 1,
+                            "type": "dict"
+                        },
+                        {
+                            "name": "container",
+                            "position": 2,
+                            "type": "oras.container.Container"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.provider.Registry",
+                    "name": "oras.provider.Registry.push",
+                    "type": "push",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "args",
+                            "position": 1
+                        },
+                        {
+                            "name": "kwargs",
+                            "position": 2
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.provider.Registry",
+                    "name": "oras.provider.Registry.pull",
+                    "type": "pull",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "args",
+                            "position": 1
+                        },
+                        {
+                            "name": "kwargs",
+                            "position": 2
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.provider.Registry",
+                    "name": "oras.provider.Registry.get_manifest",
+                    "type": "get_manifest",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "container",
+                            "position": 1,
+                            "type": "Union[str, oras.container.Container]"
+                        },
+                        {
+                            "name": "allowed_media_type",
+                            "position": 2,
+                            "type": "list",
+                            "default": "None"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.provider.Registry",
+                    "name": "oras.provider.Registry.do_request",
+                    "type": "do_request",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "url",
+                            "position": 1,
+                            "type": "str"
+                        },
+                        {
+                            "name": "method",
+                            "position": 2,
+                            "type": "str",
+                            "default": "\"GET\""
+                        },
+                        {
+                            "name": "data",
+                            "position": 3,
+                            "type": "Union[dict, bytes]",
+                            "default": "None"
+                        },
+                        {
+                            "name": "headers",
+                            "position": 4,
+                            "type": "dict",
+                            "default": "None"
+                        },
+                        {
+                            "name": "json",
+                            "position": 5,
+                            "type": "dict",
+                            "default": "None"
+                        },
+                        {
+                            "name": "stream",
+                            "position": 6,
+                            "type": "bool",
+                            "default": "False"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.provider.Registry",
+                    "name": "oras.provider.Registry.authenticate_request",
+                    "type": "authenticate_request",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "originalResponse",
+                            "position": 1,
+                            "type": "requests.Response"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger",
+                    "name": "oras.logger.ColorizingStreamHandler",
+                    "type": "ColorizingStreamHandler"
+                },
+                {
+                    "path": "oras.logger.ColorizingStreamHandler",
+                    "name": "oras.logger.ColorizingStreamHandler.__init__",
+                    "type": "__init__",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "nocolor",
+                            "position": 1,
+                            "type": "bool",
+                            "default": "False"
+                        },
+                        {
+                            "name": "use_threads",
+                            "position": 3,
+                            "type": "bool",
+                            "default": "False"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.ColorizingStreamHandler",
+                    "name": "oras.logger.ColorizingStreamHandler.can_color_tty",
+                    "type": "can_color_tty",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.ColorizingStreamHandler",
+                    "name": "oras.logger.ColorizingStreamHandler.is_tty",
+                    "type": "is_tty",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.ColorizingStreamHandler",
+                    "name": "oras.logger.ColorizingStreamHandler.emit",
+                    "type": "emit",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "record",
+                            "position": 1,
+                            "type": "_logging.LogRecord"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.ColorizingStreamHandler",
+                    "name": "oras.logger.ColorizingStreamHandler.decorate",
+                    "type": "decorate",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "record",
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger",
+                    "name": "oras.logger.Logger",
+                    "type": "Logger"
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "name": "oras.logger.Logger.__init__",
+                    "type": "__init__",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "name": "oras.logger.Logger.cleanup",
+                    "type": "cleanup",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "name": "oras.logger.Logger.handler",
+                    "type": "handler",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "msg",
+                            "position": 1,
+                            "type": "dict"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "name": "oras.logger.Logger.set_stream_handler",
+                    "type": "set_stream_handler",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "stream_handler",
+                            "position": 1,
+                            "type": "_logging.Handler"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "name": "oras.logger.Logger.set_level",
+                    "type": "set_level",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "level",
+                            "position": 1,
+                            "type": "int"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "name": "oras.logger.Logger.location",
+                    "type": "location",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "msg",
+                            "position": 1,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "name": "oras.logger.Logger.info",
+                    "type": "info",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "msg",
+                            "position": 1,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "name": "oras.logger.Logger.warning",
+                    "type": "warning",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "msg",
+                            "position": 1,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "name": "oras.logger.Logger.debug",
+                    "type": "debug",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "msg",
+                            "position": 1,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "name": "oras.logger.Logger.error",
+                    "type": "error",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "msg",
+                            "position": 1,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "name": "oras.logger.Logger.exit",
+                    "type": "exit",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "msg",
+                            "position": 1,
+                            "type": "str"
+                        },
+                        {
+                            "name": "return_code",
+                            "position": 2,
+                            "type": "int",
+                            "default": "1"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "name": "oras.logger.Logger.progress",
+                    "type": "progress",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "done",
+                            "position": 1,
+                            "type": "int",
+                            "default": "None"
+                        },
+                        {
+                            "name": "total",
+                            "position": 2,
+                            "type": "int",
+                            "default": "None"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "name": "oras.logger.Logger.shellcmd",
+                    "type": "shellcmd",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "msg",
+                            "position": 1,
+                            "type": "Optional[str]"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "name": "oras.logger.Logger.text_handler",
+                    "type": "text_handler",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "msg",
+                            "position": 1,
+                            "type": "dict"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger",
+                    "name": "oras.logger.setup_logger",
+                    "type": "setup_logger",
+                    "params": [
+                        {
+                            "name": "quiet",
+                            "position": 0,
+                            "type": "bool",
+                            "default": "False"
+                        },
+                        {
+                            "name": "printshellcmds",
+                            "position": 1,
+                            "type": "bool",
+                            "default": "False"
+                        },
+                        {
+                            "name": "nocolor",
+                            "position": 2,
+                            "type": "bool",
+                            "default": "False"
+                        },
+                        {
+                            "name": "stdout",
+                            "position": 3,
+                            "type": "bool",
+                            "default": "False"
+                        },
+                        {
+                            "name": "debug",
+                            "position": 4,
+                            "type": "bool",
+                            "default": "False"
+                        },
+                        {
+                            "name": "use_threads",
+                            "position": 5,
+                            "type": "bool",
+                            "default": "False"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.decorator",
+                    "name": "oras.decorator.ensure_container",
+                    "type": "ensure_container"
+                },
+                {
+                    "path": "oras.decorator.ensure_container",
+                    "name": "oras.decorator.ensure_container.__init__",
+                    "type": "__init__",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "func",
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.decorator.ensure_container",
+                    "name": "oras.decorator.ensure_container.__get__",
+                    "type": "__get__",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "obj",
+                            "position": 1
+                        },
+                        {
+                            "name": "objtype",
+                            "position": 2
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.decorator.ensure_container",
+                    "name": "oras.decorator.ensure_container.__call__",
+                    "type": "__call__",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "cls",
+                            "position": 1
+                        },
+                        {
+                            "name": "args",
+                            "position": 2
+                        },
+                        {
+                            "name": "kwargs",
+                            "position": 3
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.cli.shell",
+                    "name": "oras.cli.shell.main",
+                    "type": "main",
+                    "params": [
+                        {
+                            "name": "args",
+                            "position": 0
+                        },
+                        {
+                            "name": "parser",
+                            "position": 1
+                        },
+                        {
+                            "name": "extra",
+                            "position": 2
+                        },
+                        {
+                            "name": "subparser",
+                            "position": 3
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.cli.shell",
+                    "name": "oras.cli.shell.create_client",
+                    "type": "create_client",
+                    "params": [
+                        {
+                            "name": "args",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.cli.shell",
+                    "name": "oras.cli.shell.ipython",
+                    "type": "ipython",
+                    "params": [
+                        {
+                            "name": "args",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.cli.shell",
+                    "name": "oras.cli.shell.bpython",
+                    "type": "bpython",
+                    "params": [
+                        {
+                            "name": "args",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.cli.shell",
+                    "name": "oras.cli.shell.python",
+                    "type": "python",
+                    "params": [
+                        {
+                            "name": "args",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.cli",
+                    "name": "oras.cli.get_parser",
+                    "type": "get_parser"
+                },
+                {
+                    "path": "oras.cli",
+                    "name": "oras.cli.run",
+                    "type": "run"
+                },
+                {
+                    "path": "oras.cli.push",
+                    "name": "oras.cli.push.main",
+                    "type": "main",
+                    "params": [
+                        {
+                            "name": "args",
+                            "position": 0
+                        },
+                        {
+                            "name": "parser",
+                            "position": 1
+                        },
+                        {
+                            "name": "extra",
+                            "position": 2
+                        },
+                        {
+                            "name": "subparser",
+                            "position": 3
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.cli.version",
+                    "name": "oras.cli.version.main",
+                    "type": "main",
+                    "params": [
+                        {
+                            "name": "args",
+                            "position": 0
+                        },
+                        {
+                            "name": "parser",
+                            "position": 1
+                        },
+                        {
+                            "name": "extra",
+                            "position": 2
+                        },
+                        {
+                            "name": "subparser",
+                            "position": 3
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.cli.pull",
+                    "name": "oras.cli.pull.main",
+                    "type": "main",
+                    "params": [
+                        {
+                            "name": "args",
+                            "position": 0
+                        },
+                        {
+                            "name": "parser",
+                            "position": 1
+                        },
+                        {
+                            "name": "extra",
+                            "position": 2
+                        },
+                        {
+                            "name": "subparser",
+                            "position": 3
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.cli.login",
+                    "name": "oras.cli.login.main",
+                    "type": "main",
+                    "params": [
+                        {
+                            "name": "args",
+                            "position": 0
+                        },
+                        {
+                            "name": "parser",
+                            "position": 1
+                        },
+                        {
+                            "name": "extra",
+                            "position": 2
+                        },
+                        {
+                            "name": "subparser",
+                            "position": 3
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.cli.logout",
+                    "name": "oras.cli.logout.main",
+                    "type": "main",
+                    "params": [
+                        {
+                            "name": "args",
+                            "position": 0
+                        },
+                        {
+                            "name": "parser",
+                            "position": 1
+                        },
+                        {
+                            "name": "extra",
+                            "position": 2
+                        },
+                        {
+                            "name": "subparser",
+                            "position": 3
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.main.login",
+                    "name": "oras.main.login.DockerClient",
+                    "type": "DockerClient"
+                },
+                {
+                    "path": "oras.main.login.DockerClient",
+                    "name": "oras.main.login.DockerClient.login",
+                    "type": "login",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "username",
+                            "position": 1,
+                            "type": "str"
+                        },
+                        {
+                            "name": "password",
+                            "position": 2,
+                            "type": "str"
+                        },
+                        {
+                            "name": "registry",
+                            "position": 3,
+                            "type": "str"
+                        },
+                        {
+                            "name": "dockercfg_path",
+                            "position": 4,
+                            "type": "Optional[str]",
+                            "default": "None"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.main.login",
+                    "name": "oras.main.login.login",
+                    "type": "login",
+                    "params": [
+                        {
+                            "name": "username",
+                            "position": 0,
+                            "type": "Optional[str]",
+                            "default": "None"
+                        },
+                        {
+                            "name": "password",
+                            "position": 1,
+                            "type": "Optional[str]",
+                            "default": "None"
+                        },
+                        {
+                            "name": "password_stdin",
+                            "position": 2,
+                            "type": "bool",
+                            "default": "False"
+                        },
+                        {
+                            "name": "insecure",
+                            "position": 3,
+                            "type": "bool",
+                            "default": "False"
+                        },
+                        {
+                            "name": "hostname",
+                            "position": 4,
+                            "type": "Optional[str]",
+                            "default": "None"
+                        },
+                        {
+                            "name": "config_path",
+                            "position": 5,
+                            "type": "Optional[str]",
+                            "default": "None"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.main.login",
+                    "name": "oras.main.login.readline",
+                    "type": "readline"
+                },
+                {
+                    "path": "oras.utils.request",
+                    "name": "oras.utils.request.iter_localhosts",
+                    "type": "iter_localhosts",
+                    "params": [
+                        {
+                            "name": "name",
+                            "position": 0,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.request",
+                    "name": "oras.utils.request.find_docker_config",
+                    "type": "find_docker_config",
+                    "params": [
+                        {
+                            "name": "exists",
+                            "position": 0,
+                            "type": "bool",
+                            "default": "True"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.request",
+                    "name": "oras.utils.request.append_url_params",
+                    "type": "append_url_params",
+                    "params": [
+                        {
+                            "name": "url",
+                            "position": 0,
+                            "type": "str"
+                        },
+                        {
+                            "name": "params",
+                            "position": 1,
+                            "type": "dict"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.request",
+                    "name": "oras.utils.request.get_docker_client",
+                    "type": "get_docker_client",
+                    "params": [
+                        {
+                            "name": "insecure",
+                            "position": 0,
+                            "type": "bool",
+                            "default": "False"
+                        },
+                        {
+                            "name": "kwargs",
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "name": "oras.utils.fileio.make_targz",
+                    "type": "make_targz",
+                    "params": [
+                        {
+                            "name": "source_dir",
+                            "position": 0,
+                            "type": "str"
+                        },
+                        {
+                            "name": "dest_name",
+                            "position": 1,
+                            "type": "Optional[str]",
+                            "default": "None"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "name": "oras.utils.fileio.extract_targz",
+                    "type": "extract_targz",
+                    "params": [
+                        {
+                            "name": "targz",
+                            "position": 0,
+                            "type": "str"
+                        },
+                        {
+                            "name": "outdir",
+                            "position": 1,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "name": "oras.utils.fileio.get_size",
+                    "type": "get_size",
+                    "params": [
+                        {
+                            "name": "path",
+                            "position": 0,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "name": "oras.utils.fileio.get_file_hash",
+                    "type": "get_file_hash",
+                    "params": [
+                        {
+                            "name": "path",
+                            "position": 0,
+                            "type": "str"
+                        },
+                        {
+                            "name": "algorithm",
+                            "position": 1,
+                            "type": "str",
+                            "default": "\"sha256\""
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "name": "oras.utils.fileio.mkdir_p",
+                    "type": "mkdir_p",
+                    "params": [
+                        {
+                            "name": "path",
+                            "position": 0,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "name": "oras.utils.fileio.get_tmpfile",
+                    "type": "get_tmpfile",
+                    "params": [
+                        {
+                            "name": "tmpdir",
+                            "position": 0,
+                            "type": "Optional[str]",
+                            "default": "None"
+                        },
+                        {
+                            "name": "prefix",
+                            "position": 1,
+                            "type": "str",
+                            "default": "\"\""
+                        },
+                        {
+                            "name": "suffix",
+                            "position": 2,
+                            "type": "str",
+                            "default": "\"\""
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "name": "oras.utils.fileio.get_tmpdir",
+                    "type": "get_tmpdir",
+                    "params": [
+                        {
+                            "name": "tmpdir",
+                            "position": 0,
+                            "type": "Optional[str]",
+                            "default": "None"
+                        },
+                        {
+                            "name": "prefix",
+                            "position": 1,
+                            "type": "Optional[str]",
+                            "default": "\"\""
+                        },
+                        {
+                            "name": "create",
+                            "position": 2,
+                            "type": "bool",
+                            "default": "True"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "name": "oras.utils.fileio.recursive_find",
+                    "type": "recursive_find",
+                    "params": [
+                        {
+                            "name": "base",
+                            "position": 0,
+                            "type": "str"
+                        },
+                        {
+                            "name": "pattern",
+                            "position": 1,
+                            "type": "str",
+                            "default": "None"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "name": "oras.utils.fileio.copyfile",
+                    "type": "copyfile",
+                    "params": [
+                        {
+                            "name": "source",
+                            "position": 0,
+                            "type": "str"
+                        },
+                        {
+                            "name": "destination",
+                            "position": 1,
+                            "type": "str"
+                        },
+                        {
+                            "name": "force",
+                            "position": 2,
+                            "type": "bool",
+                            "default": "True"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "name": "oras.utils.fileio.write_file",
+                    "type": "write_file",
+                    "params": [
+                        {
+                            "name": "filename",
+                            "position": 0,
+                            "type": "str"
+                        },
+                        {
+                            "name": "content",
+                            "position": 1,
+                            "type": "str"
+                        },
+                        {
+                            "name": "mode",
+                            "position": 2,
+                            "type": "str",
+                            "default": "\"w\""
+                        },
+                        {
+                            "name": "make_exec",
+                            "position": 3,
+                            "type": "bool",
+                            "default": "False"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "name": "oras.utils.fileio.read_in_chunks",
+                    "type": "read_in_chunks",
+                    "params": [
+                        {
+                            "name": "image",
+                            "position": 0,
+                            "type": "Union[TextIO, io.BufferedReader]"
+                        },
+                        {
+                            "name": "chunk_size",
+                            "position": 1,
+                            "type": "int",
+                            "default": "1024"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "name": "oras.utils.fileio.write_json",
+                    "type": "write_json",
+                    "params": [
+                        {
+                            "name": "json_obj",
+                            "position": 0,
+                            "type": "dict"
+                        },
+                        {
+                            "name": "filename",
+                            "position": 1,
+                            "type": "str"
+                        },
+                        {
+                            "name": "mode",
+                            "position": 2,
+                            "type": "str",
+                            "default": "\"w\""
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "name": "oras.utils.fileio.print_json",
+                    "type": "print_json",
+                    "params": [
+                        {
+                            "name": "json_obj",
+                            "position": 0,
+                            "type": "dict"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "name": "oras.utils.fileio.read_file",
+                    "type": "read_file",
+                    "params": [
+                        {
+                            "name": "filename",
+                            "position": 0,
+                            "type": "str"
+                        },
+                        {
+                            "name": "mode",
+                            "position": 1,
+                            "type": "str",
+                            "default": "\"r\""
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "name": "oras.utils.fileio.read_json",
+                    "type": "read_json",
+                    "params": [
+                        {
+                            "name": "filename",
+                            "position": 0,
+                            "type": "str"
+                        },
+                        {
+                            "name": "mode",
+                            "position": 1,
+                            "type": "str",
+                            "default": "\"r\""
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.tests.test_oras",
+                    "name": "oras.tests.test_oras.setup_module",
+                    "type": "setup_module",
+                    "params": [
+                        {
+                            "name": "module",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.tests.test_oras",
+                    "name": "oras.tests.test_oras.test_basic_oras",
+                    "type": "test_basic_oras"
+                },
+                {
+                    "path": "oras.tests.test_oras",
+                    "name": "oras.tests.test_oras.test_login_logout",
+                    "type": "test_login_logout"
+                },
+                {
+                    "path": "oras.tests.test_oras",
+                    "name": "oras.tests.test_oras.test_basic_push_pull",
+                    "type": "test_basic_push_pull",
+                    "params": [
+                        {
+                            "name": "tmp_path",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.tests.test_oras",
+                    "name": "oras.tests.test_oras.test_directory_push_pull",
+                    "type": "test_directory_push_pull",
+                    "params": [
+                        {
+                            "name": "tmp_path",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.tests.test_utils",
+                    "name": "oras.tests.test_utils.test_write_read_files",
+                    "type": "test_write_read_files",
+                    "params": [
+                        {
+                            "name": "tmp_path",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.tests.test_utils",
+                    "name": "oras.tests.test_utils.test_write_bad_json",
+                    "type": "test_write_bad_json",
+                    "params": [
+                        {
+                            "name": "tmp_path",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.tests.test_utils",
+                    "name": "oras.tests.test_utils.test_write_json",
+                    "type": "test_write_json",
+                    "params": [
+                        {
+                            "name": "tmp_path",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.tests.test_utils",
+                    "name": "oras.tests.test_utils.test_copyfile",
+                    "type": "test_copyfile",
+                    "params": [
+                        {
+                            "name": "tmp_path",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.tests.test_utils",
+                    "name": "oras.tests.test_utils.test_get_tmpdir_tmpfile",
+                    "type": "test_get_tmpdir_tmpfile"
+                },
+                {
+                    "path": "oras.tests.test_utils",
+                    "name": "oras.tests.test_utils.test_mkdir_p",
+                    "type": "test_mkdir_p",
+                    "params": [
+                        {
+                            "name": "tmp_path",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.tests.test_utils",
+                    "name": "oras.tests.test_utils.test_print_json",
+                    "type": "test_print_json"
+                }
+            ]
+        }
+    }
+}
