@@ -197,7 +197,7 @@ class MetricsExtractor:
         for name in self.metrics:
             self.extract_metric(name, versions)
 
-    def extract_metric(self, name, versions=None):
+    def extract_metric(self, name, versions=None, **kwargs):
         """
         Given a metric, extract for each commit from the repository.
         """
@@ -209,18 +209,18 @@ class MetricsExtractor:
         if not self.git:
             self.prepare_repository(versions)
 
-        module, metric_name = self._metrics[name].rsplit(".", 1)
-        metric = self.get_metric(name)
+        _, metric_name = self._metrics[name].rsplit(".", 1)
+        metric = self.get_metric(name, **kwargs)
         metric.extract()
         self._extractors[metric_name] = metric
         return metric
 
-    def get_metric(self, name):
+    def get_metric(self, name, **kwargs):
         """
         Return a metric object based on name
         """
         module, metric_name = self._metrics[name].rsplit(".", 1)
-        return getattr(importlib.import_module(module), metric_name)(self.git)
+        return getattr(importlib.import_module(module), metric_name)(self.git, **kwargs)
 
     def prepare_repository(self, versions=None):
         """

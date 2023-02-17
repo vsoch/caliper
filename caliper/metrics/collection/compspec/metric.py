@@ -10,7 +10,8 @@ from datetime import datetime
 import caliper.metrics.database as database
 from caliper.logger import logger
 from caliper.metrics.base import MetricBase
-from caliper.utils.file import get_tmpfile, read_file, recursive_find
+from caliper.metrics.table import Table
+from caliper.utils.file import get_tmpfile, read_file, recursive_find, write_json
 
 try:
     import parso
@@ -89,6 +90,7 @@ def get_function_params(func):
             "name": param.name.value,
             "position": param.position_index,
             "default_value": None,
+            "type": None,
         }
         if param.default:
             # This seems to present numbers as strings
@@ -103,10 +105,6 @@ def get_function_params(func):
                     new_param["default_value"] = float(param.default.value)
             else:
                 new_param["default_value"] = param.default.value
-
-        # Is it expanded? (do we care?)
-        if param.star_count:
-            new_param["star_count"] = param.star_count
 
         # For now just get raw type
         if param.annotation:
@@ -149,12 +147,78 @@ CREATE TABLE IF NOT EXISTS params (
 ]
 
 
+class CompspecFacts:
+    """
+    Keep track of compatibility facts
+    """
+
+    def __init__(self):
+        self.compat = {}
+        self.versions = set()
+
+    def add_missing_global(self, signature):
+        """
+        Globally missing across versions.
+        """
+        module = signature["module"]
+        if "global" not in self.compat:
+            self.compat["global"] = {}
+        if module not in self.compat["global"]:
+            self.compat["global"][module] = []
+        missing = {
+            "tag": "missing-module",
+            "reason": "This module was not found in the database for any version",
+            **signature,
+        }
+        if missing not in self.compat["global"][module]:
+            self.compat["global"][module].append(missing)
+
+    def add_incompatible(self, version, path, meta):
+        """
+        Add an incompatibility fact, simple for now (version, path, reason)
+
+        We use the "tag" as an identifier, and we can eventually namespace these.
+        """
+        if version not in self.compat:
+            self.compat[version] = {}
+        if path not in self.compat[version]:
+            self.compat[version][path] = []
+        self.compat[version][path].append(meta)
+
+    def save(self, path):
+        """
+        Save compat output to a path.
+        """
+        write_json(self.compat, path)
+
+    def show_table(self):
+        """
+        Format the incompatibilities into a table.
+        """
+        # First row is titles
+        rows = []
+        for version, modules in self.compat.items():
+            for path, items in modules.items():
+                for item in items:
+                    rows.append(
+                        {
+                            "version": version,
+                            "path": path,
+                            "tag": item["tag"],
+                            "reason": item["reason"],
+                        }
+                    )
+        t = Table(rows)
+        t.table(title="Compspec Compatibilty Result", limit=None, sort_by="path")
+        # TODO this seems off need to double check
+
+
 class Compspec(MetricBase):
     name = "compspec"
     description = "for each commit, derive a composition specification"
     extractor = "json"
 
-    def __init__(self, git=None, filename=__file__):
+    def __init__(self, git=None, filename=__file__, db_file=None):
         """
         Create an extractor for Python facts that writes to a database.
         """
@@ -163,10 +227,141 @@ class Compspec(MetricBase):
             logger.exit("parso is required to for the compspec metric parser.")
 
         super().__init__(git=git, filename=filename)
-        self.db_file = get_tmpfile(prefix="caliper-", suffix=".sqlite")
-        self.db = database.Database(
-            create_sql=create_metrics_table, filename=self.db_file
-        )
+
+        if db_file and os.path.exists(db_file):
+            self.db_file = db_file
+            self.db = database.Database(filename=self.db_file)
+        else:
+            self.db_file = get_tmpfile(prefix="caliper-", suffix=".sqlite")
+            self.db = database.Database(
+                create_sql=create_metrics_table, filename=self.db_file
+            )
+
+        # Keep a cache of high level checks
+        self.cache = {"modules": {}}
+
+        # Keep a record of compatibility assessments
+        # This can be stored by version
+        self.compat = CompspecFacts()
+
+    def inspect_trace(self, trace):
+        """
+        Given a trace of interest, determine if it's relevant and has an incompatibility.
+
+        We could limit to a subset of calls, but instead we want to look at lines too.
+        """
+        # Just look at calls for now, we can get into more detail if needed
+        if trace["event"] != "call":
+            return
+
+        # Query for the module, we can't say anything if we don't know about it
+        # This checks for the root module, before the first "."
+        if not self.query("has_module", trace["module"]):
+            return
+
+        # If we find a module directly, we are good (we already determined having it above)
+        if trace["function"] == "<module>":
+            return
+
+        # Do a query to our database for the module, this will get it across versions
+        modules = self.query("get_module", trace["path"])
+
+        # Case 1: we don't have the specific module, it's missing
+        if not modules:
+            self.compat.add_missing_global(trace)
+            return
+
+        # Now check for compatibility of each version
+        # Note that we could save whatever granularity of info we want here
+        for module in modules:
+            self.compat.versions.add(module["version"])
+
+            # Immediate fail if the module doesn't have params
+            if trace["args"] and not module.get("params"):
+                args_called = "(%s)" % ",".join(trace["args"])
+                self.compat.add_incompatible(
+                    module["version"],
+                    module["path"],
+                    {
+                        "trace": trace,
+                        "module": module,
+                        "tag": "too-many-args",
+                        "reason": f"Found {args_called} in trace but function allows zero",
+                    },
+                )
+                continue
+
+            # Immediate fail if the trace has more args than provided
+            if len(trace["args"]) > len(module.get("params", [])):
+                args_called = "(%s)" % ",".join(trace["args"])
+                args_found = "(%s)" % ",".join([x["name"] for x in module["params"]])
+                self.compat.add_incompatible(
+                    module["version"],
+                    module["path"],
+                    {
+                        "trace": trace,
+                        "module": module,
+                        "tag": "too-many-args",
+                        "reason": f"Found {args_called} in trace but function allows {args_found}",
+                    },
+                )
+                continue
+
+    # Queries
+
+    def query(self, query_name, query):
+        """
+        Query the database for particular attributes and items
+        """
+        queries = {
+            "has_module": self.query_has_module,
+            "get_module": self.query_get_module,
+        }
+        if query_name not in queries:
+            logger.exit(
+                f"{query_name} is not a recognized query for the {self.name} metric"
+            )
+        return queries[query_name](query)
+
+    def query_get_module(self, value):
+        """
+        Get a module by name
+        """
+        res = self.db.execute(f"SELECT *,rowid from exports WHERE path='{value}'")
+        modules = []
+        for x in res:
+            module = {
+                "root": x[0],
+                "module": x[1],
+                "path": x[2],
+                "function": x[3],
+                "type": x[4],
+                "version": x[5],
+            }
+            params = self.db.execute(f"SELECT * from params WHERE function='{x[-1]}'")
+            if params:
+                module["params"] = [
+                    {"name": p[0], "type": p[1], "position": p[2], "default": p[3]}
+                    for p in params
+                ]
+            modules.append(module)
+        return modules
+
+    def query_has_module(self, value):
+        """
+        Determine if the database has a particular module.
+        """
+        # Ensure we are dealing with the root module name
+        value = value.split(".")[0]
+
+        # Check the cache first!
+        if value in self.cache["modules"]:
+            return self.cache["modules"][value]
+
+        res = self.db.execute(f"SELECT count(*) from exports WHERE root='{value}'")
+        has_module = bool(res[0][0] != 0)
+        self.cache["modules"][value] = has_module
+        return has_module
 
     def extract(self):
         """
@@ -191,7 +386,8 @@ class Compspec(MetricBase):
         Main function to run extraction.
         """
         # Add the temporary directory to the PYTHONPATH
-        sys.path.insert(0, self.git.folder)
+        if self.git.folder not in sys.path:
+            sys.path.insert(0, self.git.folder)
 
         # Keep track of counts
         count = 0
@@ -216,7 +412,7 @@ class Compspec(MetricBase):
 
             # Remove purelib or platlib
             # https://www.python.org/dev/peps/pep-0427/#what-s-the-deal-with-purelib-vs-platlib
-            modulepath = re.sub("^(purelib|platlib)[.]", "", commit)
+            modulepath = re.sub("^(purelib|platlib)[.]", "", modulepath)
             self.add_functions(filename, modulepath, commit)
 
         if count:
@@ -335,11 +531,11 @@ class Compspec(MetricBase):
             data[version][export[1]]["exports"].append(new_export)
 
         for entry in self.db.execute("select rowid, * from imports"):
-            version = export[-1]
+            version = entry[-1]
             if version not in data:
                 data[version] = {}
             if entry[1] not in data[version]:
-                data[entry[1]] = {"imports": []}
+                data[version][entry[1]] = {"imports": []}
             if "imports" not in data[version][entry[1]]:
                 data[version][entry[1]]["imports"] = []
             new_import = {"path": entry[2]}
@@ -354,12 +550,10 @@ class Compspec(MetricBase):
             func_id = param[-1]
             if "params" not in lookup[func_id]:
                 lookup[func_id]["params"] = []
-            lookup[func_id]["params"].append(
-                {
-                    "name": param[1],
-                    "type": param[2],
-                    "position": param[3],
-                    "default": param[4],
-                }
-            )
+            new_param = {"name": param[0], "position": param[2]}
+            if param[1]:
+                new_param["type"] = param[1]
+            if param[3]:
+                new_param["default"] = param[3]
+            lookup[func_id]["params"].append(new_param)
         return data

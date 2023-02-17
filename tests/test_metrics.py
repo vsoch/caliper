@@ -45,4 +45,4 @@ def test_metrics_extractor(tmp_path):
 
         elif isinstance(metric, MetricBase):
             # One is required
-            assert results.get("0.0.1")
+            assert results.get("0.0.11")

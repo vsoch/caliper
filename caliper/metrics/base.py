@@ -47,6 +47,12 @@ class MetricBase:
             self.git.checkout(str(tag.commit), dest=self.git.folder)
             self._data[index] = self._extract(tag.commit)
 
+    def query(self, args, **kwargs):
+        """
+        General function a metric can define to be queried.
+        """
+        pass
+
     @property
     def rawdata(self):
         return self._data

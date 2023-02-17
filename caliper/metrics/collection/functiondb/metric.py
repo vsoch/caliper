@@ -200,7 +200,9 @@ class Functiondb(MetricBase):
 
     def _extract(self, commit=None):
         # Add the temporary directory to the PYTHONPATH
-        sys.path.insert(0, self.git.folder)
+        if self.git.folder not in sys.path:
+            sys.path.insert(0, self.git.folder)
+
         lookup = self.create_lookup(modules=True)
 
         # If we get here and there is nothing in the lookup, likely no module

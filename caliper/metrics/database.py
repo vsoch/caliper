@@ -125,40 +125,6 @@ class Database(ContextDecorator):
         except Exception as e:
             logger.exit(e)
 
-    def filter_instances(self, props):
-        """
-        Use properties to filter instances down to a desired set based.
-        """
-        basequery = "SELECT DISTINCT cloud, cloud_select_id FROM instances"
-        # No properties,
-        if not props:
-            return {"instance": self.execute(f"{basequery};")}
-
-        query = ""
-
-        # Assemble rest of query
-        for _, key in enumerate(props):
-            if not query:
-                query = basequery
-            else:
-                query += f"INTERSECT {basequery}"
-
-            # Case 1: we have a range with lookup min/max
-            value = props[key]
-
-            # Each function here returns a complete sql statement
-            if key in ["like", "unlike"]:
-                value = parse_regex(key, value)
-
-            elif key.startswith("range:"):
-                value = parse_range(key, value)
-            else:
-                value = parse_value(key, value)
-            query += f" WHERE {value}\n"
-
-        logger.debug(query)
-        return {"instance": self.execute(f"{query};")}
-
 
 def parse_value(key, value):
     """
@@ -190,7 +156,7 @@ def parse_regex(key, value):
     return f"NOT instance REGEXP '{value}'"
 
 
-def parse_range(key, value):
+def parse_range_query(key, min_value, max_value):
     """
     Given a stated range, e.g.,:
 
@@ -198,11 +164,6 @@ def parse_range(key, value):
 
     Return either a min/max rule, or just a min,or just a max.
     """
-    # If we get to a range without min/max this is an error (and shouldn't happen)
-    key = key.replace("range:", "", 1)
-    min_value = value["min"]
-    max_value = value["max"]
-
     # All of these are numbers, so we only care about value_number
     if min_value is not None and max_value is not None:
         return f"value_number IS NOT NULL AND attribute='{key}' AND value_number >= {min_value} AND value_number <= {max_value}"

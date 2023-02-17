@@ -20,6 +20,7 @@ INSTALL_REQUIRES = (
     ("GitPython", {"min_version": "3.1.7"}),
     ("pyaml", {"min_version": "20.4.0"}),
     ("Jinja2", {"min_version": "2.11.2"}),
+    ("rich", {"min_version": None}),
 )
 PARSER_REQUIRES = (
     ("jedi", {"exact_version": "0.18.0"}),

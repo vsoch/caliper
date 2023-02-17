@@ -31,6 +31,23 @@ And then the script!
 $ python example.py
 ```
 
+The script is going to:
+
+1. Generate a database (sqlite) of signatures for oras
+2. Create a caliper `CommandTracer` to run against a set of pytest commands (we assume tests pass for the latest release)
+3. Assess compatibility or do a diff using the tracer.
+
+### Issues
+
+Issues I see that need to be worked on:
+
+- a decorator means a function can technically allow different args / signature
+- lambda / other kinds of calls aren't parsed
+- a parent class function will not be known (so we'd need to parse and add on parent signatures?)
+- functions defined within functions (e.g., see provider.extract_tags)
+
+## Background
+
 Note that I tried the trace module in python, and it traces but doesn't provide details about function arguments.
 I then tried [pytrace](https://github.com/alonho/pytrace), and gawked a little that it was last updated in 2016, and also
 has a LGPL license. But I realized the underlying logic is just using [sys.settrace](https://docs.python.org/3/library/sys.html#sys.settrace)

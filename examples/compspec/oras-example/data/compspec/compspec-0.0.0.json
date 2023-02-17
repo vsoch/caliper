@@ -1,397 +1,341 @@
 {
     "0.0.0": {
         "oras": {
-            "imports": [
-                {
-                    "from": [
-                        "oras",
-                        "version"
-                    ],
-                    "import": [
-                        "__version__"
-                    ]
-                }
-            ]
-        },
-        "oras.version": {},
-        "oras.logger": {
-            "imports": [
-                {
-                    "import": [
-                        "_logging"
-                    ]
-                },
-                {
-                    "import": [
-                        "platform"
-                    ]
-                },
-                {
-                    "import": [
-                        "sys"
-                    ]
-                },
-                {
-                    "import": [
-                        "os"
-                    ]
-                },
-                {
-                    "import": [
-                        "threading"
-                    ]
-                },
-                {
-                    "import": [
-                        "inspect"
-                    ]
-                }
-            ],
             "exports": [
                 {
-                    "name": "ColorizingStreamHandler",
+                    "path": "oras.logger",
+                    "name": "oras.logger.ColorizingStreamHandler",
+                    "type": "ColorizingStreamHandler"
+                },
+                {
                     "path": "oras.logger.ColorizingStreamHandler",
-                    "type": "class",
-                    "functions": [
-                        {
-                            "name": "__init__",
-                            "path": "oras.logger.ColorizingStreamHandler.__init__",
-                            "type": "function",
-                            "params": [
-                                {
-                                    "name": "self",
-                                    "order": 0
-                                },
-                                {
-                                    "name": "nocolor",
-                                    "order": 1,
-                                    "default": "False"
-                                },
-                                {
-                                    "name": "use_threads",
-                                    "order": 3,
-                                    "default": "False"
-                                }
-                            ]
-                        },
-                        {
-                            "name": "can_color_tty",
-                            "path": "oras.logger.ColorizingStreamHandler.can_color_tty",
-                            "type": "function",
-                            "params": [
-                                {
-                                    "name": "self",
-                                    "order": 0
-                                }
-                            ]
-                        },
-                        {
-                            "name": "is_tty",
-                            "path": "oras.logger.ColorizingStreamHandler.is_tty",
-                            "type": "function",
-                            "decorators": [
-                                {
-                                    "name": "property",
-                                    "signature": "@property"
-                                }
-                            ],
-                            "params": [
-                                {
-                                    "name": "self",
-                                    "order": 0
-                                }
-                            ]
-                        },
-                        {
-                            "name": "emit",
-                            "path": "oras.logger.ColorizingStreamHandler.emit",
-                            "type": "function",
-                            "params": [
-                                {
-                                    "name": "self",
-                                    "order": 0
-                                },
-                                {
-                                    "name": "record",
-                                    "order": 1
-                                }
-                            ]
-                        },
-                        {
-                            "name": "decorate",
-                            "path": "oras.logger.ColorizingStreamHandler.decorate",
-                            "type": "function",
-                            "params": [
-                                {
-                                    "name": "self",
-                                    "order": 0
-                                },
-                                {
-                                    "name": "record",
-                                    "order": 1
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "name": "Logger",
-                    "path": "oras.logger.Logger",
-                    "type": "class",
-                    "functions": [
-                        {
-                            "name": "__init__",
-                            "path": "oras.logger.Logger.__init__",
-                            "type": "function",
-                            "params": [
-                                {
-                                    "name": "self",
-                                    "order": 0
-                                }
-                            ]
-                        },
-                        {
-                            "name": "cleanup",
-                            "path": "oras.logger.Logger.cleanup",
-                            "type": "function",
-                            "params": [
-                                {
-                                    "name": "self",
-                                    "order": 0
-                                }
-                            ]
-                        },
-                        {
-                            "name": "handler",
-                            "path": "oras.logger.Logger.handler",
-                            "type": "function",
-                            "params": [
-                                {
-                                    "name": "self",
-                                    "order": 0
-                                },
-                                {
-                                    "name": "msg",
-                                    "order": 1
-                                }
-                            ]
-                        },
-                        {
-                            "name": "set_stream_handler",
-                            "path": "oras.logger.Logger.set_stream_handler",
-                            "type": "function",
-                            "params": [
-                                {
-                                    "name": "self",
-                                    "order": 0
-                                },
-                                {
-                                    "name": "stream_handler",
-                                    "order": 1
-                                }
-                            ]
-                        },
-                        {
-                            "name": "set_level",
-                            "path": "oras.logger.Logger.set_level",
-                            "type": "function",
-                            "params": [
-                                {
-                                    "name": "self",
-                                    "order": 0
-                                },
-                                {
-                                    "name": "level",
-                                    "order": 1
-                                }
-                            ]
-                        },
-                        {
-                            "name": "location",
-                            "path": "oras.logger.Logger.location",
-                            "type": "function",
-                            "params": [
-                                {
-                                    "name": "self",
-                                    "order": 0
-                                },
-                                {
-                                    "name": "msg",
-                                    "order": 1
-                                }
-                            ]
-                        },
-                        {
-                            "name": "info",
-                            "path": "oras.logger.Logger.info",
-                            "type": "function",
-                            "params": [
-                                {
-                                    "name": "self",
-                                    "order": 0
-                                },
-                                {
-                                    "name": "msg",
-                                    "order": 1
-                                }
-                            ]
-                        },
-                        {
-                            "name": "warning",
-                            "path": "oras.logger.Logger.warning",
-                            "type": "function",
-                            "params": [
-                                {
-                                    "name": "self",
-                                    "order": 0
-                                },
-                                {
-                                    "name": "msg",
-                                    "order": 1
-                                }
-                            ]
-                        },
-                        {
-                            "name": "debug",
-                            "path": "oras.logger.Logger.debug",
-                            "type": "function",
-                            "params": [
-                                {
-                                    "name": "self",
-                                    "order": 0
-                                },
-                                {
-                                    "name": "msg",
-                                    "order": 1
-                                }
-                            ]
-                        },
-                        {
-                            "name": "error",
-                            "path": "oras.logger.Logger.error",
-                            "type": "function",
-                            "params": [
-                                {
-                                    "name": "self",
-                                    "order": 0
-                                },
-                                {
-                                    "name": "msg",
-                                    "order": 1
-                                }
-                            ]
-                        },
-                        {
-                            "name": "exit",
-                            "path": "oras.logger.Logger.exit",
-                            "type": "function",
-                            "params": [
-                                {
-                                    "name": "self",
-                                    "order": 0
-                                },
-                                {
-                                    "name": "msg",
-                                    "order": 1
-                                },
-                                {
-                                    "name": "return_code",
-                                    "order": 2,
-                                    "default": 1
-                                }
-                            ]
-                        },
-                        {
-                            "name": "progress",
-                            "path": "oras.logger.Logger.progress",
-                            "type": "function",
-                            "params": [
-                                {
-                                    "name": "self",
-                                    "order": 0
-                                },
-                                {
-                                    "name": "done",
-                                    "order": 1,
-                                    "default": "None"
-                                },
-                                {
-                                    "name": "total",
-                                    "order": 2,
-                                    "default": "None"
-                                }
-                            ]
-                        },
-                        {
-                            "name": "shellcmd",
-                            "path": "oras.logger.Logger.shellcmd",
-                            "type": "function",
-                            "params": [
-                                {
-                                    "name": "self",
-                                    "order": 0
-                                },
-                                {
-                                    "name": "msg",
-                                    "order": 1
-                                }
-                            ]
-                        },
-                        {
-                            "name": "text_handler",
-                            "path": "oras.logger.Logger.text_handler",
-                            "type": "function",
-                            "params": [
-                                {
-                                    "name": "self",
-                                    "order": 0
-                                },
-                                {
-                                    "name": "msg",
-                                    "order": 1
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "name": "setup_logger",
-                    "path": "oras.logger.setup_logger",
-                    "type": "function",
+                    "name": "oras.logger.ColorizingStreamHandler.__init__",
+                    "type": "__init__",
                     "params": [
                         {
-                            "name": "quiet",
-                            "order": 0,
-                            "default": "False"
-                        },
-                        {
-                            "name": "printshellcmds",
-                            "order": 1,
-                            "default": "False"
+                            "name": "self",
+                            "position": 0
                         },
                         {
                             "name": "nocolor",
-                            "order": 2,
-                            "default": "False"
-                        },
-                        {
-                            "name": "stdout",
-                            "order": 3,
-                            "default": "False"
-                        },
-                        {
-                            "name": "debug",
-                            "order": 4,
+                            "position": 1,
                             "default": "False"
                         },
                         {
                             "name": "use_threads",
-                            "order": 5,
+                            "position": 3,
+                            "default": "False"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.ColorizingStreamHandler",
+                    "name": "oras.logger.ColorizingStreamHandler.can_color_tty",
+                    "type": "can_color_tty",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.ColorizingStreamHandler",
+                    "name": "oras.logger.ColorizingStreamHandler.is_tty",
+                    "type": "is_tty",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.ColorizingStreamHandler",
+                    "name": "oras.logger.ColorizingStreamHandler.emit",
+                    "type": "emit",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "record",
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.ColorizingStreamHandler",
+                    "name": "oras.logger.ColorizingStreamHandler.decorate",
+                    "type": "decorate",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "record",
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger",
+                    "name": "oras.logger.Logger",
+                    "type": "Logger"
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "name": "oras.logger.Logger.__init__",
+                    "type": "__init__",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "name": "oras.logger.Logger.cleanup",
+                    "type": "cleanup",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "name": "oras.logger.Logger.handler",
+                    "type": "handler",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "msg",
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "name": "oras.logger.Logger.set_stream_handler",
+                    "type": "set_stream_handler",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "stream_handler",
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "name": "oras.logger.Logger.set_level",
+                    "type": "set_level",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "level",
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "name": "oras.logger.Logger.location",
+                    "type": "location",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "msg",
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "name": "oras.logger.Logger.info",
+                    "type": "info",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "msg",
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "name": "oras.logger.Logger.warning",
+                    "type": "warning",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "msg",
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "name": "oras.logger.Logger.debug",
+                    "type": "debug",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "msg",
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "name": "oras.logger.Logger.error",
+                    "type": "error",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "msg",
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "name": "oras.logger.Logger.exit",
+                    "type": "exit",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "msg",
+                            "position": 1
+                        },
+                        {
+                            "name": "return_code",
+                            "position": 2,
+                            "default": "1"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "name": "oras.logger.Logger.progress",
+                    "type": "progress",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "done",
+                            "position": 1,
+                            "default": "None"
+                        },
+                        {
+                            "name": "total",
+                            "position": 2,
+                            "default": "None"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "name": "oras.logger.Logger.shellcmd",
+                    "type": "shellcmd",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "msg",
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "name": "oras.logger.Logger.text_handler",
+                    "type": "text_handler",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "msg",
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger",
+                    "name": "oras.logger.setup_logger",
+                    "type": "setup_logger",
+                    "params": [
+                        {
+                            "name": "quiet",
+                            "position": 0,
+                            "default": "False"
+                        },
+                        {
+                            "name": "printshellcmds",
+                            "position": 1,
+                            "default": "False"
+                        },
+                        {
+                            "name": "nocolor",
+                            "position": 2,
+                            "default": "False"
+                        },
+                        {
+                            "name": "stdout",
+                            "position": 3,
+                            "default": "False"
+                        },
+                        {
+                            "name": "debug",
+                            "position": 4,
+                            "default": "False"
+                        },
+                        {
+                            "name": "use_threads",
+                            "position": 5,
                             "default": "False"
                         },
                         {
                             "name": "wms_monitor",
-                            "order": 6,
+                            "position": 6,
                             "default": "None"
                         }
                     ]
