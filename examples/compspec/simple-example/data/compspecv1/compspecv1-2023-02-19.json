@@ -1,0 +1,241 @@
+{
+    "2023-02-19": {
+        "testmodule": {
+            "exports": [
+                {
+                    "path": "testmodule.isfunction.add",
+                    "module": "testmodule.isfunction",
+                    "name": "add",
+                    "needs": [
+                        {
+                            "module": "Union",
+                            "attr": null
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "A",
+                            "position": 0,
+                            "type": "Union['int', 'float']"
+                        },
+                        {
+                            "name": "B",
+                            "position": 1,
+                            "type": "Union['int', 'float']"
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.isfunction.ceiling",
+                    "module": "testmodule.isfunction",
+                    "name": "ceiling",
+                    "needs": [
+                        {
+                            "module": "math",
+                            "attr": "ceil"
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "A",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.isfunction.contains",
+                    "module": "testmodule.isfunction",
+                    "name": "contains",
+                    "needs": [
+                        {
+                            "module": "re",
+                            "attr": "search"
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "string",
+                            "position": 0
+                        },
+                        {
+                            "name": "substring",
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.isfunction.float_power",
+                    "module": "testmodule.isfunction",
+                    "name": "float_power",
+                    "params": [
+                        {
+                            "name": "A",
+                            "position": 0
+                        },
+                        {
+                            "name": "by",
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.isfunction.power",
+                    "module": "testmodule.isfunction",
+                    "name": "power",
+                    "params": [
+                        {
+                            "name": "A",
+                            "position": 0
+                        },
+                        {
+                            "name": "by",
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.tricky_parts.A",
+                    "module": "testmodule.tricky_parts",
+                    "name": "A",
+                    "needs": [
+                        {
+                            "module": "free_function",
+                            "attr": null
+                        },
+                        {
+                            "module": "pd",
+                            "attr": "DataFrame"
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.tricky_parts.cast_to_A",
+                    "module": "testmodule.tricky_parts",
+                    "name": "cast_to_A",
+                    "needs": [
+                        {
+                            "module": "A",
+                            "attr": null
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "fun",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.tricky_parts.foo",
+                    "module": "testmodule.tricky_parts",
+                    "name": "foo",
+                    "needs": [
+                        {
+                            "module": "cast_to_A",
+                            "attr": null
+                        },
+                        {
+                            "module": "A",
+                            "attr": null
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "argument1",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.tricky_parts.free_function",
+                    "module": "testmodule.tricky_parts",
+                    "name": "free_function"
+                },
+                {
+                    "path": "testmodule.tricky_parts.free_function_uses_arg",
+                    "module": "testmodule.tricky_parts",
+                    "name": "free_function_uses_arg",
+                    "params": [
+                        {
+                            "name": "arg",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.tricky_parts.free_function_uses_pandas",
+                    "module": "testmodule.tricky_parts",
+                    "name": "free_function_uses_pandas",
+                    "needs": [
+                        {
+                            "module": "pd",
+                            "attr": "DataFrame"
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.tricky_parts.other_function",
+                    "module": "testmodule.tricky_parts",
+                    "name": "other_function",
+                    "needs": [
+                        {
+                            "module": "free_function",
+                            "attr": null
+                        },
+                        {
+                            "module": "A",
+                            "attr": null
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.isclass.Car",
+                    "module": "testmodule.isclass",
+                    "name": "Car"
+                },
+                {
+                    "path": "testmodule.decorators.say_whee",
+                    "module": "testmodule.decorators",
+                    "name": "say_whee",
+                    "needs": [
+                        {
+                            "module": "useless",
+                            "attr": null
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.decorators.useless",
+                    "module": "testmodule.decorators",
+                    "name": "useless",
+                    "params": [
+                        {
+                            "name": "func",
+                            "position": 0
+                        }
+                    ]
+                }
+            ],
+            "imports": [
+                {
+                    "path": "testmodule.isfunction",
+                    "import": "re"
+                },
+                {
+                    "path": "testmodule.isfunction",
+                    "import": "math"
+                },
+                {
+                    "path": "testmodule.isfunction",
+                    "from": "typing",
+                    "import": "Union"
+                },
+                {
+                    "path": "testmodule.tricky_parts",
+                    "import": "pandas",
+                    "as": "pd"
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,26 @@
+{
+    "data": {
+        "json": {
+            "urls": [
+                "compspecv1-0.0.0.json",
+                "compspecv1-0.0.1.json",
+                "compspecv1-0.0.11.json",
+                "compspecv1-0.0.12.json",
+                "compspecv1-0.0.13.json",
+                "compspecv1-0.0.14.json",
+                "compspecv1-0.0.15.json",
+                "compspecv1-0.0.16.json",
+                "compspecv1-0.0.17.json",
+                "compspecv1-0.0.18.json",
+                "compspecv1-0.1.0.json",
+                "compspecv1-0.1.1.json",
+                "compspecv1-0.1.11.json",
+                "compspecv1-0.1.12.json",
+                "compspecv1-0.1.13.json",
+                "compspecv1-0.1.14.json",
+                "compspecv1-0.1.15.json",
+                "compspecv1-0.1.16.json"
+            ]
+        }
+    }
+}

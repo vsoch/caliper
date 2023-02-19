@@ -1,0 +1,288 @@
+{
+    "2023-02-19": {
+        "testmodule": {
+            "exports": [
+                {
+                    "path": "testmodule.isfunction.add",
+                    "module": "testmodule.isfunction",
+                    "name": "add",
+                    "params": [
+                        {
+                            "name": "A",
+                            "position": 0,
+                            "type": "Union[int, float]"
+                        },
+                        {
+                            "name": "B",
+                            "position": 1,
+                            "type": "Union[int, float]"
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.isfunction.power",
+                    "module": "testmodule.isfunction",
+                    "name": "power",
+                    "params": [
+                        {
+                            "name": "A",
+                            "position": 0
+                        },
+                        {
+                            "name": "by",
+                            "position": 1,
+                            "default": "2"
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.isfunction.float_power",
+                    "module": "testmodule.isfunction",
+                    "name": "float_power",
+                    "params": [
+                        {
+                            "name": "A",
+                            "position": 0
+                        },
+                        {
+                            "name": "by",
+                            "position": 1,
+                            "default": "2.2"
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.isfunction.ceiling",
+                    "module": "testmodule.isfunction",
+                    "name": "ceiling",
+                    "params": [
+                        {
+                            "name": "A",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.isfunction.contains",
+                    "module": "testmodule.isfunction",
+                    "name": "contains",
+                    "params": [
+                        {
+                            "name": "string",
+                            "position": 0
+                        },
+                        {
+                            "name": "substring",
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.tricky_parts.A",
+                    "module": "testmodule.tricky_parts",
+                    "name": "A"
+                },
+                {
+                    "path": "testmodule.tricky_parts.A.__init__",
+                    "module": "testmodule.tricky_parts.A",
+                    "name": "__init__",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.tricky_parts.A.func",
+                    "module": "testmodule.tricky_parts.A",
+                    "name": "func"
+                },
+                {
+                    "path": "testmodule.tricky_parts.A.func2",
+                    "module": "testmodule.tricky_parts.A",
+                    "name": "func2",
+                    "params": [
+                        {
+                            "name": "a",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.tricky_parts.A.func3",
+                    "module": "testmodule.tricky_parts.A",
+                    "name": "func3",
+                    "params": [
+                        {
+                            "name": "a",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.tricky_parts.A.func4",
+                    "module": "testmodule.tricky_parts.A",
+                    "name": "func4",
+                    "params": [
+                        {
+                            "name": "a",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.tricky_parts.free_function",
+                    "module": "testmodule.tricky_parts",
+                    "name": "free_function"
+                },
+                {
+                    "path": "testmodule.tricky_parts.free_function_uses_pandas",
+                    "module": "testmodule.tricky_parts",
+                    "name": "free_function_uses_pandas"
+                },
+                {
+                    "path": "testmodule.tricky_parts.free_function_uses_arg",
+                    "module": "testmodule.tricky_parts",
+                    "name": "free_function_uses_arg",
+                    "params": [
+                        {
+                            "name": "arg",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.tricky_parts.other_function",
+                    "module": "testmodule.tricky_parts",
+                    "name": "other_function"
+                },
+                {
+                    "path": "testmodule.tricky_parts.cast_to_A",
+                    "module": "testmodule.tricky_parts",
+                    "name": "cast_to_A",
+                    "params": [
+                        {
+                            "name": "fun",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.tricky_parts.foo",
+                    "module": "testmodule.tricky_parts",
+                    "name": "foo",
+                    "params": [
+                        {
+                            "name": "argument1",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.isclass.Car",
+                    "module": "testmodule.isclass",
+                    "name": "Car"
+                },
+                {
+                    "path": "testmodule.isclass.Car.__init__",
+                    "module": "testmodule.isclass.Car",
+                    "name": "__init__",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "wheels",
+                            "position": 1,
+                            "default": "4"
+                        },
+                        {
+                            "name": "doors",
+                            "position": 2,
+                            "default": "4"
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.isclass.Car.honk",
+                    "module": "testmodule.isclass.Car",
+                    "name": "honk",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.isclass.Car.slow_down",
+                    "module": "testmodule.isclass.Car",
+                    "name": "slow_down",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "speed",
+                            "position": 1,
+                            "type": "int"
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.isclass.Car.accelerate",
+                    "module": "testmodule.isclass.Car",
+                    "name": "accelerate",
+                    "params": [
+                        {
+                            "name": "self",
+                            "position": 0
+                        },
+                        {
+                            "name": "speed",
+                            "position": 1
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.decorators.useless",
+                    "module": "testmodule.decorators",
+                    "name": "useless",
+                    "params": [
+                        {
+                            "name": "func",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "testmodule.decorators.say_whee",
+                    "module": "testmodule.decorators",
+                    "name": "say_whee"
+                }
+            ],
+            "imports": [
+                {
+                    "path": "testmodule.isfunction",
+                    "import": "math"
+                },
+                {
+                    "path": "testmodule.isfunction",
+                    "import": "re"
+                },
+                {
+                    "path": "testmodule.isfunction",
+                    "from": "typing",
+                    "import": "Union"
+                },
+                {
+                    "path": "testmodule.tricky_parts",
+                    "import": "pd"
+                }
+            ]
+        }
+    }
+}

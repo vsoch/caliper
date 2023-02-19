@@ -1,0 +1,177 @@
+{
+    "0.0.0": {
+        "oras": {
+            "exports": [
+                {
+                    "path": "oras.logger.ColorizingStreamHandler",
+                    "module": "oras.logger",
+                    "name": "ColorizingStreamHandler",
+                    "needs": [
+                        {
+                            "parent": "threading",
+                            "attr": "Lock"
+                        },
+                        {
+                            "parent": "sys",
+                            "attr": "stderr"
+                        },
+                        {
+                            "parent": "_logging",
+                            "attr": "StreamHandler"
+                        },
+                        {
+                            "parent": "os",
+                            "attr": "environ"
+                        },
+                        {
+                            "parent": "platform",
+                            "attr": "system"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "module": "oras.logger",
+                    "name": "Logger",
+                    "needs": [
+                        {
+                            "parent": "inspect",
+                            "attr": "getframeinfo"
+                        },
+                        {
+                            "parent": "inspect",
+                            "attr": "stack"
+                        },
+                        {
+                            "parent": "sys",
+                            "attr": "exit"
+                        },
+                        {
+                            "parent": "_logging",
+                            "attr": "getLogger"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.setup_logger",
+                    "module": "oras.logger",
+                    "name": "setup_logger",
+                    "needs": [
+                        {
+                            "parent": "sys",
+                            "attr": "stdout"
+                        },
+                        {
+                            "parent": "sys",
+                            "attr": "stderr"
+                        },
+                        {
+                            "parent": "logger",
+                            "attr": "set_stream_handler"
+                        },
+                        {
+                            "parent": "logger",
+                            "attr": "set_level"
+                        },
+                        {
+                            "parent": "_logging",
+                            "attr": "DEBUG"
+                        },
+                        {
+                            "parent": "_logging",
+                            "attr": "INFO"
+                        },
+                        {
+                            "parent": "ColorizingStreamHandler",
+                            "attr": null
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "quiet",
+                            "position": 0
+                        },
+                        {
+                            "name": "printshellcmds",
+                            "position": 1
+                        },
+                        {
+                            "name": "nocolor",
+                            "position": 2
+                        },
+                        {
+                            "name": "stdout",
+                            "position": 3
+                        },
+                        {
+                            "name": "debug",
+                            "position": 4
+                        },
+                        {
+                            "name": "use_threads",
+                            "position": 5
+                        },
+                        {
+                            "name": "wms_monitor",
+                            "position": 6
+                        }
+                    ]
+                }
+            ],
+            "imports": [
+                {
+                    "path": "oras",
+                    "from": "oras.version",
+                    "import": "__version__"
+                },
+                {
+                    "path": "oras.logger",
+                    "import": "threading"
+                },
+                {
+                    "path": "oras.logger",
+                    "import": "sys"
+                },
+                {
+                    "path": "oras.logger",
+                    "import": "logging",
+                    "as": "_logging"
+                },
+                {
+                    "path": "oras.logger",
+                    "import": "inspect"
+                },
+                {
+                    "path": "oras.logger",
+                    "import": "os"
+                },
+                {
+                    "path": "oras.logger",
+                    "import": "platform"
+                }
+            ]
+        },
+        "failed_visits": [
+            "location",
+            "decorate",
+            "text_handler"
+        ],
+        "skipped": [
+            "PACKAGE_URL",
+            "TESTS_REQUIRES",
+            "__copyright__",
+            "INSTALL_REQUIRES_ALL",
+            "DESCRIPTION",
+            "LICENSE",
+            "__license__",
+            "__author__",
+            "AUTHOR",
+            "EMAIL",
+            "NAME",
+            "logger",
+            "KEYWORDS",
+            "__version__",
+            "INSTALL_REQUIRES"
+        ]
+    }
+}

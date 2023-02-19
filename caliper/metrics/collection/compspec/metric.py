@@ -524,7 +524,7 @@ class Compspec(MetricBase):
             # Then by module name
             if export[1] not in data[version]:
                 data[version][export[1]] = {"exports": []}
-            new_export = {"path": export[2], "name": export[3], "type": export[4]}
+            new_export = {"path": export[3], "module": export[2], "name": export[4]}
 
             # This is the row id to match to a parameter later
             lookup[export[0]] = new_export

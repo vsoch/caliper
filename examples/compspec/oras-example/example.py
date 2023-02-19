@@ -28,7 +28,7 @@ def main():
     extractor.prepare_repository()
 
     # Extract metric for compspec
-    metric = extractor.extract_metric("compspec")
+    metric = extractor.extract_metric("compspecv1")
 
     # For this second part, we will target an oras clone and try to trace the tests.
     oras_clone = os.path.join(here, "oras-py")

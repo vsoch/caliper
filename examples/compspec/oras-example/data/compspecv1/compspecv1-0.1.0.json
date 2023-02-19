@@ -1,0 +1,2099 @@
+{
+    "0.1.0": {
+        "oras": {
+            "exports": [
+                {
+                    "path": "oras.defaults.registry",
+                    "module": "oras.defaults",
+                    "name": "registry"
+                },
+                {
+                    "path": "oras.container.Container",
+                    "module": "oras.container",
+                    "name": "Container",
+                    "needs": [
+                        {
+                            "parent": "re",
+                            "attr": "search"
+                        },
+                        {
+                            "parent": "oras",
+                            "attr": "defaults"
+                        },
+                        {
+                            "parent": "docker_regex",
+                            "attr": null
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.oci.Annotations",
+                    "module": "oras.oci",
+                    "name": "Annotations",
+                    "needs": [
+                        {
+                            "parent": "os",
+                            "attr": "path"
+                        },
+                        {
+                            "parent": "oras",
+                            "attr": "utils"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.oci.Layer",
+                    "module": "oras.oci",
+                    "name": "Layer",
+                    "needs": [
+                        {
+                            "parent": "jsonschema",
+                            "attr": "validate"
+                        },
+                        {
+                            "parent": "oras",
+                            "attr": "defaults"
+                        },
+                        {
+                            "parent": "oras",
+                            "attr": "schemas"
+                        },
+                        {
+                            "parent": "oras",
+                            "attr": "utils"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.oci.ManifestConfig",
+                    "module": "oras.oci",
+                    "name": "ManifestConfig",
+                    "needs": [
+                        {
+                            "parent": "Dict",
+                            "attr": null
+                        },
+                        {
+                            "parent": "jsonschema",
+                            "attr": "validate"
+                        },
+                        {
+                            "parent": "oras",
+                            "attr": "defaults"
+                        },
+                        {
+                            "parent": "oras",
+                            "attr": "schemas"
+                        },
+                        {
+                            "parent": "oras",
+                            "attr": "utils"
+                        },
+                        {
+                            "parent": "Tuple",
+                            "attr": null
+                        },
+                        {
+                            "parent": "os",
+                            "attr": "path"
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "path",
+                            "position": 0,
+                            "type": "str"
+                        },
+                        {
+                            "name": "media_type",
+                            "position": 1,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.oci.NewLayer",
+                    "module": "oras.oci",
+                    "name": "NewLayer",
+                    "needs": [
+                        {
+                            "parent": "Layer",
+                            "attr": null
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "blob_path",
+                            "position": 0,
+                            "type": "str"
+                        },
+                        {
+                            "name": "media_type",
+                            "position": 1,
+                            "type": "Optional"
+                        },
+                        {
+                            "name": "is_dir",
+                            "position": 2,
+                            "type": "bool"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.oci.NewManifest",
+                    "module": "oras.oci",
+                    "name": "NewManifest",
+                    "needs": [
+                        {
+                            "parent": "EmptyManifest",
+                            "attr": null
+                        },
+                        {
+                            "parent": "copy",
+                            "attr": "deepcopy"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.auth.authHeader",
+                    "module": "oras.auth",
+                    "name": "authHeader",
+                    "needs": [
+                        {
+                            "parent": "Optional",
+                            "attr": null
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.auth.get_basic_auth",
+                    "module": "oras.auth",
+                    "name": "get_basic_auth",
+                    "needs": [
+                        {
+                            "parent": "base64",
+                            "attr": "b64encode"
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "username",
+                            "position": 0,
+                            "type": "str"
+                        },
+                        {
+                            "name": "password",
+                            "position": 1,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.auth.load_configs",
+                    "module": "oras.auth",
+                    "name": "load_configs",
+                    "needs": [
+                        {
+                            "parent": "logger",
+                            "attr": "warning"
+                        },
+                        {
+                            "parent": "os",
+                            "attr": "path"
+                        },
+                        {
+                            "parent": "oras",
+                            "attr": "utils"
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "configs",
+                            "position": 0,
+                            "type": "Optional"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.auth.parse_auth_header",
+                    "module": "oras.auth",
+                    "name": "parse_auth_header",
+                    "needs": [
+                        {
+                            "parent": "re",
+                            "attr": "compile"
+                        },
+                        {
+                            "parent": "authHeader",
+                            "attr": null
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "authHeaderRaw",
+                            "position": 0,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.client.OrasClient",
+                    "module": "oras.client",
+                    "name": "OrasClient",
+                    "needs": [
+                        {
+                            "parent": "oras",
+                            "attr": "version"
+                        },
+                        {
+                            "parent": "oras",
+                            "attr": "provider"
+                        },
+                        {
+                            "parent": "oras",
+                            "attr": "utils"
+                        },
+                        {
+                            "parent": "login",
+                            "attr": "DockerClient"
+                        },
+                        {
+                            "parent": "List",
+                            "attr": null
+                        },
+                        {
+                            "parent": "sys",
+                            "attr": "version_info"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.provider.Registry",
+                    "module": "oras.provider",
+                    "name": "Registry",
+                    "needs": [
+                        {
+                            "parent": "ensure_container",
+                            "attr": null
+                        },
+                        {
+                            "parent": "List",
+                            "attr": null
+                        },
+                        {
+                            "parent": "logger",
+                            "attr": "info"
+                        },
+                        {
+                            "parent": "logger",
+                            "attr": "warning"
+                        },
+                        {
+                            "parent": "logger",
+                            "attr": "error"
+                        },
+                        {
+                            "parent": "logger",
+                            "attr": "debug"
+                        },
+                        {
+                            "parent": "Union",
+                            "attr": null
+                        },
+                        {
+                            "parent": "oras",
+                            "attr": "defaults"
+                        },
+                        {
+                            "parent": "oras",
+                            "attr": "auth"
+                        },
+                        {
+                            "parent": "oras",
+                            "attr": "utils"
+                        },
+                        {
+                            "parent": "oras",
+                            "attr": "container"
+                        },
+                        {
+                            "parent": "oras",
+                            "attr": "schemas"
+                        },
+                        {
+                            "parent": "oras",
+                            "attr": "oci"
+                        },
+                        {
+                            "parent": "requests",
+                            "attr": "Response"
+                        },
+                        {
+                            "parent": "requests",
+                            "attr": "Session"
+                        },
+                        {
+                            "parent": "copy",
+                            "attr": "deepcopy"
+                        },
+                        {
+                            "parent": "Tuple",
+                            "attr": null
+                        },
+                        {
+                            "parent": "os",
+                            "attr": "remove"
+                        },
+                        {
+                            "parent": "os",
+                            "attr": "getcwd"
+                        },
+                        {
+                            "parent": "os",
+                            "attr": "path"
+                        },
+                        {
+                            "parent": "Optional",
+                            "attr": null
+                        },
+                        {
+                            "parent": "jsonschema",
+                            "attr": "validate"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.ColorizingStreamHandler",
+                    "module": "oras.logger",
+                    "name": "ColorizingStreamHandler",
+                    "needs": [
+                        {
+                            "parent": "platform",
+                            "attr": "system"
+                        },
+                        {
+                            "parent": "_logging",
+                            "attr": "StreamHandler"
+                        },
+                        {
+                            "parent": "os",
+                            "attr": "environ"
+                        },
+                        {
+                            "parent": "threading",
+                            "attr": "Lock"
+                        },
+                        {
+                            "parent": "sys",
+                            "attr": "stderr"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.Logger",
+                    "module": "oras.logger",
+                    "name": "Logger",
+                    "needs": [
+                        {
+                            "parent": "_logging",
+                            "attr": "getLogger"
+                        },
+                        {
+                            "parent": "sys",
+                            "attr": "exit"
+                        },
+                        {
+                            "parent": "inspect",
+                            "attr": "getframeinfo"
+                        },
+                        {
+                            "parent": "inspect",
+                            "attr": "stack"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.logger.setup_logger",
+                    "module": "oras.logger",
+                    "name": "setup_logger",
+                    "needs": [
+                        {
+                            "parent": "_logging",
+                            "attr": "DEBUG"
+                        },
+                        {
+                            "parent": "_logging",
+                            "attr": "INFO"
+                        },
+                        {
+                            "parent": "sys",
+                            "attr": "stdout"
+                        },
+                        {
+                            "parent": "sys",
+                            "attr": "stderr"
+                        },
+                        {
+                            "parent": "ColorizingStreamHandler",
+                            "attr": null
+                        },
+                        {
+                            "parent": "logger",
+                            "attr": "set_stream_handler"
+                        },
+                        {
+                            "parent": "logger",
+                            "attr": "set_level"
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "quiet",
+                            "position": 0,
+                            "type": "bool"
+                        },
+                        {
+                            "name": "printshellcmds",
+                            "position": 1,
+                            "type": "bool"
+                        },
+                        {
+                            "name": "nocolor",
+                            "position": 2,
+                            "type": "bool"
+                        },
+                        {
+                            "name": "stdout",
+                            "position": 3,
+                            "type": "bool"
+                        },
+                        {
+                            "name": "debug",
+                            "position": 4,
+                            "type": "bool"
+                        },
+                        {
+                            "name": "use_threads",
+                            "position": 5,
+                            "type": "bool"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.decorator.ensure_container",
+                    "module": "oras.decorator",
+                    "name": "ensure_container",
+                    "needs": [
+                        {
+                            "parent": "update_wrapper",
+                            "attr": null
+                        },
+                        {
+                            "parent": "partial",
+                            "attr": null
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.main.login.DockerClient",
+                    "module": "oras.main.login",
+                    "name": "DockerClient",
+                    "needs": [
+                        {
+                            "parent": "oras",
+                            "attr": "auth"
+                        },
+                        {
+                            "parent": "oras",
+                            "attr": "utils"
+                        },
+                        {
+                            "parent": "os",
+                            "attr": "path"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.request.append_url_params",
+                    "module": "oras.utils.request",
+                    "name": "append_url_params",
+                    "needs": [
+                        {
+                            "parent": "urlparse",
+                            "attr": "parse_qsl"
+                        },
+                        {
+                            "parent": "urlparse",
+                            "attr": "urlunparse"
+                        },
+                        {
+                            "parent": "urlparse",
+                            "attr": "urlparse"
+                        },
+                        {
+                            "parent": "urlencode",
+                            "attr": null
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "url",
+                            "position": 0,
+                            "type": "str"
+                        },
+                        {
+                            "name": "params",
+                            "position": 1,
+                            "type": "dict"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.request.find_docker_config",
+                    "module": "oras.utils.request",
+                    "name": "find_docker_config",
+                    "needs": [
+                        {
+                            "parent": "os",
+                            "attr": "path"
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "exists",
+                            "position": 0,
+                            "type": "bool"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.request.get_docker_client",
+                    "module": "oras.utils.request",
+                    "name": "get_docker_client",
+                    "needs": [
+                        {
+                            "parent": "docker",
+                            "attr": "DockerClient"
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "insecure",
+                            "position": 0,
+                            "type": "bool"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.request.iter_localhosts",
+                    "module": "oras.utils.request",
+                    "name": "iter_localhosts",
+                    "needs": [
+                        {
+                            "parent": "name",
+                            "attr": "replace"
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "name",
+                            "position": 0,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio.copyfile",
+                    "module": "oras.utils.fileio",
+                    "name": "copyfile",
+                    "needs": [
+                        {
+                            "parent": "os",
+                            "attr": "remove"
+                        },
+                        {
+                            "parent": "os",
+                            "attr": "path"
+                        },
+                        {
+                            "parent": "shutil",
+                            "attr": "copyfile"
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "source",
+                            "position": 0,
+                            "type": "str"
+                        },
+                        {
+                            "name": "destination",
+                            "position": 1,
+                            "type": "str"
+                        },
+                        {
+                            "name": "force",
+                            "position": 2,
+                            "type": "bool"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio.extract_targz",
+                    "module": "oras.utils.fileio",
+                    "name": "extract_targz",
+                    "needs": [
+                        {
+                            "parent": "os",
+                            "attr": "path"
+                        },
+                        {
+                            "parent": "is_within_directory",
+                            "attr": null
+                        },
+                        {
+                            "parent": "tarfile",
+                            "attr": "open"
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "targz",
+                            "position": 0,
+                            "type": "str"
+                        },
+                        {
+                            "name": "outdir",
+                            "position": 1,
+                            "type": "str"
+                        },
+                        {
+                            "name": "numeric_owner",
+                            "position": 2,
+                            "type": "bool"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio.get_file_hash",
+                    "module": "oras.utils.fileio",
+                    "name": "get_file_hash",
+                    "needs": [
+                        {
+                            "parent": "hashlib",
+                            "attr": null
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "path",
+                            "position": 0,
+                            "type": "str"
+                        },
+                        {
+                            "name": "algorithm",
+                            "position": 1,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio.get_size",
+                    "module": "oras.utils.fileio",
+                    "name": "get_size",
+                    "needs": [
+                        {
+                            "parent": "pathlib",
+                            "attr": "Path"
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "path",
+                            "position": 0,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio.get_tmpdir",
+                    "module": "oras.utils.fileio",
+                    "name": "get_tmpdir",
+                    "needs": [
+                        {
+                            "parent": "tempfile",
+                            "attr": "_get_candidate_names"
+                        },
+                        {
+                            "parent": "tempfile",
+                            "attr": "gettempdir"
+                        },
+                        {
+                            "parent": "os",
+                            "attr": "mkdir"
+                        },
+                        {
+                            "parent": "os",
+                            "attr": "path"
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "tmpdir",
+                            "position": 0,
+                            "type": "Optional"
+                        },
+                        {
+                            "name": "prefix",
+                            "position": 1,
+                            "type": "Optional"
+                        },
+                        {
+                            "name": "create",
+                            "position": 2,
+                            "type": "bool"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio.get_tmpfile",
+                    "module": "oras.utils.fileio",
+                    "name": "get_tmpfile",
+                    "needs": [
+                        {
+                            "parent": "tempfile",
+                            "attr": "mkstemp"
+                        },
+                        {
+                            "parent": "os",
+                            "attr": "close"
+                        },
+                        {
+                            "parent": "os",
+                            "attr": "path"
+                        },
+                        {
+                            "parent": "get_tmpdir",
+                            "attr": null
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "tmpdir",
+                            "position": 0,
+                            "type": "Optional"
+                        },
+                        {
+                            "name": "prefix",
+                            "position": 1,
+                            "type": "str"
+                        },
+                        {
+                            "name": "suffix",
+                            "position": 2,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio.is_within_directory",
+                    "module": "oras.utils.fileio",
+                    "name": "is_within_directory",
+                    "needs": [
+                        {
+                            "parent": "os",
+                            "attr": "path"
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "directory",
+                            "position": 0,
+                            "type": "str"
+                        },
+                        {
+                            "name": "target",
+                            "position": 1,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio.make_targz",
+                    "module": "oras.utils.fileio",
+                    "name": "make_targz",
+                    "needs": [
+                        {
+                            "parent": "os",
+                            "attr": "path"
+                        },
+                        {
+                            "parent": "get_tmpfile",
+                            "attr": null
+                        },
+                        {
+                            "parent": "tarfile",
+                            "attr": "open"
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "source_dir",
+                            "position": 0,
+                            "type": "str"
+                        },
+                        {
+                            "name": "dest_name",
+                            "position": 1,
+                            "type": "Optional"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio.mkdir_p",
+                    "module": "oras.utils.fileio",
+                    "name": "mkdir_p",
+                    "needs": [
+                        {
+                            "parent": "os",
+                            "attr": "makedirs"
+                        },
+                        {
+                            "parent": "os",
+                            "attr": "path"
+                        },
+                        {
+                            "parent": "errno",
+                            "attr": "EEXIST"
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "path",
+                            "position": 0,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio.print_json",
+                    "module": "oras.utils.fileio",
+                    "name": "print_json",
+                    "needs": [
+                        {
+                            "parent": "json",
+                            "attr": "dumps"
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "json_obj",
+                            "position": 0,
+                            "type": "dict"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio.read_file",
+                    "module": "oras.utils.fileio",
+                    "name": "read_file",
+                    "params": [
+                        {
+                            "name": "filename",
+                            "position": 0,
+                            "type": "str"
+                        },
+                        {
+                            "name": "mode",
+                            "position": 1,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio.read_in_chunks",
+                    "module": "oras.utils.fileio",
+                    "name": "read_in_chunks",
+                    "needs": [
+                        {
+                            "parent": "image",
+                            "attr": "read"
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "image",
+                            "position": 0,
+                            "type": "Union['TextIO', 'io']"
+                        },
+                        {
+                            "name": "chunk_size",
+                            "position": 1,
+                            "type": "int"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio.read_json",
+                    "module": "oras.utils.fileio",
+                    "name": "read_json",
+                    "needs": [
+                        {
+                            "parent": "json",
+                            "attr": "loads"
+                        },
+                        {
+                            "parent": "read_file",
+                            "attr": null
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "filename",
+                            "position": 0,
+                            "type": "str"
+                        },
+                        {
+                            "name": "mode",
+                            "position": 1,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio.readline",
+                    "module": "oras.utils.fileio",
+                    "name": "readline",
+                    "needs": [
+                        {
+                            "parent": "sys",
+                            "attr": "stdin"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio.recursive_find",
+                    "module": "oras.utils.fileio",
+                    "name": "recursive_find",
+                    "needs": [
+                        {
+                            "parent": "os",
+                            "attr": "path"
+                        },
+                        {
+                            "parent": "os",
+                            "attr": "walk"
+                        },
+                        {
+                            "parent": "re",
+                            "attr": "search"
+                        },
+                        {
+                            "parent": "Generator",
+                            "attr": null
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "base",
+                            "position": 0,
+                            "type": "str"
+                        },
+                        {
+                            "name": "pattern",
+                            "position": 1,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio.write_file",
+                    "module": "oras.utils.fileio",
+                    "name": "write_file",
+                    "needs": [
+                        {
+                            "parent": "os",
+                            "attr": "chmod"
+                        },
+                        {
+                            "parent": "os",
+                            "attr": "stat"
+                        },
+                        {
+                            "parent": "stat",
+                            "attr": "S_IXGRP"
+                        },
+                        {
+                            "parent": "stat",
+                            "attr": "S_IEXEC"
+                        },
+                        {
+                            "parent": "stat",
+                            "attr": "S_IXOTH"
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "filename",
+                            "position": 0,
+                            "type": "str"
+                        },
+                        {
+                            "name": "content",
+                            "position": 1,
+                            "type": "str"
+                        },
+                        {
+                            "name": "mode",
+                            "position": 2,
+                            "type": "str"
+                        },
+                        {
+                            "name": "make_exec",
+                            "position": 3,
+                            "type": "bool"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.utils.fileio.write_json",
+                    "module": "oras.utils.fileio",
+                    "name": "write_json",
+                    "needs": [
+                        {
+                            "parent": "print_json",
+                            "attr": null
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "json_obj",
+                            "position": 0,
+                            "type": "dict"
+                        },
+                        {
+                            "name": "filename",
+                            "position": 1,
+                            "type": "str"
+                        },
+                        {
+                            "name": "mode",
+                            "position": 2,
+                            "type": "str"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.tests.test_oras.setup_module",
+                    "module": "oras.tests.test_oras",
+                    "name": "setup_module",
+                    "needs": [
+                        {
+                            "parent": "registry_host",
+                            "attr": null
+                        },
+                        {
+                            "parent": "with_auth",
+                            "attr": null
+                        },
+                        {
+                            "parent": "oras_pass",
+                            "attr": null
+                        },
+                        {
+                            "parent": "oras_user",
+                            "attr": null
+                        },
+                        {
+                            "parent": "sys",
+                            "attr": "exit"
+                        },
+                        {
+                            "parent": "registry_port",
+                            "attr": null
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "module",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.tests.test_oras.test_basic_oras",
+                    "module": "oras.tests.test_oras",
+                    "name": "test_basic_oras",
+                    "needs": [
+                        {
+                            "parent": "registry",
+                            "attr": null
+                        },
+                        {
+                            "parent": "oras",
+                            "attr": "client"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.tests.test_oras.test_basic_push_pull",
+                    "module": "oras.tests.test_oras",
+                    "name": "test_basic_push_pull",
+                    "needs": [
+                        {
+                            "parent": "here",
+                            "attr": null
+                        },
+                        {
+                            "parent": "os",
+                            "attr": "path"
+                        },
+                        {
+                            "parent": "with_auth",
+                            "attr": null
+                        },
+                        {
+                            "parent": "pytest",
+                            "attr": "mark"
+                        },
+                        {
+                            "parent": "pytest",
+                            "attr": "raises"
+                        },
+                        {
+                            "parent": "registry",
+                            "attr": null
+                        },
+                        {
+                            "parent": "oras",
+                            "attr": "client"
+                        },
+                        {
+                            "parent": "target",
+                            "attr": null
+                        },
+                        {
+                            "parent": "shutil",
+                            "attr": "copyfile"
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "tmp_path",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.tests.test_oras.test_directory_push_pull",
+                    "module": "oras.tests.test_oras",
+                    "name": "test_directory_push_pull",
+                    "needs": [
+                        {
+                            "parent": "here",
+                            "attr": null
+                        },
+                        {
+                            "parent": "os",
+                            "attr": "listdir"
+                        },
+                        {
+                            "parent": "os",
+                            "attr": "path"
+                        },
+                        {
+                            "parent": "with_auth",
+                            "attr": null
+                        },
+                        {
+                            "parent": "pytest",
+                            "attr": "mark"
+                        },
+                        {
+                            "parent": "registry",
+                            "attr": null
+                        },
+                        {
+                            "parent": "oras",
+                            "attr": "client"
+                        },
+                        {
+                            "parent": "target_dir",
+                            "attr": null
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "tmp_path",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.tests.test_oras.test_login_logout",
+                    "module": "oras.tests.test_oras",
+                    "name": "test_login_logout",
+                    "needs": [
+                        {
+                            "parent": "with_auth",
+                            "attr": null
+                        },
+                        {
+                            "parent": "pytest",
+                            "attr": "mark"
+                        },
+                        {
+                            "parent": "oras_pass",
+                            "attr": null
+                        },
+                        {
+                            "parent": "registry",
+                            "attr": null
+                        },
+                        {
+                            "parent": "oras_user",
+                            "attr": null
+                        },
+                        {
+                            "parent": "oras",
+                            "attr": "client"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.tests.test_utils.test_copyfile",
+                    "module": "oras.tests.test_utils",
+                    "name": "test_copyfile",
+                    "needs": [
+                        {
+                            "parent": "utils",
+                            "attr": "copyfile"
+                        },
+                        {
+                            "parent": "utils",
+                            "attr": "write_file"
+                        },
+                        {
+                            "parent": "os",
+                            "attr": "path"
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "tmp_path",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.tests.test_utils.test_get_tmpdir_tmpfile",
+                    "module": "oras.tests.test_utils",
+                    "name": "test_get_tmpdir_tmpfile",
+                    "needs": [
+                        {
+                            "parent": "utils",
+                            "attr": "get_tmpdir"
+                        },
+                        {
+                            "parent": "utils",
+                            "attr": "get_tmpfile"
+                        },
+                        {
+                            "parent": "shutil",
+                            "attr": "rmtree"
+                        },
+                        {
+                            "parent": "os",
+                            "attr": "remove"
+                        },
+                        {
+                            "parent": "os",
+                            "attr": "path"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.tests.test_utils.test_mkdir_p",
+                    "module": "oras.tests.test_utils",
+                    "name": "test_mkdir_p",
+                    "needs": [
+                        {
+                            "parent": "utils",
+                            "attr": "mkdir_p"
+                        },
+                        {
+                            "parent": "os",
+                            "attr": "path"
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "tmp_path",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.tests.test_utils.test_print_json",
+                    "module": "oras.tests.test_utils",
+                    "name": "test_print_json",
+                    "needs": [
+                        {
+                            "parent": "utils",
+                            "attr": "print_json"
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.tests.test_utils.test_write_bad_json",
+                    "module": "oras.tests.test_utils",
+                    "name": "test_write_bad_json",
+                    "needs": [
+                        {
+                            "parent": "utils",
+                            "attr": "write_json"
+                        },
+                        {
+                            "parent": "pytest",
+                            "attr": "raises"
+                        },
+                        {
+                            "parent": "os",
+                            "attr": "path"
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "tmp_path",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.tests.test_utils.test_write_json",
+                    "module": "oras.tests.test_utils",
+                    "name": "test_write_json",
+                    "needs": [
+                        {
+                            "parent": "utils",
+                            "attr": "read_json"
+                        },
+                        {
+                            "parent": "utils",
+                            "attr": "write_json"
+                        },
+                        {
+                            "parent": "os",
+                            "attr": "path"
+                        },
+                        {
+                            "parent": "json",
+                            "attr": "loads"
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "tmp_path",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.tests.test_utils.test_write_read_files",
+                    "module": "oras.tests.test_utils",
+                    "name": "test_write_read_files",
+                    "needs": [
+                        {
+                            "parent": "utils",
+                            "attr": "read_file"
+                        },
+                        {
+                            "parent": "utils",
+                            "attr": "write_file"
+                        },
+                        {
+                            "parent": "os",
+                            "attr": "path"
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "tmp_path",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.tests.test_provider.setup_module",
+                    "module": "oras.tests.test_provider",
+                    "name": "setup_module",
+                    "needs": [
+                        {
+                            "parent": "oras_user",
+                            "attr": null
+                        },
+                        {
+                            "parent": "sys",
+                            "attr": "exit"
+                        },
+                        {
+                            "parent": "oras_pass",
+                            "attr": null
+                        },
+                        {
+                            "parent": "registry_host",
+                            "attr": null
+                        },
+                        {
+                            "parent": "registry_port",
+                            "attr": null
+                        },
+                        {
+                            "parent": "with_auth",
+                            "attr": null
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "module",
+                            "position": 0
+                        }
+                    ]
+                },
+                {
+                    "path": "oras.tests.test_provider.test_annotated_registry_push",
+                    "module": "oras.tests.test_provider",
+                    "name": "test_annotated_registry_push",
+                    "needs": [
+                        {
+                            "parent": "oras",
+                            "attr": "client"
+                        },
+                        {
+                            "parent": "oras",
+                            "attr": "provider"
+                        },
+                        {
+                            "parent": "oras",
+                            "attr": "utils"
+                        },
+                        {
+                            "parent": "here",
+                            "attr": null
+                        },
+                        {
+                            "parent": "target",
+                            "attr": null
+                        },
+                        {
+                            "parent": "pytest",
+                            "attr": "mark"
+                        },
+                        {
+                            "parent": "pytest",
+                            "attr": "raises"
+                        },
+                        {
+                            "parent": "os",
+                            "attr": "path"
+                        },
+                        {
+                            "parent": "with_auth",
+                            "attr": null
+                        },
+                        {
+                            "parent": "registry",
+                            "attr": null
+                        }
+                    ],
+                    "params": [
+                        {
+                            "name": "tmp_path",
+                            "position": 0
+                        }
+                    ]
+                }
+            ],
+            "imports": [
+                {
+                    "path": "oras.container",
+                    "import": "re"
+                },
+                {
+                    "path": "oras.container",
+                    "import": "oras.defaults"
+                },
+                {
+                    "path": "oras.container",
+                    "from": "typing",
+                    "import": "Optional"
+                },
+                {
+                    "path": "oras.oci",
+                    "from": "typing",
+                    "import": "Dict"
+                },
+                {
+                    "path": "oras.oci",
+                    "import": "copy"
+                },
+                {
+                    "path": "oras.oci",
+                    "import": "jsonschema"
+                },
+                {
+                    "path": "oras.oci",
+                    "import": "oras.utils"
+                },
+                {
+                    "path": "oras.oci",
+                    "from": "typing",
+                    "import": "Optional"
+                },
+                {
+                    "path": "oras.oci",
+                    "import": "oras.schemas"
+                },
+                {
+                    "path": "oras.oci",
+                    "from": "typing",
+                    "import": "Tuple"
+                },
+                {
+                    "path": "oras.oci",
+                    "import": "os"
+                },
+                {
+                    "path": "oras.oci",
+                    "import": "oras.defaults"
+                },
+                {
+                    "path": "oras.auth",
+                    "from": "oras.logger",
+                    "import": "logger"
+                },
+                {
+                    "path": "oras.auth",
+                    "from": "typing",
+                    "import": "List"
+                },
+                {
+                    "path": "oras.auth",
+                    "from": "typing",
+                    "import": "Optional"
+                },
+                {
+                    "path": "oras.auth",
+                    "import": "oras.utils"
+                },
+                {
+                    "path": "oras.auth",
+                    "import": "base64"
+                },
+                {
+                    "path": "oras.auth",
+                    "import": "re"
+                },
+                {
+                    "path": "oras.auth",
+                    "import": "os"
+                },
+                {
+                    "path": "oras.client",
+                    "import": "oras.utils"
+                },
+                {
+                    "path": "oras.client",
+                    "from": "typing",
+                    "import": "Optional"
+                },
+                {
+                    "path": "oras.client",
+                    "import": "oras.auth"
+                },
+                {
+                    "path": "oras.client",
+                    "import": "sys"
+                },
+                {
+                    "path": "oras.client",
+                    "import": "oras.main.login",
+                    "as": "login"
+                },
+                {
+                    "path": "oras.client",
+                    "import": "oras.provider"
+                },
+                {
+                    "path": "oras.client",
+                    "import": "oras.version"
+                },
+                {
+                    "path": "oras.client",
+                    "from": "typing",
+                    "import": "Union"
+                },
+                {
+                    "path": "oras.client",
+                    "import": "oras.container"
+                },
+                {
+                    "path": "oras.client",
+                    "from": "typing",
+                    "import": "List"
+                },
+                {
+                    "path": "oras",
+                    "from": "oras.version",
+                    "import": "__version__"
+                },
+                {
+                    "path": "oras.provider",
+                    "from": "oras.decorator",
+                    "import": "ensure_container"
+                },
+                {
+                    "path": "oras.provider",
+                    "from": "typing",
+                    "import": "List"
+                },
+                {
+                    "path": "oras.provider",
+                    "from": "oras.logger",
+                    "import": "logger"
+                },
+                {
+                    "path": "oras.provider",
+                    "from": "typing",
+                    "import": "Union"
+                },
+                {
+                    "path": "oras.provider",
+                    "import": "oras.schemas"
+                },
+                {
+                    "path": "oras.provider",
+                    "import": "requests"
+                },
+                {
+                    "path": "oras.provider",
+                    "import": "oras.utils"
+                },
+                {
+                    "path": "oras.provider",
+                    "import": "copy"
+                },
+                {
+                    "path": "oras.provider",
+                    "import": "oras.oci"
+                },
+                {
+                    "path": "oras.provider",
+                    "from": "typing",
+                    "import": "Tuple"
+                },
+                {
+                    "path": "oras.provider",
+                    "import": "oras.container"
+                },
+                {
+                    "path": "oras.provider",
+                    "import": "os"
+                },
+                {
+                    "path": "oras.provider",
+                    "from": "typing",
+                    "import": "Optional"
+                },
+                {
+                    "path": "oras.provider",
+                    "import": "oras.auth"
+                },
+                {
+                    "path": "oras.provider",
+                    "import": "jsonschema"
+                },
+                {
+                    "path": "oras.logger",
+                    "import": "platform"
+                },
+                {
+                    "path": "oras.logger",
+                    "from": "pathlib",
+                    "import": "Path"
+                },
+                {
+                    "path": "oras.logger",
+                    "import": "logging",
+                    "as": "_logging"
+                },
+                {
+                    "path": "oras.logger",
+                    "import": "os"
+                },
+                {
+                    "path": "oras.logger",
+                    "import": "threading"
+                },
+                {
+                    "path": "oras.logger",
+                    "from": "typing",
+                    "import": "Union"
+                },
+                {
+                    "path": "oras.logger",
+                    "from": "typing",
+                    "import": "Optional"
+                },
+                {
+                    "path": "oras.logger",
+                    "import": "sys"
+                },
+                {
+                    "path": "oras.logger",
+                    "from": "typing",
+                    "import": "Text"
+                },
+                {
+                    "path": "oras.logger",
+                    "import": "inspect"
+                },
+                {
+                    "path": "oras.logger",
+                    "from": "typing",
+                    "import": "TextIO"
+                },
+                {
+                    "path": "oras.decorator",
+                    "from": "functools",
+                    "import": "update_wrapper"
+                },
+                {
+                    "path": "oras.decorator",
+                    "from": "functools",
+                    "import": "partial"
+                },
+                {
+                    "path": "oras.main.login",
+                    "from": "typing",
+                    "import": "Optional"
+                },
+                {
+                    "path": "oras.main.login",
+                    "import": "oras.utils"
+                },
+                {
+                    "path": "oras.main.login",
+                    "import": "oras.auth"
+                },
+                {
+                    "path": "oras.main.login",
+                    "import": "os"
+                },
+                {
+                    "path": "oras.utils",
+                    "from": "request",
+                    "import": "find_docker_config"
+                },
+                {
+                    "path": "oras.utils",
+                    "from": "request",
+                    "import": "append_url_params"
+                },
+                {
+                    "path": "oras.utils",
+                    "from": "fileio",
+                    "import": "mkdir_p"
+                },
+                {
+                    "path": "oras.utils",
+                    "from": "fileio",
+                    "import": "read_json"
+                },
+                {
+                    "path": "oras.utils",
+                    "from": "fileio",
+                    "import": "extract_targz"
+                },
+                {
+                    "path": "oras.utils",
+                    "from": "fileio",
+                    "import": "write_json"
+                },
+                {
+                    "path": "oras.utils",
+                    "from": "fileio",
+                    "import": "get_size"
+                },
+                {
+                    "path": "oras.utils",
+                    "from": "fileio",
+                    "import": "read_in_chunks"
+                },
+                {
+                    "path": "oras.utils",
+                    "from": "fileio",
+                    "import": "recursive_find"
+                },
+                {
+                    "path": "oras.utils",
+                    "from": "fileio",
+                    "import": "get_file_hash"
+                },
+                {
+                    "path": "oras.utils",
+                    "from": "fileio",
+                    "import": "make_targz"
+                },
+                {
+                    "path": "oras.utils",
+                    "from": "fileio",
+                    "import": "get_tmpfile"
+                },
+                {
+                    "path": "oras.utils",
+                    "from": "fileio",
+                    "import": "print_json"
+                },
+                {
+                    "path": "oras.utils",
+                    "from": "request",
+                    "import": "get_docker_client"
+                },
+                {
+                    "path": "oras.utils",
+                    "from": "fileio",
+                    "import": "get_tmpdir"
+                },
+                {
+                    "path": "oras.utils",
+                    "from": "fileio",
+                    "import": "readline"
+                },
+                {
+                    "path": "oras.utils",
+                    "from": "request",
+                    "import": "iter_localhosts"
+                },
+                {
+                    "path": "oras.utils",
+                    "from": "fileio",
+                    "import": "write_file"
+                },
+                {
+                    "path": "oras.utils",
+                    "from": "fileio",
+                    "import": "copyfile"
+                },
+                {
+                    "path": "oras.utils",
+                    "from": "fileio",
+                    "import": "read_file"
+                },
+                {
+                    "path": "oras.utils.request",
+                    "import": "docker"
+                },
+                {
+                    "path": "oras.utils.request",
+                    "import": "urllib.parse",
+                    "as": "urlparse"
+                },
+                {
+                    "path": "oras.utils.request",
+                    "import": "os"
+                },
+                {
+                    "path": "oras.utils.request",
+                    "from": "urllib.parse",
+                    "import": "urlencode"
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "import": "tempfile"
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "import": "os"
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "import": "sys"
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "from": "typing",
+                    "import": "Union"
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "from": "typing",
+                    "import": "Optional"
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "import": "errno"
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "from": "typing",
+                    "import": "Generator"
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "import": "json"
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "import": "tarfile"
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "import": "pathlib"
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "import": "stat"
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "from": "typing",
+                    "import": "TextIO"
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "import": "io"
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "import": "hashlib"
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "import": "re"
+                },
+                {
+                    "path": "oras.utils.fileio",
+                    "import": "shutil"
+                },
+                {
+                    "path": "oras.tests.test_oras",
+                    "import": "os"
+                },
+                {
+                    "path": "oras.tests.test_oras",
+                    "import": "pytest"
+                },
+                {
+                    "path": "oras.tests.test_oras",
+                    "import": "oras.client"
+                },
+                {
+                    "path": "oras.tests.test_oras",
+                    "import": "sys"
+                },
+                {
+                    "path": "oras.tests.test_oras",
+                    "import": "shutil"
+                },
+                {
+                    "path": "oras.tests.test_utils",
+                    "import": "pytest"
+                },
+                {
+                    "path": "oras.tests.test_utils",
+                    "import": "os"
+                },
+                {
+                    "path": "oras.tests.test_utils",
+                    "import": "oras.utils",
+                    "as": "utils"
+                },
+                {
+                    "path": "oras.tests.test_utils",
+                    "import": "shutil"
+                },
+                {
+                    "path": "oras.tests.test_utils",
+                    "import": "json"
+                },
+                {
+                    "path": "oras.tests.test_provider",
+                    "import": "oras.client"
+                },
+                {
+                    "path": "oras.tests.test_provider",
+                    "import": "sys"
+                },
+                {
+                    "path": "oras.tests.test_provider",
+                    "import": "oras.utils"
+                },
+                {
+                    "path": "oras.tests.test_provider",
+                    "import": "oras.provider"
+                },
+                {
+                    "path": "oras.tests.test_provider",
+                    "import": "pytest"
+                },
+                {
+                    "path": "oras.tests.test_provider",
+                    "import": "os"
+                }
+            ]
+        },
+        "failed_visits": [
+            "version",
+            "decorate",
+            "text_handler",
+            "location",
+            "get_manifest"
+        ],
+        "skipped": [
+            "registry_host",
+            "EmptyManifest",
+            "default_blob_dir_media_type",
+            "layerProperties",
+            "annotation_unpack",
+            "docker_regex",
+            "INSTALL_REQUIRES_ALL",
+            "registry",
+            "AUTHOR",
+            "default_blocksize",
+            "KEYWORDS",
+            "__version__",
+            "with_auth",
+            "INSTALL_REQUIRES",
+            "target",
+            "PACKAGE_URL",
+            "here",
+            "__copyright__",
+            "__license__",
+            "annotation_title",
+            "DESCRIPTION",
+            "LICENSE",
+            "manifestProperties",
+            "default_tag",
+            "NAME",
+            "unknown_config_media_type",
+            "logger",
+            "DOCKER_REQUIRES",
+            "layer",
+            "TESTS_REQUIRES",
+            "default_blob_media_type",
+            "oras_pass",
+            "annotation_digest",
+            "target_dir",
+            "registry_port",
+            "oras_user",
+            "oci_image_index_file",
+            "blank_hash",
+            "__author__",
+            "EMAIL",
+            "default_manifest_media_type",
+            "manifest",
+            "schema_url"
+        ]
+    }
+}
