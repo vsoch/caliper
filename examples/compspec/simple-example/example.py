@@ -12,7 +12,7 @@ def main():
     extractor = MetricsExtractor(working_dir=here)
 
     # Extract metric for compspec
-    metric = extractor.extract_metric("compspec")
+    metric = extractor.extract_metric("compspecv1")
 
     # How to get results
     data = metric.get_results()

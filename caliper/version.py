@@ -24,7 +24,8 @@ INSTALL_REQUIRES = (
 )
 PARSER_REQUIRES = (
     ("jedi", {"exact_version": "0.18.0"}),
-    ("parso", {"min_version": None}),
+    ("gast", {"min_version": None}),
+    ("beniget", {"min_version": None}),
 )
 TESTS_REQUIRES = (("pytest", {"min_version": "4.6.2"}),)
 DATAVERSE_REQUIRES = (("pyDataverse", {"exact_version": "0.2.1"}),)

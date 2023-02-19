@@ -14,103 +14,105 @@ from caliper.metrics.table import Table
 from caliper.utils.file import get_tmpfile, read_file, recursive_find, write_json
 
 try:
-    import parso
+    # gast abstracts the ast of the actual python version. It is a requirement for
+    # beniget and generally speaking a must-have for static analysis anyway.
+    import beniget
+    import gast as ast
 
-    has_parso = True
+    has_deps = True
 except ImportError:
-    has_parso = False
+    has_deps = False
 
 
-def parse_function(func, modulepath, version):
+class AllImports(ast.NodeVisitor):
     """
-    Parse a function entry to add to exports defined by module.
+    ast.Import and ast.ImportFrom are the only nodes that make use of alias,
+    rely on that property to collect all imported definitions, not only the
+    global ones.
     """
-    new_func = {
-        "name": func.name.value,
-        "path": f"{modulepath}.{func.name.value}",
-        "tag": version,
-        "type": "function",
-    }
-    decorators = parse_decorators(func.get_decorators())
-    if decorators:
-        new_func["decorators"] = decorators
 
-    params = get_function_params(func)
-    if params:
-        new_func["params"] = params
-    return new_func
+    def __init__(self, duc):
+        self._result = set()
+        self._duc = duc
+
+    def visit_alias(self, node):
+        self._result.add(self._duc.chains[node])
+
+    def __iter__(self):
+        return iter(self._result)
+
+    def __contains__(self, value):
+        return value in self._result
 
 
-def parse_class(cls, modulepath, version):
+class Capture(ast.NodeVisitor):
     """
-    Parse a class into an entry for our export listing.
+    Gathers the set of definitions used in a node but not locally defined.
+    As an exception, we consider local imports as an external definition,
+    because they come from "the outside".
+    Also associates each of this definition to the set of attributes of this
+    definition used with this node (if any).
     """
-    root = modulepath.split(".", 1)[0]
-    classpath = f"{modulepath}.{cls.name.value}"
-    return {
-        "root": root,
-        "module": modulepath,
-        "tag": version,
-        "path": classpath,
-        "name": cls.name.value,
-        "type": "class",
-    }
 
+    def __init__(self, duc, imports):
+        from collections import defaultdict
 
-def parse_decorators(decorators):
-    """
-    Parse decorators into simple listing.
-    """
-    import parso.python.tree
+        self._chains = duc
+        self._imports = imports  # all import definition, including local ones
+        self._udc = beniget.UseDefChains(duc)
+        self._users = set()  # users of local definitions
+        self._captured = set()  # definitions that don't belong to local users
+        self._attributes = defaultdict(set)  # maps def to attributes
 
-    items = []
-    for decorator in decorators:
-        name = None
-        for child in decorator.children:
-            # This is the function name
-            if isinstance(child, parso.python.tree.Name):
-                name = child.value
-                break
-
-        # If we don't get the name, get the entire signatures
-        signature = decorator.get_code().strip()
-        if not name:
-            name = signature
-        items.append({"name": name, "signature": signature})
-    return items
-
-
-def get_function_params(func):
-    """
-    Get parameters for a function.
-    """
-    params = []
-    for param in func.get_params():
-        new_param = {
-            "name": param.name.value,
-            "position": param.position_index,
-            "default_value": None,
-            "type": None,
-        }
-        if param.default:
-            # This seems to present numbers as strings
-            if not hasattr(param.default, "value"):
-                new_param["default_value"] = param.default.get_code().strip()
+    def visit_FunctionDef(self, node):
+        # Initialize the set of node using a local variable. These nodes are
+        # not part of the capture.
+        for def_ in self._chains.locals[node]:
+            # ignore local imports
+            if def_ in self._imports:
                 continue
+            self._users.update(use.node for use in def_.users())
+        self.generic_visit(node)
 
-            if param.default.type == "number":
-                try:
-                    new_param["default_value"] = int(param.default.value)
-                except ValueError:
-                    new_param["default_value"] = float(param.default.value)
-            else:
-                new_param["default_value"] = param.default.value
+    visit_AsyncFunctionDef = visit_FunctionDef
 
-        # For now just get raw type
-        if param.annotation:
-            new_param["type"] = param.annotation.get_code().strip()
-        params.append(new_param)
-    return params
+    visit_ClassDef = visit_FunctionDef
+
+    def visit_Name(self, node):
+        # Register reference to identifiers not locally defined.
+        if isinstance(node.ctx, ast.Load):
+            if node not in self._users:
+                for def_ in self._udc.chains[node]:
+                    self._captured.add(def_)
+
+    def visit_Attribute(self, node):
+        # Register usage of any attribute, but not modification of
+        # existing attribute.
+        if isinstance(node.ctx, ast.Load):
+            for def_ in self._udc.chains[node.value]:
+                self._attributes[def_].add(node.attr)
+        self.generic_visit(node)
+
+    def __iter__(self):
+        return iter(self._captured)
+
+    def attrs(self):
+        return self._attributes
+
+
+def imported(global_definitions, imports, node, duc):
+    """
+    Among all the definitions captured by `Capture`, some are builtin
+    definitions (e.g. `print`). Filter them out. And some are local imports.
+    Keep them!
+    """
+    captured = Capture(duc, imports)
+    captured.visit(node)
+
+    imported_defs = (global_definitions.union(imports)).intersection(captured)
+    associated_attrs = captured.attrs()
+
+    return imported_defs, associated_attrs
 
 
 # The table will be flat - storage for our metrics we want to extract
@@ -123,6 +125,7 @@ CREATE TABLE IF NOT EXISTS imports (
     path text NOT NULL,
     module text NULLABLE,
     import text NOT NULL,
+    asname text NULLABLE,
     tag text NOT NULL
 );""",
     """
@@ -140,6 +143,14 @@ CREATE TABLE IF NOT EXISTS params (
     type text NULLABLE,
     position number NULLABLE,
     default_value text NULLABLE,
+    function number NOT NULL,
+    FOREIGN KEY (function) REFERENCES exports(id)
+);
+""",
+    """
+CREATE TABLE IF NOT EXISTS depends (
+    module text NULLABLE,
+    attr text NULLABLE,
     function number NOT NULL,
     FOREIGN KEY (function) REFERENCES exports(id)
 );
@@ -208,13 +219,14 @@ class CompspecFacts:
                             "reason": item["reason"],
                         }
                     )
+
         t = Table(rows)
         t.table(title="Compspec Compatibilty Result", limit=None, sort_by="path")
         # TODO this seems off need to double check
 
 
-class Compspec(MetricBase):
-    name = "compspec"
+class Compspecv1(MetricBase):
+    name = "compspecv1"
     description = "for each commit, derive a composition specification"
     extractor = "json"
 
@@ -223,8 +235,10 @@ class Compspec(MetricBase):
         Create an extractor for Python facts that writes to a database.
         """
         # Parso is required to use
-        if not has_parso:
-            logger.exit("parso is required to for the compspec metric parser.")
+        if not has_deps:
+            logger.exit(
+                "beniget and gast are required to for the compspec metric parser."
+            )
 
         super().__init__(git=git, filename=filename)
 
@@ -384,6 +398,13 @@ class Compspec(MetricBase):
     def _extract(self, commit):
         """
         Main function to run extraction.
+
+        Remaining questions I have using beniget:
+
+        1. How do I derivate decorators and defaults?
+        2. What should I be doing with the attributes and local variables?
+        3. Class inheritance?
+        4. Are args provided in correct order?
         """
         # Add the temporary directory to the PYTHONPATH
         if self.git.folder not in sys.path:
@@ -420,75 +441,212 @@ class Compspec(MetricBase):
                 f"Successfully parsed {count} files. {issue_count} were skipped."
             )
 
-    def _add_imports(self, module, modulepath, version):
+    def _add_imports(self, module, modulepath, version, ancestors, imports, duc):
         """
-        Add imports for a module
+        Wrapper to add imports to enter into database as one transaction
         """
-        root = modulepath.split(".")[0]
-
-        # When the database context is open, we can access self.db.conn
-        imports = []
-        for lib in module.iter_imports():
-            # This is in the format from X import ...
-            from_names = []
-            if hasattr(lib, "get_from_names"):
-                from_names = list(lib.get_from_names())
-
-            for defined in lib.get_defined_names():
-                new_import = {
-                    "root": root,
-                    "path": modulepath,
-                    "import": defined.value,
-                    "tag": version,
-                }
-                if from_names:
-                    for from_name in from_names:
-                        new_import["module"] = from_name.value
-                        imports.append(new_import)
-                else:
-                    new_import["module"] = None
-                    imports.append(new_import)
+        importlist = []
+        for import_ in imports:
+            importlist.append(
+                self._parse_import(module, modulepath, version, ancestors, import_, duc)
+            )
 
         # Add imports to the database
-        self.db.execute_many("imports", imports)
+        self.db.execute_many("imports", importlist)
 
-    def _add_exports(self, module, modulepath, version):
+    def _parse_import(self, module, modulepath, version, ancestors, imp, duc):
         """
-        Add exports (functions, classes, etc) defined for a module
+        Parse imports for a module
+        """
+        root = modulepath.split(".")[0]
+        parent = ancestors.parent(imp.node)
+
+        # Add the new import
+        new_import = {
+            "root": root,
+            "path": modulepath,
+            "tag": version,
+            "asname": None,
+            "module": None,
+        }
+
+        if isinstance(parent, ast.Import):
+            alias = imp.node
+            if alias.asname:
+                new_import.update({"import": alias.name, "asname": alias.asname})
+            else:
+                new_import.update({"import": alias.name})
+
+        elif isinstance(parent, ast.ImportFrom):
+            alias = imp.node
+            if alias.asname:
+                new_import.update(
+                    {
+                        "import": alias.name,
+                        "module": parent.module,
+                        "asname": alias.asname,
+                    }
+                )
+            else:
+                new_import.update({"import": alias.name, "module": parent.module})
+        return new_import
+
+    def _add_locals(self, imported_globals, used_attrs, func_id):
+        """
+        Add local variables a function needs to the depends table.
+        """
+        needs = []
+        for def_ in imported_globals:
+            attrs = used_attrs.get(def_, [])
+            if not attrs:
+                new_dep = {"module": def_.name(), "function": func_id, "attr": None}
+                needs.append(new_dep)
+            else:
+                for attr in attrs:
+                    new_dep = {
+                        "module": def_.name(),
+                        "function": func_id,
+                        "attr": str(attr),
+                    }
+                    needs.append(new_dep)
+
+        # Add needs (locals are types) to the database
+        if needs:
+            self.db.execute_many("depends", needs)
+
+    def _add_function(
+        self, module, modulepath, version, global_definitions, imports, function, duc
+    ):
+        """
+        Add an export of type function
+
+        Dump all global definitions used by this function, and the associated
+        accessed attributes if any.
+
+        Also lists attributes used for each argument, but only through direct
+        access (i.e. not walking through assignments etc).
         """
         # self.execute_many("instances", rows)
         # Root of the module, so we can quickly see if we have it
         root = modulepath.split(".", 1)[0]
+        imported_globals, used_attrs = imported(
+            global_definitions, imports, function.node, duc
+        )
+        name = function.name()
 
-        # When the database context is open, we can access self.db.conn
-        for cls in module.iter_classdefs():
-            new_cls = parse_class(cls, modulepath, version)
-            self.db.execute_one("exports", new_cls)
-            func_id = self.db.conn.lastrowid
+        new_func = {
+            "root": root,
+            "module": modulepath,
+            "path": f"{modulepath}.{name}",
+            "name": name,
+            "type": "function",
+            "tag": version,
+        }
+        self.db.execute_one("exports", new_func)
 
-            # Parse functions / classes
-            self._add_exports(cls, f"{modulepath}.{cls.name.value}", version)
-            self._add_imports(cls, f"{modulepath}.{cls.name.value}", version)
+        # The function id is needed to be a foreign key to params/locals
+        func_id = self.db.conn.lastrowid
 
-        for func in module.iter_funcdefs():
-            new_func = parse_function(func, modulepath, version)
-            row = {
-                "root": root,
-                "module": modulepath,
-                "path": new_func["path"],
-                "name": new_func["name"],
-                "type": "function",
-                "tag": version,
+        # We will call these local variables general needs/depends
+        # for a function.
+        if imported_globals:
+            self._add_locals(imported_globals, used_attrs, func_id)
+
+        # Add function parameters to "params" table
+        params = self._parse_params(function, used_attrs, duc, func_id)
+        if params:
+            self.db.execute_many("params", params)
+
+    def _parse_params(self, function, used_attrs, duc, func_id):
+        """
+        Add local variables a function needs to the depends table.
+        """
+        params = []
+
+        function_args = function.node.args
+        all_function_args = (
+            function_args.args
+            + function_args.posonlyargs
+            + (function_args.vararg or [])
+            + function_args.kwonlyargs
+        )
+
+        for i, arg in enumerate(all_function_args):
+            arg_def = duc.chains[arg]
+
+            param = {
+                "function": func_id,
+                "name": arg_def.name(),
+                "position": i,
+                "default_value": None,
+                "type": None,
             }
-            self.db.execute_one("exports", row)
 
-            # We need the function ID to add all the params
-            # as a foreign key!
-            func_id = self.db.conn.lastrowid
-            for param in new_func.get("params", []):
-                param["function"] = func_id
-            if new_func.get("params"):
-                self.db.execute_many("params", new_func["params"])
+            # Not sure what these attributes are (and where they should go)
+            attrs = used_attrs.get(arg_def)
+            if arg_def.node.annotation:
+                arg_type = arg_def.node.annotation.value.id
+                arg_type_inner = [x.id for x in arg_def.node.annotation.slice.elts]
+                if arg_type_inner:
+                    param["type"] = f"{arg_type}{arg_type_inner}"
+                else:
+                    param["type"] = arg_type
+
+            # I don't know what to do with these still
+            # How do parameters have attributes?
+            if attrs:
+                print("  Attributes:")
+                for attr in attrs:
+                    print(f"    .{attr}")
+            params.append(param)
+
+        return params
+
+    def _add_class(
+        self,
+        module,
+        modulepath,
+        version,
+        global_definitions,
+        imports,
+        cls,
+        duc,
+    ):
+        """
+        Add an export of type class.
+
+        Dump all global definitions used by this function, and the associated
+        accessed attributes if any.
+
+        This includes both static fields and function members, as long as they are
+        referenced within the class body.
+
+        It does not walk through the bases when doing so.
+        """
+        class_name = cls.name()
+        root = modulepath.split(".", 1)[0]
+        imported_globals, used_attrs = imported(
+            global_definitions, imports, cls.node, duc
+        )
+
+        classpath = f"{modulepath}.{class_name}"
+        new_cls = {
+            "root": root,
+            "module": modulepath,
+            "tag": version,
+            "path": classpath,
+            "name": class_name,
+            "type": "class",
+        }
+
+        self.db.execute_one("exports", new_cls)
+        class_id = self.db.conn.lastrowid
+
+        # TODO how to get inherited functions?
+        # include decorators?
+
+        if imported_globals:
+            self._add_locals(imported_globals, used_attrs, class_id)
 
     def add_functions(self, filepath, modulepath, version):
         """
@@ -497,17 +655,65 @@ class Compspec(MetricBase):
         filename = os.path.basename(filepath)
         source = read_file(filepath, readlines=False)
 
-        # This can take a python version too.
-        module = parso.parse(source)
+        module = ast.parse(source)
 
         # If we have an init, then it's just the main class, otherwise module
         if filename != "__init__.py":
             modulepath = "%s.%s" % (modulepath, re.sub("[.]py$", "", filename))
 
+        # def -> use chains compute the link between a definition and its uses.
+        duc = beniget.DefUseChains()
+        duc.visit(module)
+
+        # any import, either global or local.
+        all_imports = AllImports(duc)
+        all_imports.visit(module)
+
+        # this keeps a mapping between a node and its parent in the AST.
+        ancestors = beniget.Ancestors()
+        ancestors.visit(module)
+
+        # this contains global imports, but not local ones. Same for functions,
+        # classes etc.
+        global_definitions = set(duc.locals[module])
+
         # Do the extraction keeping the database connection open
         with self.db:
-            self._add_exports(module, modulepath, version)
-            self._add_imports(module, modulepath, version)
+            # Add all imports via one transaction
+            self._add_imports(module, modulepath, version, ancestors, all_imports, duc)
+
+            # Go through global definitions
+            for definition in sorted(global_definitions, key=lambda x: x.name()):
+                # Don't add a definition we've seen as an import
+                if definition in all_imports:
+                    continue
+
+                elif isinstance(definition.node, ast.ClassDef):
+                    self._add_class(
+                        module,
+                        modulepath,
+                        version,
+                        global_definitions,
+                        all_imports,
+                        definition,
+                        duc,
+                    )
+
+                elif isinstance(
+                    definition.node, (ast.FunctionDef, ast.AsyncFunctionDef)
+                ):
+                    self._add_function(
+                        module,
+                        modulepath,
+                        version,
+                        global_definitions,
+                        all_imports,
+                        definition,
+                        duc,
+                    )
+                else:
+                    # this can happen for any global variable
+                    print("/skipping/", definition.name())
 
     def get_results(self):
         """
@@ -543,7 +749,17 @@ class Compspec(MetricBase):
                 new_import["from"] = entry[3]
             if entry[4]:
                 new_import["import"] = entry[4]
+            if entry[5]:
+                new_import["as"] = entry[5]
             data[version][entry[1]]["imports"].append(new_import)
+
+        # Calls - what the function uses (and thus depends on)
+        for call in self.db.execute("select * from depends"):
+            func_id = call[-1]
+            if "needs" not in lookup[func_id]:
+                lookup[func_id]["needs"] = []
+            new_call = {"module": call[0], "attr": call[1]}
+            lookup[func_id]["needs"].append(new_call)
 
         # This doesn't include the rowid
         for param in self.db.execute("select * from params"):
