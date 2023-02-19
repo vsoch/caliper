@@ -63,6 +63,7 @@ class Capture(ast.NodeVisitor):
         self._users = set()  # users of local definitions
         self._captured = set()  # definitions that don't belong to local users
         self._attributes = defaultdict(set)  # maps def to attributes
+        self.failed_visits = set()
 
     def visit_FunctionDef(self, node):
         # Initialize the set of node using a local variable. These nodes are
@@ -72,7 +73,12 @@ class Capture(ast.NodeVisitor):
             if def_ in self._imports:
                 continue
             self._users.update(use.node for use in def_.users())
-        self.generic_visit(node)
+        try:
+            self.generic_visit(node)
+        except Exception:
+            # Keep track of failed visits
+            print(f"/failed/visit {node.name}")
+            self.failed_visits.add(node.name)
 
     visit_AsyncFunctionDef = visit_FunctionDef
 
@@ -112,7 +118,7 @@ def imported(global_definitions, imports, node, duc):
     imported_defs = (global_definitions.union(imports)).intersection(captured)
     associated_attrs = captured.attrs()
 
-    return imported_defs, associated_attrs
+    return imported_defs, associated_attrs, captured.failed_visits
 
 
 # The table will be flat - storage for our metrics we want to extract
@@ -149,7 +155,7 @@ CREATE TABLE IF NOT EXISTS params (
 """,
     """
 CREATE TABLE IF NOT EXISTS depends (
-    module text NULLABLE,
+    parent text NULLABLE,
     attr text NULLABLE,
     function number NOT NULL,
     FOREIGN KEY (function) REFERENCES exports(id)
@@ -241,6 +247,10 @@ class Compspecv1(MetricBase):
             )
 
         super().__init__(git=git, filename=filename)
+
+        # Keep track of what we skip or fail to visit
+        self.skips = {}
+        self.failed_visits = {}
 
         if db_file and os.path.exists(db_file):
             self.db_file = db_file
@@ -499,12 +509,12 @@ class Compspecv1(MetricBase):
         for def_ in imported_globals:
             attrs = used_attrs.get(def_, [])
             if not attrs:
-                new_dep = {"module": def_.name(), "function": func_id, "attr": None}
+                new_dep = {"parent": def_.name(), "function": func_id, "attr": None}
                 needs.append(new_dep)
             else:
                 for attr in attrs:
                     new_dep = {
-                        "module": def_.name(),
+                        "parent": def_.name(),
                         "function": func_id,
                         "attr": str(attr),
                     }
@@ -529,10 +539,13 @@ class Compspecv1(MetricBase):
         # self.execute_many("instances", rows)
         # Root of the module, so we can quickly see if we have it
         root = modulepath.split(".", 1)[0]
-        imported_globals, used_attrs = imported(
+        imported_globals, used_attrs, failed_visits = imported(
             global_definitions, imports, function.node, duc
         )
         name = function.name()
+        if version not in self.failed_visits:
+            self.failed_visits[version] = set()
+        self.failed_visits[version] = self.failed_visits[version].union(failed_visits)
 
         new_func = {
             "root": root,
@@ -585,20 +598,43 @@ class Compspecv1(MetricBase):
             # Not sure what these attributes are (and where they should go)
             attrs = used_attrs.get(arg_def)
             if arg_def.node.annotation:
-                arg_type = arg_def.node.annotation.value.id
-                arg_type_inner = [x.id for x in arg_def.node.annotation.slice.elts]
-                if arg_type_inner:
-                    param["type"] = f"{arg_type}{arg_type_inner}"
+                if hasattr(arg_def.node.annotation, "value"):
+                    arg_type = arg_def.node.annotation.value.id
+
+                    # A slice means typing with something like a union
+                    if hasattr(arg_def.node.annotation.slice, "elts"):
+                        arg_type_inner = []
+                        for entry in arg_def.node.annotation.slice.elts:
+                            if hasattr(entry, "id"):
+                                arg_type_inner.append(entry.id)
+                            else:
+                                arg_type_inner.append(entry.value.id)
+
+                        if arg_type_inner:
+                            param["type"] = f"{arg_type}{arg_type_inner}"
+                        else:
+                            param["type"] = arg_def.node.annotation.slice.id
+                    else:
+                        param["type"] = arg_type
                 else:
-                    param["type"] = arg_type
+                    param["type"] = arg_def.node.annotation.id
+
+            params.append(param)
 
             # I don't know what to do with these still
             # How do parameters have attributes?
             if attrs:
-                print("  Attributes:")
+                # Just assume it's some local need?
+                needs = []
                 for attr in attrs:
-                    print(f"    .{attr}")
-            params.append(param)
+                    new_dep = {
+                        "parent": arg_def.name(),
+                        "function": func_id,
+                        "attr": str(attr),
+                    }
+                    needs.append(new_dep)
+                if needs:
+                    self.db.execute_many("depends", needs)
 
         return params
 
@@ -625,9 +661,12 @@ class Compspecv1(MetricBase):
         """
         class_name = cls.name()
         root = modulepath.split(".", 1)[0]
-        imported_globals, used_attrs = imported(
+        imported_globals, used_attrs, failed_visits = imported(
             global_definitions, imports, cls.node, duc
         )
+        if version not in self.failed_visits:
+            self.failed_visits[version] = set()
+        self.failed_visits[version] = self.failed_visits[version].union(failed_visits)
 
         classpath = f"{modulepath}.{class_name}"
         new_cls = {
@@ -712,8 +751,10 @@ class Compspecv1(MetricBase):
                         duc,
                     )
                 else:
-                    # this can happen for any global variable
-                    print("/skipping/", definition.name())
+                    # Keep track of what we are skipping
+                    if version not in self.skips:
+                        self.skips[version] = set()
+                    self.skips[version].add(definition.name())
 
     def get_results(self):
         """
@@ -758,7 +799,7 @@ class Compspecv1(MetricBase):
             func_id = call[-1]
             if "needs" not in lookup[func_id]:
                 lookup[func_id]["needs"] = []
-            new_call = {"module": call[0], "attr": call[1]}
+            new_call = {"parent": call[0], "attr": call[1]}
             lookup[func_id]["needs"].append(new_call)
 
         # This doesn't include the rowid
@@ -772,4 +813,12 @@ class Compspecv1(MetricBase):
             if param[3]:
                 new_param["default"] = param[3]
             lookup[func_id]["params"].append(new_param)
+
+        for version, failed_visits in self.failed_visits.items():
+            if failed_visits:
+                data[version]["failed_visits"] = list(failed_visits)
+
+        for version, skips in self.skips.items():
+            if skips:
+                data[version]["skipped"] = list(skips)
         return data
