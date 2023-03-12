@@ -115,6 +115,23 @@ def wget_and_extract_zip(url, download_to, chunk_size=1024):
 
     return download_to, download_root, download_dir
 
+def wget_and_extract_conda(url, download_to, chunk_size=1024):
+    """
+    Get an extract a .conda archive.
+    """
+
+    import conda_package_handling.api as cph
+    import tempfile
+
+    # Get the root folder
+    download_root = download_to.rsplit(".", 1)[0]
+    download_dir = os.path.dirname(download_to)
+
+    # Download to a temporary file
+    download_to = wget(url, download_to, chunk_size=chunk_size)
+    cph.extract(download_to, download_dir)
+
+    return download_to, download_root, download_dir
 
 def do_request(url, headers=None, data=None, method="GET"):
     """A general function to do a request, and handle any possible error

@@ -11,7 +11,7 @@ import requests
 
 from caliper.logger import logger
 from caliper.managers.base import ManagerBase
-from caliper.utils.command import move_files, wget_and_extract_bz2
+from caliper.utils.command import move_files, wget_and_extract_bz2, wget_and_extract_conda
 from caliper.utils.file import get_tmpdir
 
 
@@ -103,9 +103,15 @@ class CondaManager(ManagerBase):
         tmpdir = get_tmpdir()
         download_to = os.path.join(tmpdir, os.path.basename(spec["source"]["filename"]))
         url = spec["source"]["filename"]
-        wget_and_extract_bz2(url, download_to, chunk_size=1024)
+        if url.endswith(".bz2"):
+            wget_and_extract_bz2(url, download_to, chunk_size=1024)
+        else:
+            wget_and_extract_conda(url, download_to, chunk_size=1024)
 
         # This should be the dest_dir
+        # TODO this won't work for "arch" packages where the `site-packages` is under 
+        # `lib/pythonX.X/site-packages/...`. Maybe we should just `rglob` for site-packages?
+        # like `os.path.join(tmpdir, "**", "site-packages")`
         dest_dir = os.path.join(tmpdir, "site-packages", spec["name"])
         if not os.path.exists(dest_dir):
             logger.exit(
