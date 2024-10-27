@@ -1,14 +1,14 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2024, Vanessa Sochat"
 __license__ = "MPL 2.0"
+
+import os
 
 from caliper.analysis import CaliperAnalyzer
 from caliper.logger import logger
-import os
 
 
 def main(args, extra):
-
     # The config file must exist
     if not args.config or not os.path.exists(args.config):
         logger.exit("You must provide an existing caliper.yaml config with --config.")

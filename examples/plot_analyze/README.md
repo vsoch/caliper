@@ -1,6 +1,6 @@
 # Plot Analysis
 
-After you run a [caliper analysis](https://caliper-python.readthedocs.io/en/latest/getting_started/user-guide.html#caliper-analyze) 
+After you run a [caliper analysis](https://caliper-python.readthedocs.io/en/latest/getting_started/user-guide.html#caliper-analyze)
 it will generate a `.caliper/data` folder with results. You can run the script here
 targeting that folder to generate an output file, `test-results-by-python.json`,
 that feeds directly into the [index.html](index.html) to visualize your results.

@@ -9,7 +9,7 @@ Caliper
     :target: https://github.com/vsoch/caliper/stargazers
 
 
-Caliper is a tool for measuring and assessing change in packages. To see the code, 
+Caliper is a tool for measuring and assessing change in packages. To see the code,
 head over to the `repository <https://github.com/vsoch/caliper/>`_
 
 .. _main-getting-started:

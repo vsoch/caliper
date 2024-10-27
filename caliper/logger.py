@@ -1,5 +1,5 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2024, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
 import sys
@@ -195,7 +195,6 @@ class Logger:
         length: character length of bar (Int)
         """
         if not self.level == QUIET:
-
             percent = 100 * (iteration / float(total))
             progress = int(length * iteration // total)
 

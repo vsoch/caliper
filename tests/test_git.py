@@ -1,10 +1,8 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2024, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
 import os
-import sys
-import pytest
 
 
 def test_git_manager_new(tmp_path):

@@ -1,18 +1,20 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2024, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-from caliper.utils.file import move_files
-from caliper.logger import logger
 import json
 import os
-import requests
 import shutil
 import subprocess
 import sys
 import tarfile
 import threading
 import zipfile
+
+import requests
+
+from caliper.logger import logger
+from caliper.utils.file import move_files
 
 
 def wget(url, download_to, chunk_size=1024):
@@ -97,11 +99,10 @@ def do_request(url, headers=None, data=None, method="GET"):
     response = requests.request(method, url, headers=headers, data=json.dumps(data))
 
     if response.status_code not in [200, 201]:
-
         # Try to serialize the message, if possible
         try:
             message = response.json()
-        except:
+        except Exception:
             message = ""
         sys.exit(
             f"Error with {url}: {response.status_code}, {response.reason}\n{message}"
@@ -178,7 +179,6 @@ def run_command(
     environ=None,
     quiet=False,
 ):
-
     """run_command uses subprocess to send a command to the terminal. If
     capture is True, we use the parent stdout, so output is piped to the user.
     This means we don't return the output to parse. This is a function (simpler)

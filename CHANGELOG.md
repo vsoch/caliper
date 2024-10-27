@@ -21,7 +21,7 @@ The versions coincide with releases on pip.
  - adding support to extract functions from filename (0.0.18)
  - adding helper metric function to extract file functions (0.0.17)
  - updating export organization to allow for many json (0.0.16)
- - adding update --check and update commands 
+ - adding update --check and update commands
  - adding functiondb metric extractor (0.0.15)
  - small bux fixes and addition of docs (0.0.14)
  - adding caliper analyzer (0.0.13)
