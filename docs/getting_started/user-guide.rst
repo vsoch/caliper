@@ -7,7 +7,7 @@ User Guide
 Caliper is a tool for measuring and assessing change in packages. It's currently
 of interest if you want to study how developers create software, or some kind
 of change that might predict something breaking. It might eventually be useful
-as a tool to, given a script with dependencies speciied, know the kind of flexibility
+as a tool to, given a script with dependencies specified, know the kind of flexibility
 you have to honor those dependencies (or not). This could be hugely useful for package
 managers and solvers that need to try more flexible constraints given a conflict.
 
@@ -75,7 +75,7 @@ If you just interact with `manager.specs`, you'll get a random architecture for 
 one. This can be okay if you want to do static file analysis, but if you want to choose
 a specific python version, your best bet is to call the get package metadata function
 directly and provide your preferences. For example, here we want Tensorflow for Python 3.5
-and a specific linux architecture:
+and a specific Linux architecture:
 
 .. code:: python
 
@@ -322,7 +322,7 @@ The output of analyze will be to write results to a ``.caliper`` folder, specifi
 to ``.caliper/data``. The result files can then be parsed to generate an interactive
 interface to explore them. A script is provided in the `examples/plot_analyze <https://github.com/vsoch/caliper/tree/main/examples/plot_analyze/>`_
 folder of the repository, an example shown at `vsoch/caliper-analysis <https://vsoch.github.io/caliper-analysis/ground-truth/>`_,
-and a screensht shown below.
+and a screenshot shown below.
 
 .. image:: img/caliper-analysis.png
 
@@ -401,7 +401,7 @@ You can specify the format with ``--fmt (json|json-single|zip)``.
 The default is json, which is the most conservative to ensure small file sizes for GitHub.
 It's recommended that you test extractions and choose the size that is right for you.
 Whatever you choose, an ``index.json`` file is generated in the output metric folder
-that will make it possible to detect what is available programatically with a request.
+that will make it possible to detect what is available programmatically with a request.
 We currently only support one extraction type at once, however if you think it necessary,
 we can add support for multiple.
 
@@ -509,7 +509,7 @@ You can change the format by specifying ``--fmt``
 
 
 By default, if you don't specify an output directory, the metrics will be saved
-to the present working directory. The organizaion is by package type,
+to the present working directory. The organization is by package type,
 name, and then results files Here we can see results in all three
 formats: ``zip``, ``json`` (multiple files), and ``json-single``:
 
@@ -604,7 +604,7 @@ We can then hand it off to the extractor:
 
 
 At this point you'll see the extractor iterating through each repository version,
-and commiting changes based on the version. It's fun to open the repository folder
+and committing changes based on the version. It's fun to open the repository folder
 (in /tmp named based on the package) and watch the changes happening in real time.
 At this point we would have our **version repository** that we can calculate metrics
 over. For example, we can see commits that correspond to versions:
@@ -683,9 +683,9 @@ And we then might want to see what metrics are available for extraction.
 
 
 Without going into detail, there are different base classes of metrics - a ``MetricBase``
-expects to extract some metric for one timepoint (a tag/commit) and a ``ChangeMetricBase``
-expects to extract metrics that compare two of these timepoints. The metric ``changedlines``
-above is a change metric, and ``totalcounts`` is a base metric (for one commit timepoint).
+expects to extract some metric for one time-point (a tag/commit) and a ``ChangeMetricBase``
+expects to extract metrics that compare two of these time-points. The metric ``changedlines``
+above is a change metric, and ``totalcounts`` is a base metric (for one commit time-point).
 We can then run the extraction:
 
 .. code:: python
@@ -709,7 +709,7 @@ For formats you can again choose between ``json``, ``json-single``, and ``zip``.
 As stated earlier, you'd want to use ``json`` for the largest repos and metrics
 (e.g., a function database, functiondb is very large, and this scales with the number
 of releases), a ``json-single`` for smaller metric/release combinations, and ``zip``
-if it's somewhere in betwee. Caliper can load all three, so you don't need to worry.
+if it's somewhere in between. Caliper can load all three, so you don't need to worry.
 
 
 Extraction From Repository
@@ -755,8 +755,8 @@ two versions.
     # dict_keys(['0.0.1'])
 
 You can then continue to use the result as needed. For the example above, since we have
-function signatures for every version of tensorflow, we might generate a comparison  or similiarity
-matric depending on those signatures.
+function signatures for every version of tensorflow, we might generate a comparison or similarity
+matrix depending on those signatures.
 
 
 Parsing Results
@@ -826,9 +826,9 @@ or a specific metric:
     [✔️  ] pypi:sregistry|functiondb is up to date.
 
 
-Or if you have many results in a respository, you might want to run a nightly (or weekly)
+Or if you have many results in a repository, you might want to run a nightly (or weekly)
 job to check for new releases, and if any new releases are found, to update your data.
-To support much larger numbersof checks, you can use a ``caliper.yaml`` file
+To support much larger numbers of checks, you can use a ``caliper.yaml`` file
 to list the metric modules that you want to update. The simplest version just has a name for each:
 
 .. code:: yaml
