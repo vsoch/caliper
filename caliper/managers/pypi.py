@@ -1,13 +1,13 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2024, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-from caliper.utils.command import do_request
+import re
+from copy import deepcopy
+
 from caliper.logger import logger
 from caliper.managers.base import ManagerBase
-
-from copy import deepcopy
-import re
+from caliper.utils.command import do_request
 
 
 class PypiManager(ManagerBase):
@@ -63,7 +63,6 @@ class PypiManager(ManagerBase):
 
         # Parse metadata into simplified version of spack package schema
         for version, releases in self.releases.items():
-
             # Find an appropriate linux/unix flavor release to extract
             release = self.find_release(releases, arch, python_version)
 
@@ -142,7 +141,6 @@ class PypiManager(ManagerBase):
             # Only add releases that match regular expression
             for r in releases:
                 if re.search(regex, r.get(search_field, "")):
-
                     # We only added sources if there aren't wheels
                     if r["python_version"] == "source" and self.source_only:
                         for source_version in self.source_versions:

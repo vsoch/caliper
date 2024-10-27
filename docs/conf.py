@@ -13,8 +13,9 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys
 import os
+import sys
+
 from recommonmark.parser import CommonMarkParser
 
 source_parsers = {".md": CommonMarkParser}
@@ -61,7 +62,7 @@ master_doc = "index"
 project = "Caliper"
 copyright = "2020-2021, Vanessa Sochat"
 
-from caliper import version
+from caliper import version  # noqa
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "caliper.settings")
 

@@ -1,25 +1,21 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2024, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-from caliper.metrics.base import MetricFinder
-from caliper.managers import GitManager
-from caliper.utils.file import (
-    zip_from_string,
-    read_json,
-    read_zip,
-)
-from caliper.utils.prompt import confirm
-from caliper.logger import logger
-from caliper.managers import get_named_manager
-
-from copy import deepcopy
 import importlib
 import json
-import requests
+import os
 import shutil
 import tempfile
-import os
+from copy import deepcopy
+
+import requests
+
+from caliper.logger import logger
+from caliper.managers import GitManager, get_named_manager
+from caliper.metrics.base import MetricFinder
+from caliper.utils.file import read_json, read_zip, zip_from_string
+from caliper.utils.prompt import confirm
 
 
 class MetricsExtractor:
@@ -227,7 +223,6 @@ class MetricsExtractor:
 
         # For each version, download and create git commit and tag
         for i, spec in enumerate(self.manager.specs):
-
             logger.info(
                 "Downloading and tagging %s, %s of %s"
                 % (spec["version"], i + 1, len(self.manager.specs))
@@ -276,7 +271,6 @@ class MetricsExtractor:
         logger.info("Results will be written to %s" % package_dir)
 
         for _, extractor in self._extractors.items():
-
             # Each metric can define a default format
             fmt_ = fmt or extractor.extractor
 
@@ -311,7 +305,6 @@ class MetricsUpdater(MetricsExtractor):
                     logger.warning("%s is not a valid package manager uri." % package)
 
             for metric in metrics[i]:
-
                 # First look for existing data in outdir
                 index_file = os.path.join(outdir, uri, name, metric, "index.json")
 
@@ -350,7 +343,6 @@ class MetricsUpdater(MetricsExtractor):
         missing = self.check_metrics(packages, metrics, outdir)
 
         for package, metrics in missing.items():
-
             uri, name = package.split(":")  # pypi:sif
 
             # Use a shared manager to get updated versions

@@ -1,11 +1,13 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2024, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
 import os
+
 from git import Repo
-from caliper.utils.command import run_command
+
 from caliper.logger import logger
+from caliper.utils.command import run_command
 
 
 class GitManager:

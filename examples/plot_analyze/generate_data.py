@@ -5,13 +5,13 @@ __copyright__ = "Copyright 2021, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
 import argparse
-from caliper.utils.file import read_json, write_json
-from distutils.version import StrictVersion
-
-import sys
-from glob import glob
 import os
 import re
+import sys
+from distutils.version import StrictVersion
+from glob import glob
+
+from caliper.utils.file import read_json, write_json
 
 here = os.path.dirname(os.path.abspath(__file__))
 
@@ -83,7 +83,7 @@ def main():
         sys.exit("A --dir directory folder with results is required.")
 
     # Step 1: build matrix of fail/success to plot
-    results = parse_tests(dirname, args.package)
+    parse_tests(dirname, args.package)
 
 
 def parse_tests(dirname, package):

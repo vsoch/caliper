@@ -1,12 +1,11 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2024, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
 from caliper.metrics.base import MetricBase
 
 
 class Totalcounts(MetricBase):
-
     name = "totalcounts"
     description = "retrieve total counts of files and lines for each commit"
 

@@ -1,15 +1,15 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2024, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-from caliper.metrics import MetricsUpdater
-from caliper.logger import logger
-from caliper.utils.file import read_yaml
 import os
+
+from caliper.logger import logger
+from caliper.metrics import MetricsUpdater
+from caliper.utils.file import read_yaml
 
 
 def main(args, extra):
-
     # The config file must exist if packages are not defined
     if not args.packages and (not args.config or not os.path.exists(args.config)):
         logger.exit(
@@ -48,7 +48,6 @@ def main(args, extra):
                 print("[👀️ ] %s is not found." % package)
                 continue
             for metric, versions in metrics.items():
-
                 if not versions:
                     print("[✔️  ] %s|%s is up to date." % (package, metric))
                 else:

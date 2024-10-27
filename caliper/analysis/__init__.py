@@ -1,17 +1,19 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2024, Vanessa Sochat"
 __license__ = "MPL 2.0"
-
-from caliper.managers import PypiManager
-from caliper.utils.file import read_file, read_yaml
-from caliper.utils.command import CommandRunner
-from caliper.logger import logger
-from jinja2 import Template
-from .workers import Workers
-from .tasks import analysis_task
 
 import os
 import re
+
+from jinja2 import Template
+
+from caliper.logger import logger
+from caliper.managers import PypiManager
+from caliper.utils.command import CommandRunner
+from caliper.utils.file import read_file, read_yaml
+
+from .tasks import analysis_task
+from .workers import Workers
 
 
 class CaliperAnalyzerBase:
@@ -126,7 +128,6 @@ class CaliperPypiAnalyzer(CaliperAnalyzerBase):
 
         # Loop over versions of the library, and Python versions
         for version, releases in all_releases.items():
-
             # Check if the user has defined a set of versions
             if self.test_versions and version not in self.test_versions:
                 continue
@@ -135,7 +136,6 @@ class CaliperPypiAnalyzer(CaliperAnalyzerBase):
             lookup = {x["python_version"]: x for x in releases}
 
             for python_version in python_versions:
-
                 # If the user has requested a subset of Python versions
                 if self.python_versions and not re.search(
                     python_version_regex, python_version, re.IGNORECASE

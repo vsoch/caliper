@@ -32,7 +32,7 @@ Then you'll want to create a new virtual environment, and install dependencies.
 And install Caliper (from the repository directly)
 
 .. code:: console
- 
+
     $ pip install -e .
 
 

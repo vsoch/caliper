@@ -1,13 +1,13 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2024, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
+import os
 from distutils.version import StrictVersion
-from caliper.utils.command import do_request
+
 from caliper.logger import logger
 from caliper.managers.base import ManagerBase
-
-import os
+from caliper.utils.command import do_request
 
 
 class GitHubManager(ManagerBase):
@@ -41,11 +41,10 @@ class GitHubManager(ManagerBase):
 
         # Parse metadata into simplified version of spack package schema
         for release in self.metadata:
-
             # Only include valid versions
             try:
                 StrictVersion(release["name"].lstrip("v"))
-            except:
+            except Exception:
                 continue
 
             self._specs.append(

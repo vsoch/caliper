@@ -1,12 +1,12 @@
 __author__ = "Vanessa Sochat"
-__copyright__ = "Copyright 2020-2021, Vanessa Sochat"
+__copyright__ = "Copyright 2020-2024, Vanessa Sochat"
 __license__ = "MPL 2.0"
 
-from distutils.version import StrictVersion
-from abc import abstractmethod
-from caliper.utils.command import wget_and_extract
-
 import os
+from abc import abstractmethod
+from distutils.version import StrictVersion
+
+from caliper.utils.command import wget_and_extract
 
 
 class ManagerBase:
